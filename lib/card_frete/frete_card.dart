@@ -73,18 +73,24 @@ class FreteCardState extends State<FreteCard> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: Image.network(
-                                'https://encurtador.com.br/agCGN',
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.cover,
-                              ),
+                              child: const ImageIcon(
+                                AssetImage("lib/assets/img/caminhao.png"),
+                                size: 70,
+                              )
+
+                              // Image.network(
+                              //   'https://encurtador.com.br/agCGN',
+                              //   width: 70,
+                              //   height: 70,
+                              //   fit: BoxFit.cover,
+                              // ),
                             ),
                           );
                         }
                       },
                     ),
                   ),
+                  const SizedBox(height: 15),
                   Switch(value: Concluido, onChanged: callMoveCard)
                 ],
               ),
