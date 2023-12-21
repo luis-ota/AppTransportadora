@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'frete_card.dart';
 import 'nested_tab_bar.dart';
+import '../card_frete/popup_form.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() {
@@ -13,22 +13,30 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   late final GlobalKey<NestedTabBarState> _nestedTabBarKey;
+  late TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = TextEditingController();
     _nestedTabBarKey = GlobalKey<NestedTabBarState>();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tranportadora Rubinho'),
-        backgroundColor: Color(0xFF43A0E4),
+        title: const Text('Transportadora Rubinho'),
+        backgroundColor: const Color(0xFF43A0E4),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
             onPressed: () {
               // Adicione aqui a lógica para ação do ícone de perfil
             },
@@ -37,17 +45,10 @@ class HomePageState extends State<HomePage> {
       ),
       body: NestedTabBar(key: _nestedTabBarKey),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          // Use a chave para obter o estado atual de NestedTabBar
-          final nestedTabBarState = _nestedTabBarKey.currentState;
-          if (nestedTabBarState != null) {
-            setState(() {
-              // Adicione o FreteCard ao estado atual
-              nestedTabBarState.addAndamentoCard(const FreteCard());
-            });
-          }
+        onPressed: () async {
+          await cardFormPopup(context, controller, _nestedTabBarKey);
         },
+        child: const Icon(Icons.add),
       ),
     );
   }

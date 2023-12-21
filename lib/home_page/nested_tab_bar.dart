@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'frete_card.dart';
+import '../card_frete/frete_card.dart';
 
 class NestedTabBar extends StatefulWidget {
-  const NestedTabBar({super.key});
+  const NestedTabBar({Key? key}) : super(key: key);
 
   @override
   State<NestedTabBar> createState() => NestedTabBarState();
@@ -10,8 +10,8 @@ class NestedTabBar extends StatefulWidget {
 
 class NestedTabBarState extends State<NestedTabBar>
     with TickerProviderStateMixin {
-  List<Widget> AndamentoCards = [];
-  List<Widget> ConcluidoCards = [];
+  List<Widget> andamentoCards = [];
+  List<Widget> concluidoCards = [];
   late final TabController _tabController;
 
   @override
@@ -26,18 +26,20 @@ class NestedTabBarState extends State<NestedTabBar>
     super.dispose();
   }
 
-  // Método público para adicionar um card em andamento
   void addAndamentoCard(Widget card) {
-    setState(() {
-      AndamentoCards.add(card);
-    });
+    if (!andamentoCards.contains(card)) {
+      setState(() {
+        andamentoCards.add(card);
+      });
+    }
   }
 
-  // Método público para adicionar um card concluído
   void addConcluidoCard(Widget card) {
-    setState(() {
-      ConcluidoCards.add(card);
-    });
+    if (!concluidoCards.contains(card)) {
+      setState(() {
+        concluidoCards.add(card);
+      });
+    }
   }
 
   @override
@@ -53,18 +55,19 @@ class NestedTabBarState extends State<NestedTabBar>
         ),
         Expanded(
           child: TabBarView(
+            key: const PageStorageKey<String>('tabBarViewKey'),
             controller: _tabController,
             children: <Widget>[
               ListView.builder(
-                itemCount: AndamentoCards.length,
+                itemCount: andamentoCards.length,
                 itemBuilder: (context, index) {
-                  return AndamentoCards[index];
+                  return andamentoCards[index];
                 },
               ),
               ListView.builder(
-                itemCount: ConcluidoCards.length,
+                itemCount: concluidoCards.length,
                 itemBuilder: (context, index) {
-                  return ConcluidoCards[index];
+                  return concluidoCards[index];
                 },
               ),
             ],
@@ -74,3 +77,5 @@ class NestedTabBarState extends State<NestedTabBar>
     );
   }
 }
+
+
