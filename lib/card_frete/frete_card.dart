@@ -14,20 +14,22 @@ class FreteCard extends StatefulWidget {
 
 class FreteCardState extends State<FreteCard> {
   late Future<void> imageLoading;
-  bool Concluido = false;
+  bool concluido = false; // Renomeie de 'Concluido' para 'concluido'
+  late bool switchValue; // Adicione um estado local para o Switch
 
   @override
   void initState() {
     super.initState();
     // Load the image only once when the widget is created
     imageLoading = loadImage();
+    switchValue = concluido; // Inicialize o estado do Switch com o valor de 'concluido'
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        color: const Color(0xD9D6D6B7),
+        color: Colors.lightBlueAccent,
         child: SizedBox(
           width: 380,
           height: 170,
@@ -71,19 +73,15 @@ class FreteCardState extends State<FreteCard> {
                               top: 10.0,
                               left: 10.0,
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
                               child: const ImageIcon(
                                 AssetImage("lib/assets/img/caminhao.png"),
                                 size: 70,
-                              )
-
-                              // Image.network(
-                              //   'https://encurtador.com.br/agCGN',
-                              //   width: 70,
-                              //   height: 70,
-                              //   fit: BoxFit.cover,
-                              // ),
+                              ),
                             ),
                           );
                         }
@@ -91,7 +89,10 @@ class FreteCardState extends State<FreteCard> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  Switch(value: Concluido, onChanged: callMoveCard)
+                  Switch(
+                    value: switchValue, // Use switchValue em vez de 'concluido'
+                    onChanged: callMoveCard,
+                  ),
                 ],
               ),
               Column(
@@ -99,17 +100,17 @@ class FreteCardState extends State<FreteCard> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
-                      top: 15.0,
+                      top: 7.0,
                       left: 10.0,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Destino: ${widget.texto}'),
+                        Text('Destino: ${widget.texto}', style: const TextStyle(fontSize: 20),),
                         const SizedBox(height: 8),
-                        const Text('Valor: '),
+                        const Text('Valor: ', style: TextStyle(fontSize: 17),),
                         const SizedBox(height: 8),
-                        Text('Data: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}'),
+                        Text('Data: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}', style: const TextStyle(fontSize: 17),),
                       ],
                     ),
                   ),
@@ -128,8 +129,26 @@ class FreteCardState extends State<FreteCard> {
 
   void callMoveCard(bool value) {
     setState(() {
-      Concluido = value;
-    });
+      switchValue = value; // Atualize o estado local do Switch
+      concluido = switchValue; // Atualize 'concluido' conforme necessário
 
+      if (concluido) {
+        // Mova o card para a tab "Concluído"
+        final NestedTabBarState? tabBarState =
+        context.findAncestorStateOfType<NestedTabBarState>();
+        if (tabBarState != null) {
+          tabBarState.addConcluidoCard(widget);
+          tabBarState.andamentoCards.remove(widget);
+        }
+      } else {
+        // Mova o card para a tab "Em andamento"
+        final NestedTabBarState? tabBarState =
+        context.findAncestorStateOfType<NestedTabBarState>();
+        if (tabBarState != null) {
+          tabBarState.addAndamentoCard(widget);
+          tabBarState.concluidoCards.remove(widget);
+        }
+      }
+    });
   }
 }

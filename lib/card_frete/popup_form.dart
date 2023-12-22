@@ -30,7 +30,7 @@ void submit(BuildContext context, TextEditingController controller, GlobalKey<Ne
   Navigator.of(context).pop();
   final nestedTabBarState = nestedTabBarKey.currentState;
   if (nestedTabBarState != null && controller.text != '') {
-    nestedTabBarState.addAndamentoCard(FreteCard(texto: controller.text, ));
+    nestedTabBarState.addAndamentoCard(FreteCard(texto: controller.text,));
   }
   controller.clear();
 }
