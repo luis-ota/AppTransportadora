@@ -1,5 +1,8 @@
 import 'package:app_caminhao/components/frete_tabbar.dart';
+import 'package:app_caminhao/funcoes/addCard.dart';
+import 'package:app_caminhao/screens/despesas_page.dart';
 import 'package:flutter/material.dart';
+import 'package:app_caminhao/funcoes/addCard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,34 +31,13 @@ class _HomePageState extends State<HomePage> {
           ),
           body: <Widget>[
             const FreteTabbar(),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Card(
-                    child: ListTile(
-                      leading: Icon(Icons.notifications_sharp),
-                      title: Text('Notification 1'),
-                      subtitle: Text('This is a notification'),
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      leading: Icon(Icons.notifications_sharp),
-                      title: Text('Notification 2'),
-                      subtitle: Text('This is a notification'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const DespesasPage(),
           ][currentPageIndex],
           bottomNavigationBar: NavigationBar(
             height: 70,
             onDestinationSelected: (int index) {
               setState(() {
                 currentPageIndex = index;
-                print(currentPageIndex);
               });
             },
             indicatorColor: const Color(0xFF43A0E4),
@@ -84,7 +66,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: addCard,
             child: const Center(child: Icon(Icons.add)),
           )),
     );
