@@ -31,83 +31,88 @@ class _FreteCardState extends State<FreteCard> {
           const SizedBox(
             height: 10,
           ),
-          Column(
-            children: [
-              Row(
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Column(
+              children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          const ImageIcon(
+                            AssetImage("lib/assets/img/caminhao.png"),
+                            size: 50,
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Destino: ${widget.destino}',
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              Text('Origem: ${widget.origem}')
+                            ],
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                              'Compra: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.compra)}'),
+                          Text(
+                              'Venda: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.venda)}'),
+                        ],
+                      ),
+                    ]),
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
+                  children: [
                     Row(
                       children: [
-                        const ImageIcon(
-                          AssetImage("lib/assets/img/caminhao.png"),
-                          size: 50,
+                        const Icon(
+                          Icons.calendar_month,
                         ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Destino: ${widget.destino}',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            Text('Origem: ${widget.origem}')
-                          ],
+                        Text(
+                          widget.data,
                         )
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    Row(
                       children: [
+                        const Icon(
+                          Icons.monetization_on_outlined,
+                          color: Colors.green,
+                        ),
                         Text(
-                            'Compra: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.compra)}'),
-                        Text(
-                            'Venda: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.venda)}'),
+                            ': ${(NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format((widget.venda - widget.compra) * .12))}')
                       ],
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    TextButton(
+                      child: const Text('Editar'),
+                      onPressed: () {/* ... */},
                     ),
-                  ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_month,
-                      ),
-                      Text(
-                        widget.data,
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.monetization_on_outlined,
-                        color: Colors.green,
-                      ),
-                      Text(
-                          ': ${(NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format((widget.venda - widget.compra) * .12))}')
-                    ],
-                  )
-                ],
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              TextButton(
-                child: const Text('Editar'),
-                onPressed: () {/* ... */},
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                child: const Text('Concluir'),
-                onPressed: () {/* ... */},
-              ),
-              const SizedBox(width: 8),
-            ],
+                    const SizedBox(width: 8),
+                    TextButton(
+                      child: const Text('Concluir'),
+                      onPressed: () {/* ... */},
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
