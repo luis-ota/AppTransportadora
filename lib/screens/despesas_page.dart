@@ -12,22 +12,22 @@ class DespesasPage extends StatefulWidget {
 class _DespesasPageState extends State<DespesasPage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
           Card(
             child: ListTile(
               leading: Icon(Icons.notifications_sharp),
-              title: Text('Notification 1'),
-              subtitle: Text('This is a notification'),
+              title: Text('Troca de Oleo'),
+              subtitle: Text('Valor: 10'),
             ),
           ),
           Card(
             child: ListTile(
               leading: Icon(Icons.notifications_sharp),
-              title: Text('Notification 2'),
-              subtitle: Text('This is a notification'),
+              title: Text('Manutenção'),
+              subtitle: Text('Valor: 20'),
             ),
           ),
         ],

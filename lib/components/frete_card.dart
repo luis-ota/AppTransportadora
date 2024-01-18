@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class FreteCard extends StatefulWidget {
-  String destino = 'luis';
-  String origem = 'luis';
-  double compra = 10;
-  double venda = 20;
-  String data = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  final String destino = 'luis';
+  final String origem = 'luis';
+  final double compra = 10;
+  final double venda = 20;
+  final String placa = '';
+  final String data = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
   FreteCard(
       {super.key,
-      required this.destino,
-      required this.origem,
-      this.compra = 0,
-      this.venda = 0,
-      this.data = ''});
+      required destino,
+      required origem,
+      required placa,
+      compra = 0,
+      venda = 0,
+      data = ''});
 
   @override
   State<StatefulWidget> createState() {
@@ -77,12 +79,11 @@ class _FreteCardState extends State<FreteCard> {
                   children: [
                     Row(
                       children: [
-                        const Icon(
-                          Icons.calendar_month,
+                        const ImageIcon(
+                          AssetImage("lib/assets/img/placa_caminhao.png"),
+                          size: 45,
                         ),
-                        Text(
-                          widget.data,
-                        )
+                        Text(': ${widget.placa}')
                       ],
                     ),
                     Row(
@@ -98,17 +99,31 @@ class _FreteCardState extends State<FreteCard> {
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    TextButton(
-                      child: const Text('Editar'),
-                      onPressed: () {/* ... */},
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_month,
+                        ),
+                        Text(
+                          ': ${widget.data}',
+                        )
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      child: const Text('Concluir'),
-                      onPressed: () {/* ... */},
-                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          child: const Text('Editar'),
+                          onPressed: () {/* ... */},
+                        ),
+                        const SizedBox(width: 8),
+                        TextButton(
+                          child: const Text('Concluir'),
+                          onPressed: () {/* ... */},
+                        ),
+                      ],
+                    )
                   ],
                 )
               ],

@@ -1,8 +1,8 @@
 import 'package:app_caminhao/components/frete_tabbar.dart';
 import 'package:app_caminhao/funcoes/addCard.dart';
 import 'package:app_caminhao/screens/despesas_page.dart';
+import 'package:app_caminhao/screens/perfil.dart';
 import 'package:flutter/material.dart';
-import 'package:app_caminhao/funcoes/addCard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.person),
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(context, "/home/perfil")
               ),
             ],
           ),
@@ -55,9 +55,6 @@ class _HomePageState extends State<HomePage> {
                 label: 'Fretes',
               ),
               NavigationDestination(
-                selectedIcon: Icon(
-                  Icons.handyman_outlined,
-                ),
                 icon: Icon(Icons.handyman),
                 label: 'Despesas',
               )
@@ -66,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: addCard,
+            onPressed: () {},
             child: const Center(child: Icon(Icons.add)),
           )),
     );
