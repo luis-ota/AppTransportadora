@@ -59,11 +59,6 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: const InputDecoration(
                                   labelText: 'Usuário',
                                   border: OutlineInputBorder()),
-                              onChanged: (value) {
-                                setState(() {
-                                  _formKey.currentState!.validate();
-                                });
-                              },
                             ),
                             const SizedBox(
                               height: 10,
