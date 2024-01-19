@@ -59,6 +59,11 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: const InputDecoration(
                                   labelText: 'Usuário',
                                   border: OutlineInputBorder()),
+                              onChanged: (value) {
+                                setState(() {
+                                  _formKey.currentState!.validate();
+                                });
+                              },
                             ),
                             const SizedBox(
                               height: 10,
@@ -77,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: const InputDecoration(
                                   labelText: 'Senha',
                                   border: OutlineInputBorder()),
-                            ),
+                                                          ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -104,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_formKey.currentState!.validate()) {
       _auth.Acessar(usuario: usuario, senha: senha).then((value){
+
 
       });
     } else {

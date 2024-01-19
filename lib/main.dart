@@ -1,5 +1,4 @@
 import 'package:app_caminhao/components/app_widget.dart';
-import 'package:app_caminhao/screens/homepage.dart';
 import 'package:app_caminhao/screens/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

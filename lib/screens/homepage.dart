@@ -4,6 +4,7 @@ import 'package:app_caminhao/screens/despesas_page.dart';
 import 'package:app_caminhao/screens/perfil.dart';
 import 'package:flutter/material.dart';
 
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -46,16 +47,23 @@ class _HomePageState extends State<HomePage> {
               NavigationDestination(
                 selectedIcon: ImageIcon(
                   AssetImage("lib/assets/img/caminhao.png"),
-                  size: 30,
+                  size: 35,
                 ),
                 icon: ImageIcon(
                   AssetImage("lib/assets/img/caminhao.png"),
-                  size: 25,
+                  size: 30,
                 ),
                 label: 'Fretes',
               ),
               NavigationDestination(
-                icon: Icon(Icons.handyman),
+                selectedIcon: ImageIcon(
+                  AssetImage("lib/assets/img/despesas_icon.png"),
+                  size: 33,
+                ),
+                icon: ImageIcon(
+                  AssetImage("lib/assets/img/despesas_icon.png"),
+                  size: 30,
+                ),
                 label: 'Despesas',
               )
               // TODO:
@@ -63,9 +71,12 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: const Center(child: Icon(Icons.add)),
+              onPressed: () => Navigator.pushNamed(context, "/home/form_frete_page"),
+              child: const Center(child: Icon(Icons.add)),
           )),
     );
   }
+
+
+
 }

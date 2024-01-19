@@ -1,5 +1,4 @@
 import 'package:app_caminhao/components/frete_card.dart';
-import 'package:app_caminhao/services/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,15 +13,6 @@ class FreteTabbar extends StatefulWidget {
 
 class _FreteTabbarState extends State<FreteTabbar>
     with TickerProviderStateMixin {
-  var db = Mysql();
-  var destino = '';
-  var origem = '';
-  var compra = '';
-  var venda = '';
-  var data = '';
-  var placa = '';
-
-
   Map<String, Widget> andamentoCards = {
     '1': FreteCard(
       destino: 'luis',
