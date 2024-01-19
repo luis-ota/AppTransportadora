@@ -198,7 +198,7 @@ class _FormFretePageState extends State<FormFretePage> {
                         height: 3,
                       ),
                       TextFormField(
-                        maxLength: 25,
+                        maxLength: 8,
                         controller: _placaController,
                         decoration: const InputDecoration(
                           labelText: 'Placa do Caminhão',
