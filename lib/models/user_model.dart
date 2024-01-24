@@ -1,9 +1,13 @@
-class User {
+class UserDados {
 
   final String uid;
   final String Nome;
   final String Usuario;
-  final String Senha;
+  final String caminhaoPadrao;
 
-  User(this.Nome, this.Usuario, this.Senha, {required this.uid});
+  UserDados(
+      this.Nome,
+      this.Usuario,
+      this.caminhaoPadrao,
+      {required this.uid});
 }

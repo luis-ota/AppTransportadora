@@ -1,9 +1,13 @@
+import 'package:app_caminhao/models/fretecard_model.dart';
+import 'package:app_caminhao/providers/frete_card_provider.dart';
 import 'package:app_caminhao/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class FormFretePage extends StatefulWidget {
+
   const FormFretePage({Key? key});
 
   @override
@@ -17,12 +21,33 @@ class _FormFretePageState extends State<FormFretePage> {
   final TextEditingController _vendaController = TextEditingController();
   final TextEditingController _dataController = TextEditingController();
   final TextEditingController _placaController = TextEditingController();
+
+
   final _formKey = GlobalKey<FormState>();
+  final Map<String, String> _formData = {};
+
 
   firebaseService _dbFrete = firebaseService();
 
   @override
   Widget build(BuildContext context) {
+
+    var action = 'criar';
+    if (ModalRoute.of(context)?.settings.arguments != null) {
+      final cardDados = ModalRoute
+          .of(context)
+          ?.settings
+          .arguments as FreteCardDados;
+
+      if (action == 'editar') {
+        _origemController.text = cardDados.origem;
+        _compraController.text = cardDados.compra;
+        _destinoController.text = cardDados.destino;
+        _vendaController.text = cardDados.venda;
+        _dataController.text = cardDados.data;
+        _placaController.text = cardDados.placaCaminhao;
+      }
+    }
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -74,6 +99,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                 }
                                 return null;
                               },
+                              onSaved: (value) => _formData['origem'] = value!,
                             ),
                           ),
                           const SizedBox(
@@ -98,6 +124,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                 }
                                 return null;
                               },
+                              onSaved: (value) => _formData['compra'] = value!,
                             ),
                           ),
                         ],
@@ -109,7 +136,7 @@ class _FormFretePageState extends State<FormFretePage> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              maxLength: 25,
+                              maxLength: 20,
                               controller: _destinoController,
                               decoration: const InputDecoration(
                                 labelText: 'Destino',
@@ -121,6 +148,8 @@ class _FormFretePageState extends State<FormFretePage> {
                                 }
                                 return null;
                               },
+                              onSaved: (value) => _formData['destino'] = value!,
+
                             ),
                           ),
                           const SizedBox(
@@ -144,6 +173,8 @@ class _FormFretePageState extends State<FormFretePage> {
                                 }
                                 return null;
                               },
+                              onSaved: (value) => _formData['venda'] = value!,
+
                             ),
                           ),
                         ],
@@ -170,6 +201,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                 }
                                 return null;
                               },
+                              onSaved: (value) => _formData['data'] = value!,
                             ),
                           ),
                           IconButton(
@@ -189,7 +221,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                 });
                               }
                             },
-                            icon: Icon(Icons.calendar_month),
+                            icon: const Icon(Icons.calendar_month),
                             iconSize: 40,
                           ),
                         ],
@@ -211,11 +243,13 @@ class _FormFretePageState extends State<FormFretePage> {
                           }
                           return null;
                         },
+                        onSaved: (value) => _formData['placaCaminhao'] = value!,
+
                       ),
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
@@ -226,10 +260,18 @@ class _FormFretePageState extends State<FormFretePage> {
                         double.maxFinite, 40), // set width and height
                   ),
                   onPressed: () async {
-                    await criarFreteCard();
+                    if(action == 'editar'){
+                      await editarFreteCard();
+
+                    }
+                    else{
+                      await criarFreteCard();
+                    }
+                    Navigator.of(context).pop();
                   },
-                  child: const Text('Cadastrar'),
+                  child: Text((action == 'editar') ? 'Salvar' : 'Cadastrar'),
                 ),
+
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.white,
@@ -237,7 +279,7 @@ class _FormFretePageState extends State<FormFretePage> {
                     minimumSize: const Size(
                         double.maxFinite, 40), // set width and height
                   ),
-                  onPressed: () => Navigator.pushNamed(context, "/home"),
+                  onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Cancelar'),
                 ),
               ],
@@ -248,7 +290,40 @@ class _FormFretePageState extends State<FormFretePage> {
     );
   }
 
-  criarFreteCard() {
+  criarFreteCard() async{
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Provider.of<FreteCardAndamentoProvider>(context, listen: false).put(
+        FreteCardDados(
+            _formData['origem']!,
+            _formData['compra']!,
+            _formData['destino']!,
+            _formData['venda']!,
+            _formData['data']!,
+            _formData['placaCaminhao']!,
+            feteId: (DateTime.now()).toString().replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''),
+        )
+      );
+      /*try{
+        await _dbFrete.cadastrarFrete(
+            freteId: (DateTime.now()).toString().replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''),
+            origem: origem,
+            compra: compra,
+            destino: destino,
+            venda: venda,
+            data: data,
+            placaCaminhao: placa);
+      } catch (err){
+        debugPrint(err.toString());
+      };
+
+       */
+    } else {
+      print('inválido');
+    }
+  }
+
+  editarFreteCard() async{
     String origem = _origemController.text;
     String compra = _compraController.text;
     String destino = _destinoController.text;
@@ -257,13 +332,19 @@ class _FormFretePageState extends State<FormFretePage> {
     String placa = _placaController.text;
 
     if (_formKey.currentState!.validate()) {
-      _dbFrete.cadastrarFrete(
-          origem: origem,
-          compra: compra,
-          destino: destino,
-          venda: venda,
-          data: data,
-          placaCaminhao: placa);
+      try{
+        await _dbFrete.cadastrarFrete(
+            freteId: (DateTime.now()).toString().replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''),
+            origem: origem,
+            compra: compra,
+            destino: destino,
+            venda: venda,
+            data: data,
+            placaCaminhao: placa);
+      } catch (err){
+        debugPrint(err.toString());
+      }
+      ;
     } else {
       print('inválido');
     }

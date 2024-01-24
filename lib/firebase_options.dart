@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '231155578796',
     projectId: 'transapp-c2093',
     authDomain: 'transapp-c2093.firebaseapp.com',
+    databaseURL: 'https://transapp-c2093-default-rtdb.firebaseio.com',
     storageBucket: 'transapp-c2093.appspot.com',
     measurementId: 'G-D2FM882W81',
   );
@@ -58,6 +59,7 @@ class DefaultFirebaseOptions {
     appId: '1:231155578796:android:9d21050b24b09a03d06c09',
     messagingSenderId: '231155578796',
     projectId: 'transapp-c2093',
+    databaseURL: 'https://transapp-c2093-default-rtdb.firebaseio.com',
     storageBucket: 'transapp-c2093.appspot.com',
   );
 
@@ -66,6 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:231155578796:ios:15badd981b2bb0efd06c09',
     messagingSenderId: '231155578796',
     projectId: 'transapp-c2093',
+    databaseURL: 'https://transapp-c2093-default-rtdb.firebaseio.com',
     storageBucket: 'transapp-c2093.appspot.com',
     iosBundleId: 'com.example.appCaminhao',
   );
@@ -75,6 +78,7 @@ class DefaultFirebaseOptions {
     appId: '1:231155578796:ios:9b0843734a8c5c09d06c09',
     messagingSenderId: '231155578796',
     projectId: 'transapp-c2093',
+    databaseURL: 'https://transapp-c2093-default-rtdb.firebaseio.com',
     storageBucket: 'transapp-c2093.appspot.com',
     iosBundleId: 'com.example.appCaminhao.RunnerTests',
   );
