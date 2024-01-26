@@ -1,18 +1,16 @@
+import 'package:app_caminhao/screens/form_frete_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../models/fretecard_model.dart';
 
 class FreteCard extends StatefulWidget {
-
   final FreteCardDados card;
 
-  const FreteCard(
-      {super.key,
-      required this.card,
-      });
-
-
+  const FreteCard({
+    super.key,
+    required this.card,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -30,7 +28,7 @@ class _FreteCardState extends State<FreteCard> {
             height: 10,
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
             child: Column(
               children: [
                 Row(
@@ -50,9 +48,9 @@ class _FreteCardState extends State<FreteCard> {
                             children: [
                               Text(
                                 widget.card.destino,
-                                style: const TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 20),
                               ),
-                              Text('Origem: ${widget.card.origem}')
+                              Text('origem: ${widget.card.origem}'),
                             ],
                           )
                         ],
@@ -61,9 +59,10 @@ class _FreteCardState extends State<FreteCard> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                              'Compra: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(double.parse(widget.card.compra))}'),
-                          Text(
-                              'Venda: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(double.parse(widget.card.venda))}'),
+                            formatToReal(widget.card.venda),
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          Text('compra: ${formatToReal(widget.card.compra)}'),
                         ],
                       ),
                     ]),
@@ -89,7 +88,7 @@ class _FreteCardState extends State<FreteCard> {
                           color: Colors.green,
                         ),
                         Text(
-                            ': ${(NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format((double.parse(widget.card.venda) - double.parse(widget.card.compra)) * .12))}')
+                            ': ${formatToReal(((double.parse(widget.card.venda) - double.parse(widget.card.compra)) * .12).toString())}')
                       ],
                     )
                   ],
@@ -110,10 +109,10 @@ class _FreteCardState extends State<FreteCard> {
                     Row(
                       children: [
                         TextButton(
-                          child: const Text('Editar'),
-                          onPressed: () =>
-                              Navigator.pushNamed(context, "/home/form_frete_page", arguments: widget.card)
-                        ),
+                            child: const Text('Editar'),
+                            onPressed: () => Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) => FormFretePage(cardDados: widget.card, action: 'editar',)))),
                         const SizedBox(width: 8),
                         TextButton(
                           child: const Text('Concluir'),
@@ -129,5 +128,12 @@ class _FreteCardState extends State<FreteCard> {
         ],
       ),
     );
+  }
+
+  String formatToReal(
+    String valor,
+  ) {
+    return NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+        .format(double.parse(valor));
   }
 }

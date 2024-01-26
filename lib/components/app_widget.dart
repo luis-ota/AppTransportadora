@@ -36,7 +36,7 @@ class _AppWidgetState extends State<AppWidget> {
         supportedLocales: const [Locale('pt', 'BR')],
         initialRoute: '/home',
         routes: {
-          '/home': (context) => const HomePage(),
+          '/home': (context) => HomePage(),
           '/home/perfil': (context) => const PerfilPage(),
           '/home/form_frete_page': (context) => const FormFretePage(),
         },

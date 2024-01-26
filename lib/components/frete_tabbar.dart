@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../services/firebase_service.dart';
+
 class FreteTabbar extends StatefulWidget {
-  const FreteTabbar({super.key});
+  FreteTabbar({super.key});
+  firebaseService _dbFrete = firebaseService();
 
   @override
   State<StatefulWidget> createState() {
@@ -48,13 +51,19 @@ class _FreteTabbarState extends State<FreteTabbar>
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              ListView.builder(
-                itemCount: andamentoCards.count,
-                itemBuilder: (context, i) => FreteCard(card: andamentoCards.all.elementAt(i))
+              RefreshIndicator(
+                onRefresh: () async => await widget._dbFrete.lerDadosFretes(),
+                child: ListView.builder(
+                  itemCount: andamentoCards.count,
+                  itemBuilder: (context, i) => FreteCard(card: andamentoCards.all.elementAt(i))
+                ),
               ),
-              ListView.builder(
-                  itemCount: concluidoCards.count,
-                  itemBuilder: (context, i) => FreteCard(card: concluidoCards.all.elementAt(i))
+              RefreshIndicator(
+                onRefresh: () async => await widget._dbFrete.lerDadosFretes(),
+                child: ListView.builder(
+                    itemCount: concluidoCards.count,
+                    itemBuilder: (context, i) => FreteCard(card: concluidoCards.all.elementAt(i))
+                ),
               ),
             ],
           ),

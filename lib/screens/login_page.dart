@@ -13,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  firebaseService _dbFrete = firebaseService();
 
   firebaseService _auth = firebaseService();
   @override
@@ -98,11 +99,12 @@ class _LoginPageState extends State<LoginPage> {
                   )))),
     );
   }
-  acessar() {
+  acessar() async{
     String usuario = _usuarioController.text;
     String senha = _senhaController.text;
 
     if (_formKey.currentState!.validate()) {
+      await _dbFrete.lerDadosFretes();
       _auth.Acessar(usuario: usuario, senha: senha).then((value){
 
 

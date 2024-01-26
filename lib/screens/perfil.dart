@@ -25,7 +25,8 @@ class _PerfilPageState extends State<PerfilPage> {
           title: const Text('Meu perfil'),
           backgroundColor: const Color(0xFF43A0E4),
         ),
-        body: const Center( // Utilizando o widget Center para centralizar os filhos
+        body: const Center(
+          // Utilizando o widget Center para centralizar os filhos
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -37,23 +38,34 @@ class _PerfilPageState extends State<PerfilPage> {
         bottomNavigationBar: BottomAppBar(
           color: Colors.white,
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(
                 width: 100,
-                child: FilledButton.tonal(
+                child: MaterialButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [Icon(Icons.home), Text('Voltar')],
                     )),
               ),
-              const SizedBox(width: 50,),
+              const SizedBox(
+                width: 50,
+              ),
               SizedBox(
                 width: 100,
-                child: FilledButton.tonal(
+                child: MaterialButton(
                     onPressed: _auth.Sair,
                     child: const Column(
-                      children: [Icon(Icons.logout_rounded), Text('Sair')],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.logout_rounded,
+                          color: Colors.red,
+                        ),
+                        Text('Sair')
+                      ],
                     )),
               ),
             ],

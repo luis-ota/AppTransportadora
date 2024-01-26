@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 
 
 import '../providers/frete_card_provider.dart';
+import '../services/firebase_service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+   HomePage({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             body: <Widget>[
-              const FreteTabbar(),
+              FreteTabbar(),
               const DespesasPage(),
             ][currentPageIndex],
             bottomNavigationBar: NavigationBar(
