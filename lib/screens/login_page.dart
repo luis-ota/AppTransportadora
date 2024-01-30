@@ -13,9 +13,9 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  firebaseService _dbFrete = firebaseService();
+  final firebaseService _dbFrete = firebaseService();
 
-  firebaseService _auth = firebaseService();
+  final firebaseService _auth = firebaseService();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,12 +49,11 @@ class _LoginPageState extends State<LoginPage> {
                               height: 50,
                             ),
                             TextFormField(
-                              validator: (String? value){
-                                if(value==null || value.isEmpty){
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
                                   return 'Insira seu usuáiro';
                                 }
-                                  return null;
-
+                                return null;
                               },
                               controller: _usuarioController,
                               decoration: const InputDecoration(
@@ -66,19 +65,18 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             TextFormField(
                               onFieldSubmitted: (_) => acessar(),
-                              validator: (String? value){
-                                if(value==null || value.isEmpty){
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
                                   return 'Senha inválida';
                                 }
-                                  return null;
-
+                                return null;
                               },
                               controller: _senhaController,
                               obscureText: true,
                               decoration: const InputDecoration(
                                   labelText: 'Senha',
                                   border: OutlineInputBorder()),
-                                                          ),
+                            ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -86,12 +84,12 @@ class _LoginPageState extends State<LoginPage> {
                               style: ElevatedButton.styleFrom(
                                 onPrimary: Colors.white,
                                 backgroundColor: Colors.blue,
-                                minimumSize: const Size(double.maxFinite, 40), // set width and height
+                                minimumSize: const Size(double.maxFinite,
+                                    40), // set width and height
                               ),
                               onPressed: acessar,
                               child: const Text('Acessar'),
                             ),
-
                           ],
                         ),
                       ),
@@ -99,19 +97,16 @@ class _LoginPageState extends State<LoginPage> {
                   )))),
     );
   }
-  acessar() async{
+
+  acessar() async {
     String usuario = _usuarioController.text;
     String senha = _senhaController.text;
 
     if (_formKey.currentState!.validate()) {
       await _dbFrete.lerDadosFretes();
-      _auth.Acessar(usuario: usuario, senha: senha).then((value){
-
-
-      });
+      _auth.acessar(usuario: usuario, senha: senha).then((value) {});
     } else {
       print('inválido');
     }
   }
-
 }

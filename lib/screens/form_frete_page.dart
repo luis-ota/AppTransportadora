@@ -23,26 +23,53 @@ class FormFretePage extends StatefulWidget {
 }
 
 class _FormFretePageState extends State<FormFretePage> {
-  final TextEditingController _origemController = TextEditingController();
-  final TextEditingController _compraController = TextEditingController();
-  final TextEditingController _destinoController = TextEditingController();
-  final TextEditingController _vendaController = TextEditingController();
-  final TextEditingController _dataController = TextEditingController();
-  final TextEditingController _placaController = TextEditingController();
+  late TextEditingController _origemController;
+  late TextEditingController _compraController;
+  late TextEditingController _destinoController;
+  late TextEditingController _vendaController;
+  late TextEditingController _dataController;
+  late TextEditingController _placaController;
 
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
   bool _carregando = false;
 
   @override
+  void initState() {
+    super.initState();
+    _origemController =
+        TextEditingController(text: widget.cardDados?.origem ?? '');
+    _compraController =
+        TextEditingController(text: widget.cardDados?.compra ?? '');
+    _destinoController =
+        TextEditingController(text: widget.cardDados?.destino ?? '');
+    _vendaController =
+        TextEditingController(text: widget.cardDados?.venda ?? '');
+    _dataController = TextEditingController(text: widget.cardDados?.data ?? '');
+    _placaController =
+        TextEditingController(text: widget.cardDados?.placaCaminhao ?? '');
+  }
+
+  @override
+  void dispose() {
+    _origemController.dispose();
+    _compraController.dispose();
+    _destinoController.dispose();
+    _vendaController.dispose();
+    _dataController.dispose();
+    _placaController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (widget.action == 'editar') {
-      _origemController.text = widget.cardDados!.origem;
-      _compraController.text = widget.cardDados!.compra;
-      _destinoController.text = widget.cardDados!.destino;
-      _vendaController.text = widget.cardDados!.venda;
-      _dataController.text = widget.cardDados!.data;
-      _placaController.text = widget.cardDados!.placaCaminhao;
+      _formData['origem'] = widget.cardDados!.origem;
+      _formData['compra'] = widget.cardDados!.compra;
+      _formData['destino'] = widget.cardDados!.destino;
+      _formData['venda'] = widget.cardDados!.venda;
+      _formData['data'] = widget.cardDados!.data;
+      _formData['placaCaminhao'] = widget.cardDados!.placaCaminhao;
       _formData['freteId'] = widget.cardDados!.freteId;
     }
 
@@ -280,7 +307,6 @@ class _FormFretePageState extends State<FormFretePage> {
                         ),
                         onPressed: () async {
                           if (widget.action == 'editar') {
-
                             criarFreteCard(
                                 freteId: (_formData['freteId']).toString());
                           } else {
@@ -310,7 +336,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                   showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                            title: const Text('Exclir frete'),
+                                            title: const Text('Excluir frete'),
                                             content: const Text(
                                                 'Deseja excluir o registro de frete?'),
                                             actions: [
@@ -330,7 +356,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                             ],
                                           ));
                                 },
-                                child: const Text('Exculir'),
+                                child: const Text('Excluir'),
                               ),
                             ),
                           ),
@@ -369,8 +395,7 @@ class _FormFretePageState extends State<FormFretePage> {
       setState(() {
         _carregando = true;
       });
-      await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-          .put(FreteCardDados(
+      FreteCardDados freteCardDados = FreteCardDados(
         _formData['origem']!,
         _formData['compra']!,
         _formData['destino']!,
@@ -379,12 +404,16 @@ class _FormFretePageState extends State<FormFretePage> {
         _formData['placaCaminhao']!,
         status,
         freteId: freteId,
-      ));
+      );
+      if (widget.cardDados!.status == 'Em andamento') {
+        await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+            .put(freteCardDados);
+      } else {
+        await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+            .put(freteCardDados);
+      }
+
       Navigator.of(context).pop();
-
-      /*
-
-       */
     } else {
       print('inválido');
     }

@@ -1,8 +1,10 @@
 import 'package:app_caminhao/screens/form_frete_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../models/fretecard_model.dart';
+import '../providers/frete_card_provider.dart';
 
 class FreteCard extends StatefulWidget {
   final FreteCardDados card;
@@ -110,13 +112,42 @@ class _FreteCardState extends State<FreteCard> {
                       children: [
                         TextButton(
                             child: const Text('Editar'),
-                            onPressed: () => Navigator.of(context)
-                                .push(MaterialPageRoute(
-                                    builder: (context) => FormFretePage(cardDados: widget.card, action: 'editar',)))),
+                            onPressed: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => FormFretePage(
+                                          cardDados: widget.card,
+                                          action: 'editar',
+                                        )))),
                         const SizedBox(width: 8),
                         TextButton(
-                          child: const Text('Concluir'),
-                          onPressed: () {/* ... */},
+                          child: Text(widget.card.status == ''
+                              ? 'Concluir'
+                              : 'Restaurar'),
+                          onPressed: () async {
+                            if (widget.card.status == 'Em andamento') {
+                              await Provider.of<FreteCardAndamentoProvider>(
+                                      context,
+                                      listen: false)
+                                  .remover(widget.card);
+
+                              await Provider.of<FreteCardConcluidoProvider>(
+                                      context,
+                                      listen: false)
+                                  .put(widget.card);
+                            }
+
+                            if (widget.card.status == 'Concluido') {
+                              await Provider.of<FreteCardConcluidoProvider>(
+                                      context,
+                                      listen: false)
+                                  .remover(widget.card);
+
+                              await Provider.of<FreteCardAndamentoProvider>(
+                                      context,
+                                      listen: false)
+                                  .put(widget.card);
+                            }
+                          },
                         ),
                       ],
                     )

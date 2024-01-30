@@ -4,10 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 
 class firebaseService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
   final DatabaseReference _fretesRef = FirebaseDatabase.instance.ref('Fretes');
   final User? user = FirebaseAuth.instance.currentUser;
-  Future<String?> Acessar(
+  Future<String?> acessar(
       {required String usuario, required String senha}) async {
     try {
       usuario = "$usuario@apprubinho.com";
@@ -34,6 +33,7 @@ class firebaseService {
     required String status,
   }) async {
     try {
+      // Use push para adicionar um novo filho ao nó 'Fretes'
       await _fretesRef.child('${user?.uid}/$status/$freteId').set({
         'origem': origem,
         'compra': compra,
@@ -59,39 +59,27 @@ class firebaseService {
     required String placaCaminhao,
     required String status,
   }) async {
-    try {
-      await _fretesRef.child('${user?.uid}/$status/$freteId').update({
-        'origem': origem,
-        'compra': compra,
-        'destino': destino,
-        'venda': venda,
-        'data': data,
-        'placaCaminhao': placaCaminhao,
-      });
-    } catch (error) {
-      // Trate os erros aqui
-      print('Erro ao atualizar dados do frete: $error');
-      throw error;
-    }
+    return await _fretesRef.child('${user?.uid}/$status/$freteId').update({
+      'origem': origem,
+      'compra': compra,
+      'destino': destino,
+      'venda': venda,
+      'data': data,
+      'placaCaminhao': placaCaminhao,
+    });
   }
-
 
   Future<String?> excluirFrete({
     required String freteId,
     required String status,
   }) async {
     _fretesRef.child('${user?.uid}/$status/$freteId').remove();
+    return null;
   }
 
-  Future<String?> lerDadosFretes() async {
-    final snapshot = await _fretesRef.child('${user?.uid}').get();
-    if (snapshot.exists) {
-      print(snapshot.value);
-    } else {
-      print('No data available.');
-    }
+  Future<Map?> lerDadosFretes() async {
+    DatabaseEvent snapshot = await _fretesRef.child('${user?.uid}').once();
+    Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+    return data;
   }
-
-
-
 }

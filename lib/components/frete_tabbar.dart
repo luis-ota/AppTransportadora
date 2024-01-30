@@ -52,18 +52,24 @@ class _FreteTabbarState extends State<FreteTabbar>
             controller: _tabController,
             children: <Widget>[
               RefreshIndicator(
-                onRefresh: () async => await widget._dbFrete.lerDadosFretes(),
+                onRefresh: () async =>
+                    await Provider.of<FreteCardAndamentoProvider>(context,
+                            listen: false)
+                        .carregarDadosDoBanco(),
                 child: ListView.builder(
-                  itemCount: andamentoCards.count,
-                  itemBuilder: (context, i) => FreteCard(card: andamentoCards.all.elementAt(i))
-                ),
+                    itemCount: andamentoCards.count,
+                    itemBuilder: (context, i) =>
+                        FreteCard(card: andamentoCards.all.elementAt(i))),
               ),
               RefreshIndicator(
-                onRefresh: () async => await widget._dbFrete.lerDadosFretes(),
+                onRefresh: () async =>
+                    await Provider.of<FreteCardConcluidoProvider>(context,
+                            listen: false)
+                        .carregarDadosDoBanco(),
                 child: ListView.builder(
                     itemCount: concluidoCards.count,
-                    itemBuilder: (context, i) => FreteCard(card: concluidoCards.all.elementAt(i))
-                ),
+                    itemBuilder: (context, i) =>
+                        FreteCard(card: concluidoCards.all.elementAt(i))),
               ),
             ],
           ),

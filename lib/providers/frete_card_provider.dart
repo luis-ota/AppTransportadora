@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/fretecard_model.dart';
-import 'dart:math';
 
 import '../services/firebase_service.dart';
 
+final firebaseService _dbFrete = firebaseService();
+
 class FreteCardAndamentoProvider with ChangeNotifier {
   final Map<String, FreteCardDados> _andamentoCards = {};
-  final firebaseService _dbFrete = firebaseService();
 
   List<FreteCardDados> get all {
     return [..._andamentoCards.values];
@@ -31,25 +31,25 @@ class FreteCardAndamentoProvider with ChangeNotifier {
         venda: freteCard.venda,
         data: freteCard.data,
         placaCaminhao: freteCard.placaCaminhao,
-        status: freteCard.status,
+        status: 'Em andamento',
       );
 
       _andamentoCards.update(freteCard.freteId, (_) => freteCard);
     } else {
       try {
         await _dbFrete.cadastrarFrete(
-            freteId: freteCard.freteId,
-            origem: freteCard.origem,
-            compra: freteCard.compra,
-            destino: freteCard.destino,
-            venda: freteCard.venda,
-            data: freteCard.data,
-            placaCaminhao: freteCard.placaCaminhao,
-            status: freteCard.status);
+          freteId: freteCard.freteId,
+          origem: freteCard.origem,
+          compra: freteCard.compra,
+          destino: freteCard.destino,
+          venda: freteCard.venda,
+          data: freteCard.data,
+          placaCaminhao: freteCard.placaCaminhao,
+          status: 'Em andamento',
+        );
       } catch (err) {
         debugPrint(err.toString());
       }
-      ;
       final id = freteCard.freteId;
       _andamentoCards.putIfAbsent(
           id,
@@ -60,26 +60,35 @@ class FreteCardAndamentoProvider with ChangeNotifier {
               freteCard.venda,
               freteCard.data,
               freteCard.placaCaminhao,
-              freteCard.status,
+              'Em andamento',
               freteId: id));
     }
-
+    carregarDadosDoBanco();
     notifyListeners();
   }
 
   Future<void> remover(FreteCardDados freteCard) async {
-    if (freteCard != null && freteCard.freteId != null) {
-      await _dbFrete.excluirFrete(freteId: freteCard.freteId, status: freteCard.status);
-      _andamentoCards.remove(freteCard.freteId);
-      notifyListeners();
-    }
+    await _dbFrete.excluirFrete(
+        freteId: freteCard.freteId, status: freteCard.status);
+    _andamentoCards.remove(freteCard.freteId);
+    notifyListeners();
   }
 
-  void concluir(FreteCardDados freteCard) {
-    if (freteCard != null && freteCard.freteId != null) {
-      FreteCardConcluidoProvider().put(freteCard);
-      _andamentoCards.remove(freteCard.freteId);
-      notifyListeners();
+  Future<void> carregarDadosDoBanco() async {
+    final dados = await _dbFrete.lerDadosFretes();
+
+    if (dados?['Em andamento'] != null) {
+      dados?['Em andamento'].forEach((key, value) {
+        put(FreteCardDados(
+            value['origem'],
+            value['compra'],
+            value['destino'],
+            value['venda'],
+            value['data'],
+            value['placaCaminhao'],
+            'Em andamento',
+            freteId: key));
+      });
     }
   }
 }
@@ -99,18 +108,36 @@ class FreteCardConcluidoProvider with ChangeNotifier {
     return _concluidoCards.values.elementAt(i);
   }
 
-  void put(FreteCardDados freteCard) {
-    if (FreteCardDados == null) {
-      return;
-    }
-
-    if (freteCard.freteId != null &&
-        freteCard.freteId.trim().isNotEmpty &&
+  Future<void> put(FreteCardDados freteCard) async {
+    if (freteCard.freteId.trim().isNotEmpty &&
         _concluidoCards.containsKey(freteCard.freteId)) {
+      await _dbFrete.attDadosFretes(
+        freteId: freteCard.freteId,
+        origem: freteCard.origem,
+        compra: freteCard.compra,
+        destino: freteCard.destino,
+        venda: freteCard.venda,
+        data: freteCard.data,
+        placaCaminhao: freteCard.placaCaminhao,
+        status: 'Concluido',
+      );
+
       _concluidoCards.update(freteCard.freteId, (_) => freteCard);
     } else {
-      final id =
-          (DateTime.now()).toString().replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      try {
+        await _dbFrete.cadastrarFrete(
+            freteId: freteCard.freteId,
+            origem: freteCard.origem,
+            compra: freteCard.compra,
+            destino: freteCard.destino,
+            venda: freteCard.venda,
+            data: freteCard.data,
+            placaCaminhao: freteCard.placaCaminhao,
+            status: 'Concluido');
+      } catch (err) {
+        debugPrint(err.toString());
+      }
+      final id = freteCard.freteId;
       _concluidoCards.putIfAbsent(
           id,
           () => FreteCardDados(
@@ -120,17 +147,29 @@ class FreteCardConcluidoProvider with ChangeNotifier {
               freteCard.venda,
               freteCard.data,
               freteCard.placaCaminhao,
-              freteCard.status,
+              'Concluido',
               freteId: id));
     }
 
     notifyListeners();
   }
 
-  void remover(FreteCardDados freteCard) {
-    if (freteCard != null && freteCard.freteId != null) {
-      _concluidoCards.remove(freteCard.freteId);
-      notifyListeners();
+  Future<void> carregarDadosDoBanco() async {
+    final dados = await _dbFrete.lerDadosFretes();
+
+    if (dados?['Concluido'] != null) {
+      dados?['Concluido'].forEach((key, value) {
+        put(FreteCardDados(value['origem'], value['compra'], value['destino'],
+            value['venda'], value['data'], value['placaCaminhao'], 'Concluido',
+            freteId: key));
+      });
     }
+  }
+
+  Future<void> remover(FreteCardDados freteCard) async {
+    await _dbFrete.excluirFrete(
+        freteId: freteCard.freteId, status: freteCard.status);
+    _concluidoCards.remove(freteCard.freteId);
+    notifyListeners();
   }
 }

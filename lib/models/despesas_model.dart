@@ -5,11 +5,6 @@ class DespesasDados {
   final String Valor;
   final String Tipo;
 
-
-  DespesasDados(
-      this.Titulo,
-      this.Descricao,
-      this.Valor,
-      this.Tipo,
+  DespesasDados(this.Titulo, this.Descricao, this.Valor, this.Tipo,
       {required this.despesaId});
 }

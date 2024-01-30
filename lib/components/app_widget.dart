@@ -8,7 +8,6 @@ import 'package:app_caminhao/providers/user_provider.dart';
 import 'package:app_caminhao/providers/despesas_provider.dart';
 import 'package:app_caminhao/providers/frete_card_provider.dart';
 
-
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
 
@@ -23,20 +22,21 @@ class _AppWidgetState extends State<AppWidget> {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => DespesasProvider()),
-        ChangeNotifierProvider(create: (context) => FreteCardAndamentoProvider()),
-        ChangeNotifierProvider(create: (context) => FreteCardConcluidoProvider()),
+        ChangeNotifierProvider(
+            create: (context) => FreteCardAndamentoProvider()),
+        ChangeNotifierProvider(
+            create: (context) => FreteCardConcluidoProvider()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
-
         ],
         supportedLocales: const [Locale('pt', 'BR')],
         initialRoute: '/home',
         routes: {
-          '/home': (context) => HomePage(),
+          '/home': (context) => const HomePage(),
           '/home/perfil': (context) => const PerfilPage(),
           '/home/form_frete_page': (context) => const FormFretePage(),
         },
