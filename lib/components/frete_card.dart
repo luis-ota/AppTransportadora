@@ -40,10 +40,16 @@ class _FreteCardState extends State<FreteCard> {
                     children: <Widget>[
                       Row(
                         children: [
-                          const ImageIcon(
-                            AssetImage("lib/assets/img/caminhao.png"),
-                            size: 50,
-                          ),
+                          (widget.card.status == 'Em andamento')
+                              ? const ImageIcon(
+                                  AssetImage("lib/assets/img/caminhao.png"),
+                                  size: 50,
+                                )
+                              : const Icon(
+                                  Icons.check_circle_outline_outlined,
+                                  size: 50,
+                                  color: Colors.green,
+                                ),
                           const SizedBox(
                             width: 15,
                           ),
@@ -125,7 +131,9 @@ class _FreteCardState extends State<FreteCard> {
                           child: Text(widget.card.status == 'Concluido'
                               ? 'Restaurar'
                               : 'Concluir'),
-                          onPressed: () {mover();} ,
+                          onPressed: () {
+                            mover();
+                          },
                         ),
                       ],
                     )
@@ -139,37 +147,34 @@ class _FreteCardState extends State<FreteCard> {
     );
   }
 
-   Future<void> mover() async{
+  Future<void> mover() async {
+    if (widget.card.status == 'Em andamento') {
+      await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+          .remover(widget.card);
 
-      if (widget.card.status == 'Em andamento') {
-        await Provider.of<FreteCardAndamentoProvider>(
-            context,
-            listen: false)
-            .remover(widget.card);
+      await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+          .put(widget.card);
+      await _dbFrete.moverFrete(
+          freteId: widget.card.freteId,
+          status: 'Em andamento',
+          card: widget.card,
+          paraOnde: 'Concluido');
+    }
 
-        await Provider.of<FreteCardConcluidoProvider>(
-            context,
-            listen: false)
-            .put(widget.card);
-        await _dbFrete.moverFrete(freteId: widget.card.freteId, status: 'Em andamento', card: widget.card, paraOnde: 'Concluido');
-      }
+    if (widget.card.status == 'Concluido') {
+      await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+          .remover(widget.card);
 
-      if (widget.card.status == 'Concluido') {
-        await Provider.of<FreteCardConcluidoProvider>(
-            context,
-            listen: false)
-            .remover(widget.card);
+      print("removido do concluido");
+      await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+          .put(widget.card);
 
-        print("removido do concluido");
-        await Provider.of<FreteCardAndamentoProvider>(
-            context,
-            listen: false)
-            .put(widget.card);
-
-        await _dbFrete.moverFrete(freteId: widget.card.freteId, status: 'Concluido', card: widget.card, paraOnde: 'Em andamento');
-
-
-      }
+      await _dbFrete.moverFrete(
+          freteId: widget.card.freteId,
+          status: 'Concluido',
+          card: widget.card,
+          paraOnde: 'Em andamento');
+    }
   }
 
   String formatToReal(

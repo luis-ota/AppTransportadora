@@ -124,6 +124,24 @@ class _HomePageState extends State<HomePageAdm> {
                 ),
               ],
             ),
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.white,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: MaterialButton(
+                        onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Icon(Icons.home), Text('Voltar')],
+                        )),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );
