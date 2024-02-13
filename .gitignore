@@ -44,7 +44,7 @@ app.*.map.json
 /android/app/google-services.json
 /ios/firebase_app_id_file.json
 /ios/Runner/GoogleServices-Info.plist
-/lib/firebase_options.dart
+./lib/firebase_options.dart
 /linux
 /macos
 /windows
@@ -52,3 +52,8 @@ app.*.map.json
 /ios
 /test
 /planejamento/config db.txt
+lib/firebase_options.dart
+/lib/firebase_options.dart
+pubspec.lock
+planejamento/banco.sql
+.metadata
