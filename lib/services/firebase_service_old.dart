@@ -25,18 +25,15 @@ class FirebaseService {
     return await _firebaseAuth.signOut();
   }
 
-  Future cadastrarFrete({
-    required FreteCardDados card,
-    required String status,
-  }) async {
+  Future cadastrarFrete(FreteCardDados dados) async {
     try {
-      await _fretesRef.child('${user?.uid}/$status/${card.freteId}').set({
-        'origem': card.origem,
-        'compra': card.compra,
-        'destino': card.destino,
-        'venda': card.venda,
-        'data': card.data,
-        'placaCaminhao': card.placaCaminhao,
+      await _fretesRef.child('${user?.uid}/${dados.status}/${dados.freteId}').set({
+        'origem': dados.origem,
+        'compra': dados.compra,
+        'destino': dados.destino,
+        'venda': dados.venda,
+        'data': dados.data,
+        'placaCaminhao': dados.placaCaminhao,
       });
     } catch (error) {
       // Trate os erros aqui
@@ -45,14 +42,14 @@ class FirebaseService {
     }
   }
 
-  Future<void> attDadosFretes(FreteCardDados card) async {
-    return await _fretesRef.child('${user?.uid}/${card.status}/${card.freteId}').update({
-      'origem': card.origem,
-      'compra': card.compra,
-      'destino': card.destino,
-      'venda': card.venda,
-      'data': card.data,
-      'placaCaminhao': card.placaCaminhao,
+  Future<void> attDadosFretes(FreteCardDados dados) async {
+    return await _fretesRef.child('${user?.uid}/${dados.status}/${dados.freteId}').update({
+      'origem': dados.origem,
+      'compra': dados.compra,
+      'destino': dados.destino,
+      'venda': dados.venda,
+      'data': dados.data,
+      'placaCaminhao': dados.placaCaminhao,
     });
   }
 
@@ -64,16 +61,13 @@ class FirebaseService {
     return null;
   }
 
-  Future<String?> moverFrete({
-    required String freteId,
-    required String status,
-    required FreteCardDados card,
-    required String paraOnde,
+  Future<void> mover(String paraOnde, FreteCardDados card) async {
 
-  }) async {
-    excluirFrete(freteId: freteId, status: status);
-    cadastrarFrete(card: card, status: paraOnde);
-    return null;
+    excluirFrete(freteId: card.freteId, status: card.status);
+    if(paraOnde == 'Em andamento'){
+
+    }
+
   }
 
   Future<Map?> lerDadosFretes() async {

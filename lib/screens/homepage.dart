@@ -1,5 +1,5 @@
-import 'package:app_caminhao/components/frete_tabbar.dart';
-import 'package:app_caminhao/screens/despesas_page.dart';
+import 'package:apprubinho/components/frete_tabbar.dart';
+import 'package:apprubinho/screens/despesas_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                   child: CircularProgressIndicator(),
                 )
               : <Widget>[
-                  FreteTabbar(),
+                  const FreteTabbar(),
                   const DespesasPage(),
                 ][currentPageIndex],
           bottomNavigationBar: NavigationBar(
@@ -97,6 +97,12 @@ class _HomePageState extends State<HomePage> {
 
     await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
         .carregarDadosDoBanco();
+
+    await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+        .organizar();
+    await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+        .organizar();
+
     setState(() {
       _carregando = false;
     });

@@ -1,5 +1,4 @@
-import 'package:app_caminhao/services/firebase_service.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:apprubinho/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,9 +12,9 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final firebaseService _dbFrete = firebaseService();
+  final FirebaseService _dbFrete = FirebaseService();
 
-  final firebaseService _auth = firebaseService();
+  final FirebaseService _auth = FirebaseService();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -82,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                onPrimary: Colors.white,
+                                foregroundColor: Colors.white,
                                 backgroundColor: Colors.blue,
                                 minimumSize: const Size(double.maxFinite,
                                     40), // set width and height
@@ -105,6 +104,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       await _dbFrete.lerDadosFretes();
       _auth.acessar(usuario: usuario, senha: senha).then((value) {});
+
     } else {
       print('inválido');
     }

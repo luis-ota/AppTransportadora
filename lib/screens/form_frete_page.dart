@@ -1,7 +1,6 @@
-import 'package:app_caminhao/models/fretecard_model.dart';
-import 'package:app_caminhao/providers/frete_card_provider.dart';
-import 'package:app_caminhao/screens/homepage.dart';
-import 'package:app_caminhao/services/firebase_service.dart';
+import 'package:apprubinho/models/fretecard_model.dart';
+import 'package:apprubinho/providers/frete_card_provider.dart';
+import 'package:apprubinho/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:masked_text/masked_text.dart';
@@ -13,10 +12,10 @@ class FormFretePage extends StatefulWidget {
   final String? action;
 
   const FormFretePage({
-    Key? key,
+    super.key,
     this.cardDados,
     this.action,
-  }) : super(key: key);
+  });
 
   @override
   State<FormFretePage> createState() => _FormFretePageState();
@@ -32,6 +31,7 @@ class _FormFretePageState extends State<FormFretePage> {
 
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
+  final FirebaseService _dbFrete = FirebaseService();
   bool _carregando = false;
 
   @override
@@ -75,6 +75,7 @@ class _FormFretePageState extends State<FormFretePage> {
 
     if (widget.action != 'editar') {
       _dataController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+      widget.cardDados?.status == 'Em andamento';
     }
 
     return MaterialApp(
@@ -300,7 +301,7 @@ class _FormFretePageState extends State<FormFretePage> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          onPrimary: Colors.white,
+                          foregroundColor: Colors.white,
                           backgroundColor: Colors.blue,
                           minimumSize: const Size(
                               double.maxFinite, 40), // set width and height
@@ -308,7 +309,8 @@ class _FormFretePageState extends State<FormFretePage> {
                         onPressed: () async {
                           if (widget.action == 'editar') {
                             criarFreteCard(
-                                freteId: (_formData['freteId']).toString());
+                                freteId: (_formData['freteId']).toString(),
+                                att: true);
                           } else {
                             await criarFreteCard(
                                 freteId: (DateTime.now())
@@ -327,10 +329,9 @@ class _FormFretePageState extends State<FormFretePage> {
                             child: Expanded(
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  onPrimary: Colors.white,
+                                  foregroundColor: Colors.white,
                                   backgroundColor: Colors.redAccent,
-                                  minimumSize: const Size(double.maxFinite,
-                                      40), // set width and height
+                                  minimumSize: const Size(double.maxFinite, 40),
                                 ),
                                 onPressed: () {
                                   showDialog(
@@ -368,7 +369,7 @@ class _FormFretePageState extends State<FormFretePage> {
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                onPrimary: Colors.white,
+                                foregroundColor: Colors.white,
                                 backgroundColor: Colors.blue,
                                 minimumSize: const Size(double.maxFinite,
                                     40), // set width and height
@@ -387,7 +388,7 @@ class _FormFretePageState extends State<FormFretePage> {
     );
   }
 
-  criarFreteCard({String freteId = '', String status = 'Em andamento'}) async {
+  criarFreteCard({String freteId = '', bool att = false}) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       _formData['compra'] = _formData['compra'].toString().replaceAll(',', '.');
@@ -402,16 +403,30 @@ class _FormFretePageState extends State<FormFretePage> {
         _formData['venda']!,
         _formData['data']!,
         _formData['placaCaminhao']!,
-        status,
+        (null == widget.cardDados?.status) ? 'Em andamento': 'Concluido',
         freteId: freteId,
       );
-      if (widget.cardDados!.status == 'Em andamento') {
-        await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-            .put(freteCardDados);
-      } else {
+
+      if (widget.cardDados?.status == 'Concluido') {
         await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
             .put(freteCardDados);
+        try {
+          await _dbFrete.attDadosFretes(freteCardDados);
+
+        } catch (err) {
+          debugPrint(err.toString());
+        }
+      } else {
+        await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+            .put(freteCardDados);
+        try {
+          await _dbFrete.cadastrarFrete(card: freteCardDados, status: 'Em andamento');
+
+        } catch (err) {
+          debugPrint(err.toString());
+        }
       }
+
 
       Navigator.of(context).pop();
     } else {

@@ -1,10 +1,10 @@
 class DespesasDados {
   final String despesaId;
-  final String Titulo;
-  final String Descricao;
-  final String Valor;
-  final String Tipo;
+  final String titulo;
+  final String descricao;
+  final String valor;
+  final String tipo;
 
-  DespesasDados(this.Titulo, this.Descricao, this.Valor, this.Tipo,
+  DespesasDados(this.titulo, this.descricao, this.valor, this.tipo,
       {required this.despesaId});
 }

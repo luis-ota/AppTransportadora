@@ -3,7 +3,7 @@ import '../models/fretecard_model.dart';
 
 import '../services/firebase_service.dart';
 
-final firebaseService _dbFrete = firebaseService();
+final FirebaseService _dbFrete = FirebaseService();
 
 class FreteCardAndamentoProvider with ChangeNotifier {
   final Map<String, FreteCardDados> _andamentoCards = {};
@@ -23,33 +23,8 @@ class FreteCardAndamentoProvider with ChangeNotifier {
   Future<void> put(FreteCardDados freteCard) async {
     if (freteCard.freteId.trim().isNotEmpty &&
         _andamentoCards.containsKey(freteCard.freteId)) {
-      await _dbFrete.attDadosFretes(
-        freteId: freteCard.freteId,
-        origem: freteCard.origem,
-        compra: freteCard.compra,
-        destino: freteCard.destino,
-        venda: freteCard.venda,
-        data: freteCard.data,
-        placaCaminhao: freteCard.placaCaminhao,
-        status: 'Em andamento',
-      );
-
       _andamentoCards.update(freteCard.freteId, (_) => freteCard);
     } else {
-      try {
-        await _dbFrete.cadastrarFrete(
-          freteId: freteCard.freteId,
-          origem: freteCard.origem,
-          compra: freteCard.compra,
-          destino: freteCard.destino,
-          venda: freteCard.venda,
-          data: freteCard.data,
-          placaCaminhao: freteCard.placaCaminhao,
-          status: 'Em andamento',
-        );
-      } catch (err) {
-        debugPrint(err.toString());
-      }
       final id = freteCard.freteId;
       _andamentoCards.putIfAbsent(
           id,
@@ -63,13 +38,11 @@ class FreteCardAndamentoProvider with ChangeNotifier {
               'Em andamento',
               freteId: id));
     }
-    carregarDadosDoBanco();
+    organizar();
     notifyListeners();
   }
 
   Future<void> remover(FreteCardDados freteCard) async {
-    await _dbFrete.excluirFrete(
-        freteId: freteCard.freteId, status: freteCard.status);
     _andamentoCards.remove(freteCard.freteId);
     notifyListeners();
   }
@@ -91,6 +64,20 @@ class FreteCardAndamentoProvider with ChangeNotifier {
       });
     }
   }
+
+  Future<void> organizar() async {
+    Map<String, FreteCardDados> fretesOrdenados = {};
+
+    List<String> chavesOrdenadas = _andamentoCards.keys.toList();
+    chavesOrdenadas.sort((a, b) => b.compareTo(a));
+    for (var chave in chavesOrdenadas) {
+      fretesOrdenados[chave] = _andamentoCards[chave]!;
+    }
+    _andamentoCards.clear();
+    _andamentoCards.addAll(fretesOrdenados);
+    notifyListeners();
+  }
+
 }
 
 class FreteCardConcluidoProvider with ChangeNotifier {
@@ -111,32 +98,8 @@ class FreteCardConcluidoProvider with ChangeNotifier {
   Future<void> put(FreteCardDados freteCard) async {
     if (freteCard.freteId.trim().isNotEmpty &&
         _concluidoCards.containsKey(freteCard.freteId)) {
-      await _dbFrete.attDadosFretes(
-        freteId: freteCard.freteId,
-        origem: freteCard.origem,
-        compra: freteCard.compra,
-        destino: freteCard.destino,
-        venda: freteCard.venda,
-        data: freteCard.data,
-        placaCaminhao: freteCard.placaCaminhao,
-        status: 'Concluido',
-      );
-
       _concluidoCards.update(freteCard.freteId, (_) => freteCard);
     } else {
-      try {
-        await _dbFrete.cadastrarFrete(
-            freteId: freteCard.freteId,
-            origem: freteCard.origem,
-            compra: freteCard.compra,
-            destino: freteCard.destino,
-            venda: freteCard.venda,
-            data: freteCard.data,
-            placaCaminhao: freteCard.placaCaminhao,
-            status: 'Concluido');
-      } catch (err) {
-        debugPrint(err.toString());
-      }
       final id = freteCard.freteId;
       _concluidoCards.putIfAbsent(
           id,
@@ -166,9 +129,20 @@ class FreteCardConcluidoProvider with ChangeNotifier {
     }
   }
 
+  Future<void> organizar() async {
+    Map<String, FreteCardDados> fretesOrdenados = {};
+
+    List<String> chavesOrdenadas = _concluidoCards.keys.toList();
+    chavesOrdenadas.sort((a, b) => b.compareTo(a));
+    for (var chave in chavesOrdenadas) {
+      fretesOrdenados[chave] = _concluidoCards[chave]!;
+    }
+    _concluidoCards.clear();
+    _concluidoCards.addAll(fretesOrdenados);
+    notifyListeners();
+  }
+
   Future<void> remover(FreteCardDados freteCard) async {
-    await _dbFrete.excluirFrete(
-        freteId: freteCard.freteId, status: freteCard.status);
     _concluidoCards.remove(freteCard.freteId);
     notifyListeners();
   }

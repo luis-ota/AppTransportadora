@@ -1,5 +1,5 @@
-import 'package:app_caminhao/components/app_widget.dart';
-import 'package:app_caminhao/screens/login_page.dart';
+import 'package:apprubinho/components/app_widget.dart';
+import 'package:apprubinho/screens/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,9 +33,9 @@ class RoteadorTela extends StatelessWidget {
     return StreamBuilder<User?>(stream: FirebaseAuth.instance.userChanges(),
         builder: (context, snapshot){
           if(snapshot.hasData){
-            return AppWidget();
+            return const AppWidget();
           }else{
-            return LoginPage();
+            return const LoginPage();
           }
         },
     );

@@ -1,4 +1,5 @@
-import 'package:app_caminhao/services/firebase_service.dart';
+import 'package:apprubinho/services/firebase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PerfilPage extends StatefulWidget {
@@ -9,7 +10,8 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
-  firebaseService _auth = firebaseService();
+  final FirebaseService _auth = FirebaseService();
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +27,22 @@ class _PerfilPageState extends State<PerfilPage> {
           title: const Text('Meu perfil'),
           backgroundColor: const Color(0xFF43A0E4),
         ),
-        body: const Center(
+        body: Center(
           // Utilizando o widget Center para centralizar os filhos
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Nome: Luis'),
-              Text('Lucros últimos 15 dias: 10 reais')
+              const Text('Nome: Luis'),
+              Text('id: "${user?.uid}"'),
+              const Text('Lucros últimos 15 dias: 10 reais'),
+              Visibility(
+                  visible: user?.uid == 'WYUO7BaXNCgqpVzqopIM0b6DiEl1',
+                  child: TextButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, "home/admin/homepage_adm"),
+                    child: const Text('Administração'),
+                  ))
+
             ],
           ),
         ),
@@ -56,7 +67,7 @@ class _PerfilPageState extends State<PerfilPage> {
               SizedBox(
                 width: 100,
                 child: MaterialButton(
-                    onPressed: _auth.Sair,
+                    onPressed: _auth.sair,
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

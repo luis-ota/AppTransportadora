@@ -1,15 +1,11 @@
-import 'package:app_caminhao/components/frete_card.dart';
-import 'package:app_caminhao/models/fretecard_model.dart';
-import 'package:app_caminhao/providers/frete_card_provider.dart';
+import 'package:apprubinho/components/frete_card.dart';
+import 'package:apprubinho/models/fretecard_model.dart';
+import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../services/firebase_service.dart';
-
 class FreteTabbar extends StatefulWidget {
-  FreteTabbar({super.key});
-  firebaseService _dbFrete = firebaseService();
+  const FreteTabbar({super.key});
 
   @override
   State<StatefulWidget> createState() {
