@@ -1,0 +1,49 @@
+1. desenhar interface
+
+2. desenvolver interface MVP
+
+3. criar um servidor para dados
+
+4. deploy
+
+
+5. criar filtros de pesquisa dos fretes
+
+
+telas vv
+opção criar usuario pelo admin
+criar login de usuario
+
+esquema de gerar relatorio no 15 dia do mes
+
+beautfy
+
+
+-------==============-----------=========----------==========--------==============---------------
+
+
+caminhoeneiro acessam app usando placa do caminhão ou dizem qual caminhão estao usando 
+
+frete = compra - venda
+
+funcionarios ganhao 12% do frete ao final de 15 dias
+
+opção de dispesas
+
+foto da bomba ou abastecer o caminhão
+
+
+bonus: rastreio do caminhao
+
+
+
+
+
+
+
+
+
+
+
+
+
