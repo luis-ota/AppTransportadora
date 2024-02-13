@@ -49,6 +49,7 @@ app.*.map.json
 /macos
 /windows
 /web
+/android
 /ios
 /test
 /planejamento/config db.txt
