@@ -12,7 +12,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final FirebaseService _dbFrete = FirebaseService();
 
   final FirebaseService _auth = FirebaseService();
   @override
@@ -102,7 +101,6 @@ class _LoginPageState extends State<LoginPage> {
     String senha = _senhaController.text;
 
     if (_formKey.currentState!.validate()) {
-      await _dbFrete.lerDadosFretes();
       _auth.acessar(usuario: usuario, senha: senha).then((value) {});
 
     } else {

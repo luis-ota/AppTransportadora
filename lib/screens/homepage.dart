@@ -1,5 +1,5 @@
-import 'package:apprubinho/components/frete_tabbar.dart';
-import 'package:apprubinho/screens/despesas_page.dart';
+import 'package:apprubinho/components/despesas/despesas_tabbar.dart';
+import 'package:apprubinho/components/fretes/frete_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                 )
               : <Widget>[
                   const FreteTabbar(),
-                  const DespesasPage(),
+                  const DespesasTabbar(),
                 ][currentPageIndex],
           bottomNavigationBar: NavigationBar(
             height: 70,
@@ -84,8 +84,46 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, "/home/form_frete_page"),
+            heroTag: 'botao',
+            onPressed: () {
+              if (currentPageIndex == 0) {
+                Navigator.pushNamed(context, "/home/form_frete_page");
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Center(
+                        child: Text(
+                          'Selecione o tipo',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            child: TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, "/home/form_despesa_page");
+                                }, child: Text("Despesa"),),
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pushNamed(context, "/home/form_abastecimento_page");
+                              }, child: Text("Abastecimento")),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }
+            },
             child: const Center(child: Icon(Icons.add)),
           )),
     );

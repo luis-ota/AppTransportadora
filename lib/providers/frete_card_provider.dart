@@ -48,6 +48,7 @@ class FreteCardAndamentoProvider with ChangeNotifier {
   }
 
   Future<void> carregarDadosDoBanco() async {
+    _andamentoCards.clear();
     final dados = await _dbFrete.lerDadosFretes();
 
     if (dados?['Em andamento'] != null) {
@@ -77,7 +78,6 @@ class FreteCardAndamentoProvider with ChangeNotifier {
     _andamentoCards.addAll(fretesOrdenados);
     notifyListeners();
   }
-
 }
 
 class FreteCardConcluidoProvider with ChangeNotifier {
@@ -118,15 +118,29 @@ class FreteCardConcluidoProvider with ChangeNotifier {
   }
 
   Future<void> carregarDadosDoBanco() async {
+    _concluidoCards.clear();
+    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
     final dados = await _dbFrete.lerDadosFretes();
-
     if (dados?['Concluido'] != null) {
-      dados?['Concluido'].forEach((key, value) {
-        put(FreteCardDados(value['origem'], value['compra'], value['destino'],
-            value['venda'], value['data'], value['placaCaminhao'], 'Concluido',
-            freteId: key));
+      dados?['Concluido'].forEach((ano, value) {
+        dados['Concluido']['$ano'].forEach((mes, value) {
+          dados['Concluido']['$ano']['$mes'].forEach((key, value) {
+            if(mes==mesAtual && ano==DateTime.now().year.toString()){
+              put(FreteCardDados(
+                  value['origem'],
+                  value['compra'],
+                  value['destino'],
+                  value['venda'],
+                  value['data'],
+                  value['placaCaminhao'],
+                  'Concluido',
+                  freteId: key));
+            }
+          });
+        });
       });
     }
+    organizar();
   }
 
   Future<void> organizar() async {

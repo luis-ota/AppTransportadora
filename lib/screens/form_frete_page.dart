@@ -8,12 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class FormFretePage extends StatefulWidget {
-  final FreteCardDados? cardDados;
+  final FreteCardDados? card;
   final String? action;
 
   const FormFretePage({
     super.key,
-    this.cardDados,
+    this.card,
     this.action,
   });
 
@@ -38,16 +38,16 @@ class _FormFretePageState extends State<FormFretePage> {
   void initState() {
     super.initState();
     _origemController =
-        TextEditingController(text: widget.cardDados?.origem ?? '');
+        TextEditingController(text: widget.card?.origem ?? '');
     _compraController =
-        TextEditingController(text: widget.cardDados?.compra ?? '');
+        TextEditingController(text: widget.card?.compra ?? '');
     _destinoController =
-        TextEditingController(text: widget.cardDados?.destino ?? '');
+        TextEditingController(text: widget.card?.destino ?? '');
     _vendaController =
-        TextEditingController(text: widget.cardDados?.venda ?? '');
-    _dataController = TextEditingController(text: widget.cardDados?.data ?? '');
+        TextEditingController(text: widget.card?.venda ?? '');
+    _dataController = TextEditingController(text: widget.card?.data ?? '');
     _placaController =
-        TextEditingController(text: widget.cardDados?.placaCaminhao ?? '');
+        TextEditingController(text: widget.card?.placaCaminhao ?? '');
   }
 
   @override
@@ -64,18 +64,18 @@ class _FormFretePageState extends State<FormFretePage> {
   @override
   Widget build(BuildContext context) {
     if (widget.action == 'editar') {
-      _formData['origem'] = widget.cardDados!.origem;
-      _formData['compra'] = widget.cardDados!.compra;
-      _formData['destino'] = widget.cardDados!.destino;
-      _formData['venda'] = widget.cardDados!.venda;
-      _formData['data'] = widget.cardDados!.data;
-      _formData['placaCaminhao'] = widget.cardDados!.placaCaminhao;
-      _formData['freteId'] = widget.cardDados!.freteId;
+      _formData['origem'] = widget.card!.origem;
+      _formData['compra'] = widget.card!.compra;
+      _formData['destino'] = widget.card!.destino;
+      _formData['venda'] = widget.card!.venda;
+      _formData['data'] = widget.card!.data;
+      _formData['placaCaminhao'] = widget.card!.placaCaminhao;
+      _formData['freteId'] = widget.card!.freteId;
     }
 
     if (widget.action != 'editar') {
       _dataController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
-      widget.cardDados?.status == 'Em andamento';
+      widget.card?.status == 'Em andamento';
     }
 
     return MaterialApp(
@@ -242,6 +242,9 @@ class _FormFretePageState extends State<FormFretePage> {
                                       if (value == null || value.isEmpty) {
                                         return 'Insira a data do frete';
                                       }
+                                      if (value.length<10) {
+                                        return 'Insira uma data válida';
+                                      }
                                       return null;
                                     },
                                     onSaved: (value) =>
@@ -256,7 +259,6 @@ class _FormFretePageState extends State<FormFretePage> {
                                       firstDate: DateTime(2023),
                                       lastDate: DateTime(
                                           (DateTime.now().year).toInt() + 1),
-                                      locale: const Locale('pt', 'BR'),
                                     );
 
                                     if (pickedDate != null) {
@@ -403,15 +405,15 @@ class _FormFretePageState extends State<FormFretePage> {
         _formData['venda']!,
         _formData['data']!,
         _formData['placaCaminhao']!,
-        (null == widget.cardDados?.status) ? 'Em andamento': 'Concluido',
+        (null == widget.card?.status)?'Em andamento':widget.card!.status,
         freteId: freteId,
       );
 
-      if (widget.cardDados?.status == 'Concluido') {
+      if (widget.card?.status == 'Concluido') {
         await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
             .put(freteCardDados);
         try {
-          await _dbFrete.attDadosFretes(freteCardDados);
+          await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data);
 
         } catch (err) {
           debugPrint(err.toString());
@@ -439,7 +441,8 @@ class _FormFretePageState extends State<FormFretePage> {
       _carregando = true;
     });
     await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-        .remover(widget.cardDados!);
+        .remover(widget.card!);
     Navigator.of(context).pop();
+    await _dbFrete.excluirFrete(card: widget.card!, status: widget.card!.status, data: widget.card!.data);
   }
 }

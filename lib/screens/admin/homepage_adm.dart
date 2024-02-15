@@ -1,6 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/frete_card_provider.dart';
@@ -31,6 +32,12 @@ class _HomePageState extends State<HomePageAdm> {
       return Visibility(
         visible: user?.uid == 'WYUO7BaXNCgqpVzqopIM0b6DiEl1',
         child: MaterialApp(
+          localizationsDelegates:  const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('pt', 'BR')],
           home: Scaffold(
             appBar: AppBar(
               title: const Text('Administração'),
