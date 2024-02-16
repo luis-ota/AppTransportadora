@@ -79,6 +79,7 @@ class AbastecimentoProvider with ChangeNotifier {
   Future<void> put(AbastecimentoDados abastecimentoCard) async {
     if (abastecimentoCard.abastecimentoId.trim().isNotEmpty &&
         _abastecimentoCards.containsKey(abastecimentoCard.abastecimentoId)) {
+      print("atualizou");
       _abastecimentoCards.update(
           abastecimentoCard.abastecimentoId, (_) => abastecimentoCard);
     } else {

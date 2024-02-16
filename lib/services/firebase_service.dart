@@ -185,7 +185,7 @@ class FirebaseService {
           .update({
         'despesa': abastecimento.tipo,
         'data': abastecimento.data,
-        'nivelBomba': abastecimento.volumeBomba,
+        'volumeBomba': abastecimento.volumeBomba,
         'imageLink': abastecimento.imageLink,
       });
     }

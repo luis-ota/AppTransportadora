@@ -241,7 +241,6 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                       criarDespesaCard(
                           despesaId: (_formData['despesaId']).toString(),
                           att: true);
-                      print(_formData['despesaId']);
                     } else {
                       await criarDespesaCard(
                           despesaId: (DateTime.now())
@@ -268,20 +267,20 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Excluir frete'),
-                                  content: const Text(
-                                      'Deseja excluir o registro de frete?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Não'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        excluiCard();
+                                  title: const Text('Excluir despesa'),
+                                      content: const Text(
+                                          'Deseja excluir o registro de despesa?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Não'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            excluiCard();
                                       },
                                       child: const Text('Sim'),
                                     )

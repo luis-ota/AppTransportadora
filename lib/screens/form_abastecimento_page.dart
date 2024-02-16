@@ -60,6 +60,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
       _formData['volumeBomba'] = widget.card!.volumeBomba;
       _formData['quantAbast'] = widget.card!.quantidadeAbastecida;
       _formData['imageLink'] = widget.card!.imageLink;
+      _formData['abastecimentoId'] = widget.card!.abastecimentoId;
     }
 
     if (widget.action != 'editar') {
@@ -230,9 +231,9 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                   onPressed: () async {
                     if (widget.action == 'editar') {
                       criarAbastecimentoCard(
-                          abastecimentoId: (_formData['despesaId']).toString(),
+                          abastecimentoId:
+                              (_formData['abastecimentoId']).toString(),
                           att: true);
-                      print(_formData['despesaId']);
                     } else {
                       await criarAbastecimentoCard(
                           abastecimentoId: (DateTime.now())
@@ -258,19 +259,20 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Excluir frete'),
-                                  content: const Text(
-                                      'Deseja excluir o registro de frete?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Não'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
+                                  title:
+                                          const Text('Excluir Abastecimento'),
+                                      content: const Text(
+                                          'Deseja excluir o registro de abastecimento?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Não'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
                                             excluiCard();
                                           },
                                       child: const Text('Sim'),

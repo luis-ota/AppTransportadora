@@ -38,8 +38,8 @@ class _PerfilPageState extends State<PerfilPage> {
               Visibility(
                   visible: user?.uid == 'WYUO7BaXNCgqpVzqopIM0b6DiEl1',
                   child: TextButton(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "home/admin/homepage_adm"),
+                    onPressed: () => Navigator.pushNamed(
+                        context, "/home/admin/homepage_adm"),
                     child: const Text('Administração'),
                   ))
 
