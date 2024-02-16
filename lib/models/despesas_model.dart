@@ -11,14 +11,14 @@ class DespesasDados {
 }
 
 class AbastecimentoDados {
-  final String abastecimentoiD;
-  final String valor;
+  final String abastecimentoId;
+  final String quantidadeAbastecida;
   final String tipo;
   final String data;
   final String imageLink;
-  final String nivelBomba;
+  final String volumeBomba;
 
-  AbastecimentoDados(
-      this.valor, this.tipo, this.data, this.imageLink, this.nivelBomba,
-      {required this.abastecimentoiD});
+  AbastecimentoDados(this.quantidadeAbastecida, this.tipo, this.data,
+      this.imageLink, this.volumeBomba,
+      {required this.abastecimentoId});
 }

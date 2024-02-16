@@ -28,14 +28,9 @@ class DespesasProvider with ChangeNotifier {
       final id = despesaCard.despesaId;
       _despesasCards.putIfAbsent(
           id,
-              () => DespesasDados(
-                  despesaCard.despesa,
-                  despesaCard.descricao,
-                  despesaCard.valor,
-                  despesaCard.tipo,
-                  despesaCard.data,
-                  despesaId: ''
-              ));
+          () => DespesasDados(despesaCard.despesa, despesaCard.descricao,
+              despesaCard.valor, despesaCard.tipo, despesaCard.data,
+              despesaId: id));
     }
     organizar();
     notifyListeners();
@@ -82,22 +77,28 @@ class AbastecimentoProvider with ChangeNotifier {
   }
 
   Future<void> put(AbastecimentoDados abastecimentoCard) async {
-    if (abastecimentoCard.abastecimentoiD.trim().isNotEmpty &&
-        _abastecimentoCards.containsKey(abastecimentoCard.abastecimentoiD)) {
-      _abastecimentoCards.update(abastecimentoCard.abastecimentoiD, (_) => abastecimentoCard);
+    if (abastecimentoCard.abastecimentoId.trim().isNotEmpty &&
+        _abastecimentoCards.containsKey(abastecimentoCard.abastecimentoId)) {
+      _abastecimentoCards.update(
+          abastecimentoCard.abastecimentoId, (_) => abastecimentoCard);
     } else {
-      final id = abastecimentoCard.abastecimentoiD;
+      final id = abastecimentoCard.abastecimentoId;
       _abastecimentoCards.putIfAbsent(
           id,
-              () => AbastecimentoDados(
-                  abastecimentoCard.valor,
-                  abastecimentoCard.tipo,
-                  abastecimentoCard.data,
-                  abastecimentoCard.imageLink,
-                  abastecimentoCard.nivelBomba,
-                  abastecimentoiD: id));
+          () => AbastecimentoDados(
+              abastecimentoCard.quantidadeAbastecida,
+              abastecimentoCard.tipo,
+              abastecimentoCard.data,
+              abastecimentoCard.imageLink,
+              abastecimentoCard.volumeBomba,
+              abastecimentoId: id));
     }
+    organizar();
+    notifyListeners();
+  }
 
+  Future<void> remover(AbastecimentoDados abastecimentoDados) async {
+    _abastecimentoCards.remove(abastecimentoDados.abastecimentoId);
     notifyListeners();
   }
 
@@ -122,8 +123,4 @@ class AbastecimentoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> remover(DespesasDados despesaCard) async {
-    _abastecimentoCards.remove(despesaCard.despesaId);
-    notifyListeners();
-  }
 }

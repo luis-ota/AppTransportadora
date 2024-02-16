@@ -7,11 +7,10 @@ import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
 
 class FormDespesaPage extends StatefulWidget {
-  final String? tipo;
-  final DespesasDados? despesa;
+  final DespesasDados? card;
   final String? action;
 
-  const FormDespesaPage({super.key, this.despesa, this.tipo, this.action});
+  const FormDespesaPage({super.key, this.card, this.action});
 
   @override
   State<StatefulWidget> createState() {
@@ -22,7 +21,6 @@ class FormDespesaPage extends StatefulWidget {
 class _FormDespesaPageState extends State<FormDespesaPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
-  late final bool tipoDespesa;
   bool _carregando = false;
 
 
@@ -34,12 +32,12 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
   @override
   void initState() {
     super.initState();
-    tipoDespesa = (widget.tipo ==
-        'despesa'); // Use widget.tipo para acessar o tipo passado no construtor
-    _dataController = TextEditingController(text: widget.despesa?.data ?? '');
-    _valorController = TextEditingController(text: widget.despesa?.valor ?? '');
-    _despesaController = TextEditingController(text: widget.despesa?.despesa ?? '');
-    _descricaoController = TextEditingController(text: widget.despesa?.descricao ?? '');
+    _dataController = TextEditingController(text: widget.card?.data ?? '');
+    _valorController = TextEditingController(text: widget.card?.valor ?? '');
+    _despesaController =
+        TextEditingController(text: widget.card?.despesa ?? '');
+    _descricaoController =
+        TextEditingController(text: widget.card?.descricao ?? '');
   }
 
   @override
@@ -54,10 +52,12 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
   @override
   Widget build(BuildContext context) {
     if (widget.action == 'editar') {
-      _formData['data'] = widget.despesa!.data;
-      _formData['valor'] = widget.despesa!.valor;
-      _formData['despesa'] = widget.despesa!.despesa;
-      _formData['descricao'] = widget.despesa!.descricao;
+      _formData['data'] = widget.card!.data;
+      _formData['valor'] = widget.card!.valor;
+      _formData['despesa'] = widget.card!.despesa;
+      _formData['descricao'] = widget.card!.descricao;
+      _formData['despesaId'] = widget.card!.despesaId;
+      print(widget.card?.despesaId);
     }
 
     if (widget.action != 'editar') {
@@ -67,23 +67,18 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          leading: Row(children: [
-            const SizedBox(
+          leading: const Row(children: [
+            SizedBox(
               width: 15,
             ),
-            (tipoDespesa)
-                ? const ImageIcon(
-                    AssetImage("lib/assets/img/despesas_icon.png"),
-                    size: 40,
-                  )
-                : const Icon(
-                    Icons.local_gas_station,
-                    size: 40,
-                  ),
+            ImageIcon(
+              AssetImage("lib/assets/img/despesas_icon.png"),
+              size: 40,
+            )
           ]),
-          title: Text(
-            'Informações ${widget.tipo}',
-            style: const TextStyle(fontSize: 20),
+          title: const Text(
+            'Informações da Despesa',
+            style: TextStyle(fontSize: 20),
           ),
           backgroundColor: const Color(0xFF43A0E4),
         ),
@@ -95,9 +90,9 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                Text(
-                  'Preencha com as informações de ${widget.tipo}',
-                  style: const TextStyle(fontSize: 16),
+                const Text(
+                  'Preencha com as informações da despesa',
+                  style: TextStyle(fontSize: 16),
                 ),
                 const SizedBox(
                   height: 20,
@@ -171,7 +166,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                               mask: '##/##/####',
                               maxLength: 10,
                               decoration: const InputDecoration(
-                                labelText: 'Data do frete',
+                                labelText: 'Data da despesa',
                                 border: OutlineInputBorder(),
                               ),
                               keyboardType: TextInputType.datetime,
@@ -211,26 +206,22 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 150, // Defina a altura desejada aqui
-                        child: TextFormField(
-                          controller: _descricaoController,
-                          maxLength: 100,
-                          maxLines:
-                              null, // Para permitir várias linhas de texto
-                          decoration: const InputDecoration(
-                            labelText: 'Descrição',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.name,
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Insira a descrição da despesa';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) => _formData['descricao'] = value!,
+                      TextFormField(
+                        controller: _descricaoController,
+                        maxLength: 100,
+                        maxLines: null,
+                        decoration: const InputDecoration(
+                          labelText: 'Descrição',
+                          border: OutlineInputBorder(),
                         ),
+                        keyboardType: TextInputType.name,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Insira a descrição da despesa';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => _formData['descricao'] = value!,
                       ),
                     ],
                   ),
@@ -250,6 +241,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                       criarDespesaCard(
                           despesaId: (_formData['despesaId']).toString(),
                           att: true);
+                      print(_formData['despesaId']);
                     } else {
                       await criarDespesaCard(
                           despesaId: (DateTime.now())
@@ -361,7 +353,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
       _carregando = true;
     });
     await Provider.of<DespesasProvider>(context, listen: false)
-        .remover(widget.despesa!);
+        .remover(widget.card!);
     Navigator.of(context).pop();
   }
 }

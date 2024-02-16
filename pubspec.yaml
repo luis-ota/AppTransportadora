@@ -39,6 +39,10 @@ dependencies:
   firebase_auth: ^4.16.0
   firebase_database:
   masked_text:
+  camera:
+  camera_camera:
+  image_picker:
+
 
 
 

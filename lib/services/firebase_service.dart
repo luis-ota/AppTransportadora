@@ -144,12 +144,11 @@ class FirebaseService {
       }else{
         await _despesaRef
             .child(
-            '${user?.uid}/Despesas/${abastecimento!.tipo}/$anoMes/${abastecimento
-                .abastecimentoiD}')
+                '${user?.uid}/Despesas/${abastecimento!.tipo}/$anoMes/${abastecimento.abastecimentoId}')
             .set({
           'despesa': abastecimento.tipo,
           'data': abastecimento.data,
-          'nivelBomba': abastecimento.nivelBomba,
+          'nivelBomba': abastecimento.volumeBomba,
           'imageLink': abastecimento.imageLink,
         });
       }
@@ -182,12 +181,11 @@ class FirebaseService {
     }else{
       await _despesaRef
           .child(
-          '${user?.uid}/Despesas/${abastecimento!.tipo}/$anoMes/${abastecimento
-              .abastecimentoiD}')
+              '${user?.uid}/Despesas/${abastecimento!.tipo}/$anoMes/${abastecimento.abastecimentoId}')
           .update({
         'despesa': abastecimento.tipo,
         'data': abastecimento.data,
-        'nivelBomba': abastecimento.nivelBomba,
+        'nivelBomba': abastecimento.volumeBomba,
         'imageLink': abastecimento.imageLink,
       });
     }
