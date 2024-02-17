@@ -22,18 +22,43 @@ beautfy
 -------==============-----------=========----------==========--------==============---------------
 
 
-caminhoeneiro acessam app usando placa do caminhão ou dizem qual caminhão estao usando 
 
 frete = compra - venda
 
 funcionarios ganhao 12% do frete ao final de 15 dias
 
-opção de dispesas
+opção de despesas
 
 foto da bomba ou abastecer o caminhão
 
 
 bonus: rastreio do caminhao
+
+
+Ses 7d93 Rubens 
+Bvc 4b77 André 
+Bex 5j10 Cristian 
+Avd 2i68 Gileade 
+Aur 4j40 Marcelo
+
+
+uteis:
+
+flutter clean
+flutter pub get
+flutterfire configure
+
+
+
+cd C:\dev\projetos\apprubinho
+flutter build web
+
+robocopy C:\dev\projetos\apprubinho\build\web\ C:\dev\projetos\apprubinhosite
+
+cd C:\dev\projetos\apprubinhosite\
+git add .
+git commit -m 'atualizando'
+git push
 
 
 

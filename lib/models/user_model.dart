@@ -4,5 +4,9 @@ class UserDados {
   final String usuario;
   final String caminhaoPadrao;
 
-  UserDados(this.nome, this.usuario, this.caminhaoPadrao, {required this.uid});
+  UserDados(
+      {required this.nome,
+      required this.usuario,
+      required this.caminhaoPadrao,
+      required this.uid});
 }

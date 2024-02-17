@@ -1,10 +1,10 @@
 import 'package:apprubinho/components/despesas/despesas_tabbar.dart';
 import 'package:apprubinho/components/fretes/frete_tabbar.dart';
+import 'package:apprubinho/providers/despesas_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/frete_card_provider.dart';
-import '../services/firebase_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     carregandoFretes();
+    carregandoCustos();
   }
 
   @override
@@ -77,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                   AssetImage("lib/assets/img/despesas_icon.png"),
                   size: 30,
                 ),
-                label: 'Despesas',
+                label: 'Custos',
               )
               // TODO:
               // NavigationDestination(comissao)
@@ -88,12 +89,13 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               if (currentPageIndex == 0) {
                 Navigator.pushNamed(context, "/home/form_frete_page");
-              } else {
+              }
+              if (currentPageIndex == 1) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Center(
+                      title: const Center(
                         child: Text(
                           'Selecione o tipo',
                           style: TextStyle(
@@ -107,16 +109,21 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(
                             width: 100,
                             child: TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushNamed(context, "/home/form_despesa_page");
-                                }, child: Text("Despesa"),),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pushNamed(
+                                    context, "/home/form_despesa_page");
+                              },
+                              child: const Text("Despesa"),
+                            ),
                           ),
                           TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.pushNamed(context, "/home/form_abastecimento_page");
-                              }, child: Text("Abastecimento")),
+                                Navigator.pushNamed(
+                                    context, "/home/form_abastecimento_page");
+                              },
+                              child: const Text("Abastecimento")),
                         ],
                       ),
                     );
@@ -139,6 +146,21 @@ class _HomePageState extends State<HomePage> {
     await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
         .organizar();
     await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+        .organizar();
+
+    setState(() {
+      _carregando = false;
+    });
+  }
+
+  Future<void> carregandoCustos() async {
+    await Provider.of<DespesasProvider>(context, listen: false)
+        .carregarDadosDoBanco();
+    await Provider.of<DespesasProvider>(context, listen: false).organizar();
+
+    await Provider.of<AbastecimentoProvider>(context, listen: false)
+        .carregarDadosDoBanco();
+    await Provider.of<AbastecimentoProvider>(context, listen: false)
         .organizar();
 
     setState(() {

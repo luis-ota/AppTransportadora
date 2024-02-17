@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/fretecard_model.dart';
 
+import '../models/fretecard_model.dart';
 import '../services/firebase_service.dart';
 
 final FirebaseService _dbFrete = FirebaseService();
@@ -29,13 +29,13 @@ class FreteCardAndamentoProvider with ChangeNotifier {
       _andamentoCards.putIfAbsent(
           id,
           () => FreteCardDados(
-              freteCard.origem,
-              freteCard.compra,
-              freteCard.destino,
-              freteCard.venda,
-              freteCard.data,
-              freteCard.placaCaminhao,
-              'Em andamento',
+              origem: freteCard.origem,
+              compra: freteCard.compra,
+              destino: freteCard.destino,
+              venda: freteCard.venda,
+              data: freteCard.data,
+              placaCaminhao: freteCard.placaCaminhao,
+              status: 'Em andamento',
               freteId: id));
     }
     organizar();
@@ -54,13 +54,13 @@ class FreteCardAndamentoProvider with ChangeNotifier {
     if (dados?['Em andamento'] != null) {
       dados?['Em andamento'].forEach((key, value) {
         put(FreteCardDados(
-            value['origem'],
-            value['compra'],
-            value['destino'],
-            value['venda'],
-            value['data'],
-            value['placaCaminhao'],
-            'Em andamento',
+            origem: value['origem'],
+            compra: value['compra'],
+            destino: value['destino'],
+            venda: value['venda'],
+            data: value['data'],
+            placaCaminhao: value['placaCaminhao'],
+            status: 'Em andamento',
             freteId: key));
       });
     }
@@ -104,13 +104,13 @@ class FreteCardConcluidoProvider with ChangeNotifier {
       _concluidoCards.putIfAbsent(
           id,
           () => FreteCardDados(
-              freteCard.origem,
-              freteCard.compra,
-              freteCard.destino,
-              freteCard.venda,
-              freteCard.data,
-              freteCard.placaCaminhao,
-              'Concluido',
+              origem: freteCard.origem,
+              compra: freteCard.compra,
+              destino: freteCard.destino,
+              venda: freteCard.venda,
+              data: freteCard.data,
+              placaCaminhao: freteCard.placaCaminhao,
+              status: 'Concluido',
               freteId: id));
     }
 
@@ -125,15 +125,15 @@ class FreteCardConcluidoProvider with ChangeNotifier {
       dados?['Concluido'].forEach((ano, value) {
         dados['Concluido']['$ano'].forEach((mes, value) {
           dados['Concluido']['$ano']['$mes'].forEach((key, value) {
-            if(mes==mesAtual && ano==DateTime.now().year.toString()){
+            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
               put(FreteCardDados(
-                  value['origem'],
-                  value['compra'],
-                  value['destino'],
-                  value['venda'],
-                  value['data'],
-                  value['placaCaminhao'],
-                  'Concluido',
+                  origem: value['origem'],
+                  compra: value['compra'],
+                  destino: value['destino'],
+                  venda: value['venda'],
+                  data: value['data'],
+                  placaCaminhao: value['placaCaminhao'],
+                  status: 'Concluido',
                   freteId: key));
             }
           });

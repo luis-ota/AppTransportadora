@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:apprubinho/models/despesas_model.dart';
 import 'package:flutter/material.dart';
 
 class PreviewPage extends StatelessWidget {

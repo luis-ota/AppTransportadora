@@ -1,9 +1,9 @@
-import 'package:apprubinho/models/despesas_model.dart';
+import 'package:apprubinho/models/custos_model.dart';
 import 'package:flutter/material.dart';
 
 import '../services/firebase_service.dart';
 
-final FirebaseService _dbFrete = FirebaseService();
+final FirebaseService _dbDespesas = FirebaseService();
 
 class DespesasProvider with ChangeNotifier {
   final Map<String, DespesasDados> _despesasCards = {};
@@ -28,8 +28,11 @@ class DespesasProvider with ChangeNotifier {
       final id = despesaCard.despesaId;
       _despesasCards.putIfAbsent(
           id,
-          () => DespesasDados(despesaCard.despesa, despesaCard.descricao,
-              despesaCard.valor, despesaCard.tipo, despesaCard.data,
+          () => DespesasDados(
+              despesa: despesaCard.despesa,
+              descricao: despesaCard.descricao,
+              valor: despesaCard.valor,
+              data: despesaCard.data,
               despesaId: id));
     }
     organizar();
@@ -43,9 +46,25 @@ class DespesasProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco() async {
     _despesasCards.clear();
-    final dados = await _dbFrete.lerDadosFretes();
-
-
+    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
+    final dados = await _dbDespesas.lerDadosDespesas();
+    if (dados?['Despesas'] != null) {
+      dados?['Despesas'].forEach((ano, value) {
+        dados['Despesas']['$ano'].forEach((mes, value) {
+          dados['Despesas']['$ano']['$mes'].forEach((key, value) {
+            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
+              put(DespesasDados(
+                  despesaId: key,
+                  despesa: value['despesa'],
+                  valor: value['valor'],
+                  descricao: value['descricao'],
+                  data: value['data']));
+            }
+          });
+        });
+      });
+    }
+    organizar();
   }
 
   Future<void> organizar() async {
@@ -87,11 +106,10 @@ class AbastecimentoProvider with ChangeNotifier {
       _abastecimentoCards.putIfAbsent(
           id,
           () => AbastecimentoDados(
-              abastecimentoCard.quantidadeAbastecida,
-              abastecimentoCard.tipo,
-              abastecimentoCard.data,
-              abastecimentoCard.imageLink,
-              abastecimentoCard.volumeBomba,
+              quantidadeAbastecida: abastecimentoCard.quantidadeAbastecida,
+              data: abastecimentoCard.data,
+              imageLink: abastecimentoCard.imageLink,
+              volumeBomba: abastecimentoCard.volumeBomba,
               abastecimentoId: id));
     }
     organizar();
@@ -106,7 +124,7 @@ class AbastecimentoProvider with ChangeNotifier {
   Future<void> carregarDadosDoBanco() async {
     _abastecimentoCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbFrete.lerDadosFretes();
+    final dados = await _dbDespesas.lerDadosDespesas();
 
     organizar();
   }
@@ -123,5 +141,4 @@ class AbastecimentoProvider with ChangeNotifier {
     _abastecimentoCards.addAll(fretesOrdenados);
     notifyListeners();
   }
-
 }

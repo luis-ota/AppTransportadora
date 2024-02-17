@@ -53,8 +53,10 @@ class _FreteTabbarState extends State<FreteTabbar>
                         .carregarDadosDoBanco(),
                 child: ListView.builder(
                     itemCount: andamentoCards.count,
-                    itemBuilder: (context, i) =>
-                        FreteCard(card: andamentoCards.all.elementAt(i), status: 'Em andamento',)),
+                    itemBuilder: (context, i) => FreteCard(
+                          card: andamentoCards.all.elementAt(i),
+                          status: 'Em andamento',
+                        )),
               ),
               RefreshIndicator(
                 onRefresh: () async =>
@@ -63,8 +65,10 @@ class _FreteTabbarState extends State<FreteTabbar>
                         .carregarDadosDoBanco(),
                 child: ListView.builder(
                     itemCount: concluidoCards.count,
-                    itemBuilder: (context, i) =>
-                        FreteCard(card: concluidoCards.all.elementAt(i), status: 'Concluido',)),
+                    itemBuilder: (context, i) => FreteCard(
+                          card: concluidoCards.all.elementAt(i),
+                          status: 'Concluido',
+                        )),
               ),
             ],
           ),

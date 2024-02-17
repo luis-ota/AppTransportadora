@@ -1,13 +1,13 @@
 import 'package:apprubinho/components/app_widget.dart';
 import 'package:apprubinho/screens/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl_standalone.dart';
 
+import 'firebase_options.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -31,14 +31,15 @@ class RoteadorTela extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(stream: FirebaseAuth.instance.userChanges(),
-        builder: (context, snapshot){
-          if(snapshot.hasData){
-            return const AppWidget();
-          }else{
-            return const LoginPage();
-          }
-        },
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return const AppWidget();
+        } else {
+          return const LoginPage();
+        }
+      },
     );
   }
 }

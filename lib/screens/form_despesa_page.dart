@@ -1,10 +1,12 @@
-import 'package:apprubinho/models/despesas_model.dart';
+import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/providers/despesas_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
+
+import '../services/firebase_service.dart';
 
 class FormDespesaPage extends StatefulWidget {
   final DespesasDados? card;
@@ -21,8 +23,9 @@ class FormDespesaPage extends StatefulWidget {
 class _FormDespesaPageState extends State<FormDespesaPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
-  bool _carregando = false;
+  final FirebaseService _dbDespesa = FirebaseService();
 
+  bool _carregando = false;
 
   late TextEditingController _dataController;
   late TextEditingController _valorController;
@@ -57,7 +60,6 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
       _formData['despesa'] = widget.card!.despesa;
       _formData['descricao'] = widget.card!.descricao;
       _formData['despesaId'] = widget.card!.despesaId;
-      print(widget.card?.despesaId);
     }
 
     if (widget.action != 'editar') {
@@ -82,18 +84,22 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
           ),
           backgroundColor: const Color(0xFF43A0E4),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(15),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                const Text(
-                  'Preencha com as informações da despesa',
-                  style: TextStyle(fontSize: 16),
-                ),
+        body: _carregando
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const Text(
+                        'Preencha com as informações da despesa',
+                        style: TextStyle(fontSize: 16),
+                      ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -109,19 +115,19 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                               controller: _despesaController,
                               maxLength: 8,
                               decoration: const InputDecoration(
-                                labelText: 'Despesa',
-                                border: OutlineInputBorder(),
-                              ),
-                              keyboardType: TextInputType.name,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Insira a despesa';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) =>
-                                  _formData['despesa'] = value!,
-                            ),
+                                      labelText: 'Despesa',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    keyboardType: TextInputType.name,
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Insira a despesa';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (value) =>
+                                        _formData['despesa'] = value!,
+                                  ),
                           ),
                           const SizedBox(
                             width: 10,
@@ -138,19 +144,19 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
-                                  RegExp(
-                                      r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
-                                ),
-                              ],
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Insira o valor da despesa';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) =>
-                                  _formData['valor'] = value!,
-                            ),
+                                        RegExp(
+                                            r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
+                                      ),
+                                    ],
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Insira o valor da despesa';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (value) =>
+                                        _formData['valor'] = value!,
+                                  ),
                           ),
                         ],
                       ),
@@ -186,20 +192,20 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                             onPressed: () async {
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2023),
-                                lastDate: DateTime(
-                                    (DateTime.now().year).toInt() + 1),
-                              );
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2023),
+                                      lastDate: DateTime(
+                                          (DateTime.now().year).toInt() + 1),
+                                    );
 
                               if (pickedDate != null) {
                                 String formattedDate =
-                                DateFormat('dd/MM/yyyy')
-                                    .format(pickedDate);
-                                setState(() {
-                                  _dataController.text = formattedDate;
-                                });
-                              }
+                                          DateFormat('dd/MM/yyyy')
+                                              .format(pickedDate);
+                                      setState(() {
+                                        _dataController.text = formattedDate;
+                                      });
+                                    }
                             },
                             icon: const Icon(Icons.calendar_month),
                             iconSize: 40,
@@ -238,20 +244,20 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                   ),
                   onPressed: () async {
                     if (widget.action == 'editar') {
-                      criarDespesaCard(
-                          despesaId: (_formData['despesaId']).toString(),
-                          att: true);
-                    } else {
-                      await criarDespesaCard(
-                          despesaId: (DateTime.now())
-                              .toString()
-                              .replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''));
-                    }
-                  },
-                  child: Text((widget.action == 'editar')
-                      ? 'Salvar'
-                      : 'Cadastrar'),
-                ),
+                            criarDespesaCard(
+                                despesaId: (_formData['despesaId']).toString(),
+                                att: true);
+                          } else {
+                            await criarDespesaCard(
+                                despesaId: (DateTime.now())
+                                    .toString()
+                                    .replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''));
+                          }
+                        },
+                        child: Text((widget.action == 'editar')
+                            ? 'Salvar'
+                            : 'Cadastrar'),
+                      ),
                 Row(
                   children: [
                     Visibility(
@@ -267,26 +273,27 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Excluir despesa'),
-                                      content: const Text(
-                                          'Deseja excluir o registro de despesa?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Não'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            excluiCard();
-                                      },
-                                      child: const Text('Sim'),
-                                    )
-                                  ],
-                                ));
-                          },
+                                  title:
+                                                const Text('Excluir despesa'),
+                                            content: const Text(
+                                                'Deseja excluir o registro de despesa?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Não'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  excluiCard();
+                                                },
+                                                child: const Text('Sim'),
+                                              )
+                                            ],
+                                          ));
+                                },
                           child: const Text('Excluir'),
                         ),
                       ),
@@ -299,11 +306,11 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue,
-                          minimumSize: const Size(double.maxFinite,
-                              40), // set width and height
-                        ),
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue,
+                                minimumSize: const Size(double.maxFinite,
+                                    40), // set width and height
+                              ),
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text('Cancelar'),
                       ),
@@ -317,6 +324,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
       ),
     );
   }
+
   criarDespesaCard({String despesaId = '', bool att = false}) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -325,21 +333,24 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
         _carregando = true;
       });
       DespesasDados despesasDados = DespesasDados(
-        _formData['despesa']!,
-        _formData['descricao']!,
-        _formData['valor']!,
-        'Despesa',
-        _formData['data']!,
+        despesa: _formData['despesa']!,
+        descricao: _formData['descricao']!,
+        valor: _formData['valor']!,
+        data: _formData['data']!,
         despesaId: despesaId,
       );
 
-        await Provider.of<DespesasProvider>(context, listen: false)
-            .put(despesasDados);
-        try {
-
-        } catch (err) {
-          debugPrint(err.toString());
+      await Provider.of<DespesasProvider>(context, listen: false)
+          .put(despesasDados);
+      try {
+        if (widget.action == 'editar') {
+          await _dbDespesa.attDadosDespesa(despesasDados, widget.card!.data);
+        } else {
+          await _dbDespesa.cadastrarDespesa(despesa: despesasDados);
         }
+      } catch (err) {
+        debugPrint(err.toString());
+      }
 
       Navigator.of(context).pop();
     } else {
@@ -354,5 +365,6 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
     await Provider.of<DespesasProvider>(context, listen: false)
         .remover(widget.card!);
     Navigator.of(context).pop();
+    await _dbDespesa.excluirDespesa(widget.card!, widget.card!.data);
   }
 }

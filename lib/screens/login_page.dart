@@ -14,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final FirebaseService _auth = FirebaseService();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -102,7 +103,6 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_formKey.currentState!.validate()) {
       _auth.acessar(usuario: usuario, senha: senha).then((value) {});
-
     } else {
       print('inválido');
     }

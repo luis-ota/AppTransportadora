@@ -3,8 +3,8 @@ import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:apprubinho/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:masked_text/masked_text.dart';
 import 'package:intl/intl.dart';
+import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
 
 class FormFretePage extends StatefulWidget {
@@ -37,14 +37,11 @@ class _FormFretePageState extends State<FormFretePage> {
   @override
   void initState() {
     super.initState();
-    _origemController =
-        TextEditingController(text: widget.card?.origem ?? '');
-    _compraController =
-        TextEditingController(text: widget.card?.compra ?? '');
+    _origemController = TextEditingController(text: widget.card?.origem ?? '');
+    _compraController = TextEditingController(text: widget.card?.compra ?? '');
     _destinoController =
         TextEditingController(text: widget.card?.destino ?? '');
-    _vendaController =
-        TextEditingController(text: widget.card?.venda ?? '');
+    _vendaController = TextEditingController(text: widget.card?.venda ?? '');
     _dataController = TextEditingController(text: widget.card?.data ?? '');
     _placaController =
         TextEditingController(text: widget.card?.placaCaminhao ?? '');
@@ -242,7 +239,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                       if (value == null || value.isEmpty) {
                                         return 'Insira a data do frete';
                                       }
-                                      if (value.length<10) {
+                                      if (value.length < 10) {
                                         return 'Insira uma data válida';
                                       }
                                       return null;
@@ -399,13 +396,15 @@ class _FormFretePageState extends State<FormFretePage> {
         _carregando = true;
       });
       FreteCardDados freteCardDados = FreteCardDados(
-        _formData['origem']!,
-        _formData['compra']!,
-        _formData['destino']!,
-        _formData['venda']!,
-        _formData['data']!,
-        _formData['placaCaminhao']!,
-        (null == widget.card?.status)?'Em andamento':widget.card!.status,
+        origem: _formData['origem']!,
+        compra: _formData['compra']!,
+        destino: _formData['destino']!,
+        venda: _formData['venda']!,
+        data: _formData['data']!,
+        placaCaminhao: _formData['placaCaminhao']!,
+        status: (null == widget.card?.status)
+            ? 'Em andamento'
+            : widget.card!.status,
         freteId: freteId,
       );
 
@@ -414,7 +413,6 @@ class _FormFretePageState extends State<FormFretePage> {
             .put(freteCardDados);
         try {
           await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data);
-
         } catch (err) {
           debugPrint(err.toString());
         }
@@ -422,13 +420,16 @@ class _FormFretePageState extends State<FormFretePage> {
         await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
             .put(freteCardDados);
         try {
-          await _dbFrete.cadastrarFrete(card: freteCardDados, status: 'Em andamento');
-
+          (widget.action == 'editar')
+              ? await _dbFrete.cadastrarFrete(
+                  card: freteCardDados, status: 'Em andamento')
+              : await _dbFrete.attDadosFretes(
+                  freteCardDados, widget.card!.data);
+          ;
         } catch (err) {
           debugPrint(err.toString());
         }
       }
-
 
       Navigator.of(context).pop();
     } else {
@@ -443,6 +444,9 @@ class _FormFretePageState extends State<FormFretePage> {
     await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
         .remover(widget.card!);
     Navigator.of(context).pop();
-    await _dbFrete.excluirFrete(card: widget.card!, status: widget.card!.status, data: widget.card!.data);
+    await _dbFrete.excluirFrete(
+        card: widget.card!,
+        status: widget.card!.status,
+        data: widget.card!.data);
   }
 }

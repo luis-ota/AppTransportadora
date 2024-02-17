@@ -1,8 +1,6 @@
-import 'package:apprubinho/models/despesas_model.dart';
+import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/screens/form_abastecimento_page.dart';
-import 'package:apprubinho/screens/form_despesa_page.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class AbastecimentoCard extends StatefulWidget {
   final AbastecimentoDados card;
@@ -20,11 +18,11 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Icon(
+        leading: const Icon(
           Icons.local_gas_station,
           size: 40,
         ),
-        title: Text(widget.card.tipo),
+        title: const Text('Abastecimento'),
         subtitle: Column(
           children: [
             Row(
@@ -33,7 +31,10 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
               ],
             ),
             Row(
-              children: [Icon(Icons.calendar_month), Text(widget.card.data)],
+              children: [
+                const Icon(Icons.calendar_month),
+                Text(widget.card.data)
+              ],
             )
           ],
         ),

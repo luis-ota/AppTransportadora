@@ -1,10 +1,9 @@
 import 'dart:io';
 
-import 'package:apprubinho/models/despesas_model.dart';
+import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/providers/despesas_provider.dart';
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
@@ -275,10 +274,10 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                                             Navigator.of(context).pop();
                                             excluiCard();
                                           },
-                                      child: const Text('Sim'),
-                                    )
-                                  ],
-                                ));
+                                          child: const Text('Sim'),
+                                        )
+                                      ],
+                                    ));
                           },
                           child: const Text('Excluir'),
                         ),
@@ -319,11 +318,10 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
         _carregando = true;
       });
       AbastecimentoDados abastecimentoDados = AbastecimentoDados(
-        _formData['quantAbast']!,
-        'Abastecimento',
-        _formData['data']!,
-        _formData['imageLink']!,
-        _formData['volumeBomba']!,
+        quantidadeAbastecida: _formData['quantAbast']!,
+        data: _formData['data']!,
+        imageLink: _formData['imageLink']!,
+        volumeBomba: _formData['volumeBomba']!,
         abastecimentoId: abastecimentoId,
       );
 

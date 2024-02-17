@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -32,7 +31,7 @@ class _HomePageState extends State<HomePageAdm> {
       return Visibility(
         visible: user?.uid == 'WYUO7BaXNCgqpVzqopIM0b6DiEl1',
         child: MaterialApp(
-          localizationsDelegates:  const [
+          localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
@@ -95,7 +94,10 @@ class _HomePageState extends State<HomePageAdm> {
                 ),
                 Card(
                   child: ListTile(
-                    leading: const Icon(Icons.monetization_on_outlined, size: 50,),
+                    leading: const Icon(
+                      Icons.monetization_on_outlined,
+                      size: 50,
+                    ),
                     title: const Text('Pagamentos'),
                     subtitle: const Text('Pagamento aos caminhoneiros'),
                     trailing: IconButton(
@@ -106,7 +108,10 @@ class _HomePageState extends State<HomePageAdm> {
                 ),
                 Card(
                   child: ListTile(
-                    leading: const Icon(Icons.analytics_outlined, size: 50,),
+                    leading: const Icon(
+                      Icons.analytics_outlined,
+                      size: 50,
+                    ),
                     title: const Text('Faturamento'),
                     subtitle: const Text('Lucros e despesas'),
                     trailing: IconButton(
@@ -140,7 +145,8 @@ class _HomePageState extends State<HomePageAdm> {
                   SizedBox(
                     width: 100,
                     child: MaterialButton(
-                        onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
+                        onPressed: () =>
+                            Navigator.pushReplacementNamed(context, "/home"),
                         child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [Icon(Icons.home), Text('Voltar')],

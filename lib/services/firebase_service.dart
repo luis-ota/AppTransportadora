@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:apprubinho/models/despesas_model.dart';
+
+import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/models/fretecard_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -9,8 +10,8 @@ class FirebaseService {
   final User? user = FirebaseAuth.instance.currentUser;
 
   final DatabaseReference _fretesRef = FirebaseDatabase.instance.ref('Fretes');
-  final DatabaseReference _despesaRef =
-      FirebaseDatabase.instance.ref('Despesas');
+  final DatabaseReference _custosref = FirebaseDatabase.instance.ref('Custos');
+
   Future<String?> acessar(
       {required String usuario, required String senha}) async {
     try {
@@ -63,7 +64,9 @@ class FirebaseService {
   }
 
   Future<void> attDadosFretes(FreteCardDados card, String data) async {
-    excluirFrete(card: card, status: card.status, data: data);
+    if (card.data != data) {
+      await excluirFrete(card: card, status: card.status, data: data);
+    }
     if (card.status == "Em andamento") {
       return await _fretesRef
           .child('${user?.uid}/${card.status}/${card.freteId}')
@@ -123,88 +126,168 @@ class FirebaseService {
     return data;
   }
 
-  Future cadastrarDespesa({
-     DespesasDados? despesa,
-     AbastecimentoDados? abastecimento,
+  Future<void> cadastrarDespesa({
+    required DespesasDados despesa,
   }) async {
     try {
-      List<String> partes = despesa!.data.split('/');
+      List<String> partes = despesa.data.split('/');
       String anoMes = '${partes[2]}/${partes[1]}';
-      if(despesa.tipo=='Despesa'){
-        await _despesaRef
-            .child(
-            '${user?.uid}/Despesas/${despesa.tipo}/$anoMes/${despesa
-                .despesaId}')
-            .set({
-          'despesa': despesa.despesa,
-          'valor': despesa.valor,
-          'data': despesa.data,
-          'descricao': despesa.descricao,
-        });
-      }else{
-        await _despesaRef
-            .child(
-                '${user?.uid}/Despesas/${abastecimento!.tipo}/$anoMes/${abastecimento.abastecimentoId}')
-            .set({
-          'despesa': abastecimento.tipo,
-          'data': abastecimento.data,
-          'nivelBomba': abastecimento.volumeBomba,
-          'imageLink': abastecimento.imageLink,
-        });
-      }
-    } catch (error) {
-      // Trate os erros aqui
-      print('Erro ao cadastrar frete: $error');
-      rethrow;
-    }
-  }
-
-  Future<void> attDadosDespesa(String data, {DespesasDados? despesa, AbastecimentoDados? abastecimento,
-  }) async {
-    List<String> partes = data.split('/');
-    String anoMes = '${partes[2]}/${partes[1]}';
-    excluirDespesa(despesa: despesa!, data: data);
-    partes = despesa.data.split('/');
-    anoMes = '${partes[2]}/${partes[1]}';
-    if(despesa.tipo=='Despesa'){
-
-      await _despesaRef
-          .child(
-          '${user?.uid}/Despesas/${despesa.tipo}/$anoMes/${despesa
-              .despesaId}')
-          .update({
+      await _custosref
+          .child('${user?.uid}/Despesas/$anoMes/${despesa.despesaId}')
+          .set({
         'despesa': despesa.despesa,
         'valor': despesa.valor,
         'data': despesa.data,
         'descricao': despesa.descricao,
       });
-    }else{
-      await _despesaRef
-          .child(
-              '${user?.uid}/Despesas/${abastecimento!.tipo}/$anoMes/${abastecimento.abastecimentoId}')
-          .update({
-        'despesa': abastecimento.tipo,
-        'data': abastecimento.data,
-        'volumeBomba': abastecimento.volumeBomba,
-        'imageLink': abastecimento.imageLink,
-      });
+    } catch (error) {
+      // Trate os erros aqui
+      print('Erro ao cadastrar despesa: $error');
+      rethrow;
     }
   }
 
-  Future<String?> excluirDespesa(
-      {required DespesasDados despesa, required String data}) async {
+  Future<void> attDadosDespesa(
+    DespesasDados despesa,
+    String data,
+  ) async {
+    var partes = despesa.data.split('/');
+    var anoMes = '${partes[2]}/${partes[1]}';
+    if (despesa.data != data) {
+      await excluirDespesa(despesa, data);
+    }
+    await _custosref
+        .child('${user?.uid}/Despesas/$anoMes/${despesa.despesaId}')
+        .update({
+      'despesa': despesa.despesa,
+      'valor': despesa.valor,
+      'data': despesa.data,
+      'descricao': despesa.descricao,
+    });
+  }
+
+  Future<String?> excluirDespesa(DespesasDados despesa, String data) async {
     List<String> partes = data.split('/');
     String anoMes = '${partes[2]}/${partes[1]}';
-    await _despesaRef
-        .child(
-            '${user?.uid}/Despesas/$anoMes/${despesa.tipo}/${despesa.despesaId}')
+
+    await _custosref
+        .child('${user?.uid}/Despesas/$anoMes/${despesa.despesaId}')
         .remove();
+
     return null;
   }
 
-  Future<Map?> lerDadosDespesa() async {
-    DatabaseEvent snapshot = await _despesaRef.child('${user?.uid}').once();
+  Future<Map?> lerDadosDespesas() async {
+    DatabaseEvent snapshot = await _custosref.child('${user?.uid}').once();
     Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
     return data;
   }
+
+// Future<void> cadastrarDespesa({
+//   required DespesasDados despesa,
+//   required AbastecimentoDados abastecimento,
+//   String? tipo,
+// }) async {
+//   try {
+//     if (tipo == 'Despesa') {
+//       print("cadastrando");
+//       List<String> partes = despesa.data.split('/');
+//       String anoMes = '${partes[2]}/${partes[1]}';
+//       await _despesaRef
+//           .child('${user?.uid}/Despesas/Despesa/$anoMes/${despesa.despesaId}')
+//           .set({
+//         'despesa': despesa.despesa,
+//         'valor': despesa.valor,
+//         'data': despesa.data,
+//         'descricao': despesa.descricao,
+//       });
+//     } else if (tipo == 'Abastecimento' && abastecimento != null) {
+//       print("cadastrando");
+//       List<String> partes = abastecimento.data.split('/');
+//       String anoMes = '${partes[2]}/${partes[1]}';
+//       await _despesaRef
+//           .child(
+//           '${user?.uid}/Despesas/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+//           .set({
+//         'despesa': 'Abastecimento',
+//         'data': abastecimento.data,
+//         'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
+//         'volumeBomba': abastecimento.volumeBomba,
+//         'imageLink': abastecimento.imageLink,
+//       });
+//     }
+//     print("nada aconteceu");
+//
+//   } catch (error) {
+//     // Trate os erros aqui
+//     print('Erro ao cadastrar abastecimento ou : $error');
+//     rethrow;
+//   }
+// }
+//
+// Future<void> attDadosDespesa({
+//   String? data,
+//   DespesasDados? despesa,
+//   AbastecimentoDados? abastecimento,
+//   String? tipo,
+// }) async {
+//   if (tipo == 'Despesa' && despesa != null) {
+//     var partes = despesa.data.split('/');
+//     var anoMes = '${partes[2]}/${partes[1]}';
+//     await excluirDespesa(despesa: despesa, data: data);
+//     await _despesaRef
+//         .child('${user?.uid}/Despesas/Despesa/$anoMes/${despesa.despesaId}')
+//         .update({
+//       'despesa': despesa.despesa,
+//       'valor': despesa.valor,
+//       'data': despesa.data,
+//       'descricao': despesa.descricao,
+//     });
+//   } else if (tipo == 'Abastecimento' && abastecimento != null) {
+//     var partes = abastecimento.data.split('/');
+//     var anoMes = '${partes[2]}/${partes[1]}';
+//     await excluirDespesa(abastecimento: abastecimento, data: data);
+//     await _despesaRef
+//         .child(
+//         '${user?.uid}/Despesas/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+//         .update({
+//       'despesa': 'Abastecimento',
+//       'data': abastecimento.data,
+//       'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
+//       'volumeBomba': abastecimento.volumeBomba,
+//       'imageLink': abastecimento.imageLink,
+//     });
+//   }
+// }
+//
+//
+//
+// Future<String?> excluirDespesa(
+//     {DespesasDados? despesa,
+//       AbastecimentoDados? abastecimento,
+//       String? tipo,
+//       String? data}) async {
+//   List<String> partes = data!.split('/');
+//   String anoMes = '${partes[2]}/${partes[1]}';
+//   if(tipo=="Despesa")
+//   {
+//     await _despesaRef
+//         .child(
+//         '${user?.uid}/Despesas/$anoMes/Despesa/${despesa?.despesaId}')
+//         .remove();
+//   }else{
+//     await _despesaRef
+//         .child(
+//         '${user?.uid}/Despesas/$anoMes/Abastecimento/${abastecimento?.abastecimentoId}')
+//         .remove();
+//   }
+//
+//   return null;
+// }
+//
+// Future<Map?> lerDadosDespesa() async {
+//   DatabaseEvent snapshot = await _despesaRef.child('${user?.uid}').once();
+//   Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+//   return data;
+// }
 }

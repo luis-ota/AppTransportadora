@@ -1,5 +1,4 @@
 import 'package:apprubinho/components/despesas/despesas_card.dart';
-import 'package:apprubinho/models/fretecard_model.dart';
 import 'package:apprubinho/providers/despesas_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,8 +49,7 @@ class _DespesasTabbarState extends State<DespesasTabbar>
             children: <Widget>[
               RefreshIndicator(
                 onRefresh: () async =>
-                    await Provider.of<DespesasProvider>(context,
-                            listen: false)
+                    await Provider.of<DespesasProvider>(context, listen: false)
                         .carregarDadosDoBanco(),
                 child: ListView.builder(
                     itemCount: despesasCards.count,
@@ -59,21 +57,19 @@ class _DespesasTabbarState extends State<DespesasTabbar>
                         DespeasasCard(card: despesasCards.all.elementAt(i))),
               ),
               RefreshIndicator(
-                onRefresh: () async =>
-                    await Provider.of<AbastecimentoProvider>(context,
-                            listen: false)
-                        .carregarDadosDoBanco(),
+                onRefresh: () async => await Provider.of<AbastecimentoProvider>(
+                        context,
+                        listen: false)
+                    .carregarDadosDoBanco(),
                 child: ListView.builder(
                     itemCount: abastecimentoCards.count,
-                    itemBuilder: (context, i) =>
-                        AbastecimentoCard(card: abastecimentoCards.all.elementAt(i))),
+                    itemBuilder: (context, i) => AbastecimentoCard(
+                        card: abastecimentoCards.all.elementAt(i))),
               ),
             ],
           ),
         ),
       ],
     );
-
   }
-
 }

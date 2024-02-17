@@ -8,7 +8,13 @@ class FreteCardDados {
   final String placaCaminhao;
   late final String status;
 
-  FreteCardDados(this.origem, this.compra, this.destino, this.venda, this.data,
-      this.placaCaminhao, this.status,
-      {required this.freteId});
+  FreteCardDados(
+      {required this.freteId,
+      required this.origem,
+      required this.compra,
+      required this.destino,
+      required this.data,
+      required this.venda,
+      required this.placaCaminhao,
+      required this.status});
 }

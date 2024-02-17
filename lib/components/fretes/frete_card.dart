@@ -2,6 +2,7 @@ import 'package:apprubinho/screens/form_frete_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../../models/fretecard_model.dart';
 import '../../providers/frete_card_provider.dart';
 import '../../services/firebase_service.dart';
@@ -9,6 +10,7 @@ import '../../services/firebase_service.dart';
 class FreteCard extends StatefulWidget {
   final FreteCardDados card;
   final String status;
+
   const FreteCard({super.key, required this.card, required this.status});
 
   @override
@@ -152,9 +154,7 @@ class _FreteCardState extends State<FreteCard> {
       await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
           .put(widget.card);
       await _dbFrete.moverFrete(
-          status: 'Em andamento',
-          card: widget.card,
-          paraOnde: 'Concluido');
+          status: 'Em andamento', card: widget.card, paraOnde: 'Concluido');
     }
 
     if (widget.card.status == 'Concluido') {
@@ -166,9 +166,7 @@ class _FreteCardState extends State<FreteCard> {
           .put(widget.card);
 
       await _dbFrete.moverFrete(
-          card: widget.card,
-          status: 'Concluido',
-          paraOnde: 'Em andamento');
+          card: widget.card, status: 'Concluido', paraOnde: 'Em andamento');
     }
   }
 

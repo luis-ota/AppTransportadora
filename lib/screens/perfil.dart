@@ -42,7 +42,6 @@ class _PerfilPageState extends State<PerfilPage> {
                         context, "/home/admin/homepage_adm"),
                     child: const Text('Administração'),
                   ))
-
             ],
           ),
         ),
