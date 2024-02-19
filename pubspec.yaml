@@ -35,15 +35,17 @@ dependencies:
   intl:
   provider:
   cupertino_icons: ^1.0.6
-  firebase_core: ^2.25.0
-  firebase_auth: ^4.16.0
-  firebase_database:
   masked_text:
+
   camera:
   camera_camera:
   image_picker:
 
-
+  #firebase
+  firebase_core: ^2.25.0
+  firebase_auth: ^4.16.0
+  firebase_database:
+  firebase_storage:
 
 
 
@@ -98,3 +100,5 @@ flutter:
     - lib/assets/img/caminhao.png
     - lib/assets/img/placa_caminhao.png
     - lib/assets/img/despesas_icon.png
+    - lib/assets/img/local_gas_station.png
+    - lib/assets/img/add_a_photo.png

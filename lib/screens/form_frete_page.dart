@@ -1,6 +1,7 @@
 import 'package:apprubinho/models/fretecard_model.dart';
 import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:apprubinho/services/firebase_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -425,15 +426,18 @@ class _FormFretePageState extends State<FormFretePage> {
                   card: freteCardDados, status: 'Em andamento')
               : await _dbFrete.attDadosFretes(
                   freteCardDados, widget.card!.data);
-          ;
         } catch (err) {
           debugPrint(err.toString());
         }
       }
 
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } else {
-      print('inválido');
+      if (kDebugMode) {
+        print('inválido');
+      }
     }
   }
 
@@ -443,7 +447,9 @@ class _FormFretePageState extends State<FormFretePage> {
     });
     await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
         .remover(widget.card!);
-    Navigator.of(context).pop();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
     await _dbFrete.excluirFrete(
         card: widget.card!,
         status: widget.card!.status,

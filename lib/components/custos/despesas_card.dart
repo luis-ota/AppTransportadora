@@ -3,25 +3,31 @@ import 'package:apprubinho/screens/form_despesa_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DespeasasCard extends StatefulWidget {
+class DespesasCard extends StatefulWidget {
   final DespesasDados card;
 
-  const DespeasasCard({super.key, required this.card});
+  const DespesasCard({super.key, required this.card});
 
   @override
   State<StatefulWidget> createState() {
-    return _DespeasasCardState();
+    return _DespesasCardState();
   }
 }
 
-class _DespeasasCardState extends State<DespeasasCard> {
+class _DespesasCardState extends State<DespesasCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const ImageIcon(
-          AssetImage("lib/assets/img/despesas_icon.png"),
-          size: 40,
+        leading: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const ImageIcon(
+              AssetImage("lib/assets/img/despesas_icon.png"),
+              size: 40,
+            ),
+            Text(widget.card.data.substring(0, 5))
+          ],
         ),
         title: Text(widget.card.despesa),
         subtitle: Text("${limitarString(widget.card.descricao)}\n"

@@ -18,9 +18,15 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Icon(
-          Icons.local_gas_station,
-          size: 40,
+        leading: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const ImageIcon(
+              AssetImage("lib/assets/img/local_gas_station.png"),
+              size: 40,
+            ),
+            Text(widget.card.data.substring(0, 5))
+          ],
         ),
         title: const Text('Abastecimento'),
         subtitle: Column(
@@ -30,12 +36,6 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
                 Text("Abastecido: ${widget.card.quantidadeAbastecida} litros"),
               ],
             ),
-            Row(
-              children: [
-                const Icon(Icons.calendar_month),
-                Text(widget.card.data)
-              ],
-            )
           ],
         ),
         trailing: IconButton(
@@ -48,7 +48,6 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
                     )));
           },
         ),
-        isThreeLine: true,
       ),
     );
   }

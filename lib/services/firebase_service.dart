@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/models/fretecard_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 
 class FirebaseService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -11,6 +14,7 @@ class FirebaseService {
 
   final DatabaseReference _fretesRef = FirebaseDatabase.instance.ref('Fretes');
   final DatabaseReference _custosref = FirebaseDatabase.instance.ref('Custos');
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<String?> acessar(
       {required String usuario, required String senha}) async {
@@ -58,7 +62,9 @@ class FirebaseService {
       }
     } catch (error) {
       // Trate os erros aqui
-      print('Erro ao cadastrar frete: $error');
+      if (kDebugMode) {
+        print('Erro ao cadastrar frete: $error');
+      }
       rethrow;
     }
   }
@@ -142,7 +148,9 @@ class FirebaseService {
       });
     } catch (error) {
       // Trate os erros aqui
-      print('Erro ao cadastrar despesa: $error');
+      if (kDebugMode) {
+        print('Erro ao cadastrar despesa: $error');
+      }
       rethrow;
     }
   }
@@ -153,7 +161,7 @@ class FirebaseService {
   ) async {
     var partes = despesa.data.split('/');
     var anoMes = '${partes[2]}/${partes[1]}';
-    if (despesa.data != data) {
+    if ('${partes[1]}/${partes[2]}' != data.substring(3)) {
       await excluirDespesa(despesa, data);
     }
     await _custosref
@@ -183,111 +191,92 @@ class FirebaseService {
     return data;
   }
 
-// Future<void> cadastrarDespesa({
-//   required DespesasDados despesa,
-//   required AbastecimentoDados abastecimento,
-//   String? tipo,
-// }) async {
-//   try {
-//     if (tipo == 'Despesa') {
-//       print("cadastrando");
-//       List<String> partes = despesa.data.split('/');
-//       String anoMes = '${partes[2]}/${partes[1]}';
-//       await _despesaRef
-//           .child('${user?.uid}/Despesas/Despesa/$anoMes/${despesa.despesaId}')
-//           .set({
-//         'despesa': despesa.despesa,
-//         'valor': despesa.valor,
-//         'data': despesa.data,
-//         'descricao': despesa.descricao,
-//       });
-//     } else if (tipo == 'Abastecimento' && abastecimento != null) {
-//       print("cadastrando");
-//       List<String> partes = abastecimento.data.split('/');
-//       String anoMes = '${partes[2]}/${partes[1]}';
-//       await _despesaRef
-//           .child(
-//           '${user?.uid}/Despesas/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
-//           .set({
-//         'despesa': 'Abastecimento',
-//         'data': abastecimento.data,
-//         'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
-//         'volumeBomba': abastecimento.volumeBomba,
-//         'imageLink': abastecimento.imageLink,
-//       });
-//     }
-//     print("nada aconteceu");
-//
-//   } catch (error) {
-//     // Trate os erros aqui
-//     print('Erro ao cadastrar abastecimento ou : $error');
-//     rethrow;
-//   }
-// }
-//
-// Future<void> attDadosDespesa({
-//   String? data,
-//   DespesasDados? despesa,
-//   AbastecimentoDados? abastecimento,
-//   String? tipo,
-// }) async {
-//   if (tipo == 'Despesa' && despesa != null) {
-//     var partes = despesa.data.split('/');
-//     var anoMes = '${partes[2]}/${partes[1]}';
-//     await excluirDespesa(despesa: despesa, data: data);
-//     await _despesaRef
-//         .child('${user?.uid}/Despesas/Despesa/$anoMes/${despesa.despesaId}')
-//         .update({
-//       'despesa': despesa.despesa,
-//       'valor': despesa.valor,
-//       'data': despesa.data,
-//       'descricao': despesa.descricao,
-//     });
-//   } else if (tipo == 'Abastecimento' && abastecimento != null) {
-//     var partes = abastecimento.data.split('/');
-//     var anoMes = '${partes[2]}/${partes[1]}';
-//     await excluirDespesa(abastecimento: abastecimento, data: data);
-//     await _despesaRef
-//         .child(
-//         '${user?.uid}/Despesas/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
-//         .update({
-//       'despesa': 'Abastecimento',
-//       'data': abastecimento.data,
-//       'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
-//       'volumeBomba': abastecimento.volumeBomba,
-//       'imageLink': abastecimento.imageLink,
-//     });
-//   }
-// }
-//
-//
-//
-// Future<String?> excluirDespesa(
-//     {DespesasDados? despesa,
-//       AbastecimentoDados? abastecimento,
-//       String? tipo,
-//       String? data}) async {
-//   List<String> partes = data!.split('/');
-//   String anoMes = '${partes[2]}/${partes[1]}';
-//   if(tipo=="Despesa")
-//   {
-//     await _despesaRef
-//         .child(
-//         '${user?.uid}/Despesas/$anoMes/Despesa/${despesa?.despesaId}')
-//         .remove();
-//   }else{
-//     await _despesaRef
-//         .child(
-//         '${user?.uid}/Despesas/$anoMes/Abastecimento/${abastecimento?.abastecimentoId}')
-//         .remove();
-//   }
-//
-//   return null;
-// }
-//
-// Future<Map?> lerDadosDespesa() async {
-//   DatabaseEvent snapshot = await _despesaRef.child('${user?.uid}').once();
-//   Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
-//   return data;
-// }
+  Future<void> cadastrarAbastecimento({
+    required AbastecimentoDados abastecimento,
+  }) async {
+    try {
+      List<String> partes = abastecimento.data.split('/');
+      String anoMes = '${partes[2]}/${partes[1]}';
+      await _custosref
+          .child(
+              '${user?.uid}/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+          .set({
+        'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
+        'data': abastecimento.data,
+        'imageLink': abastecimento.imageLink,
+        'volumeBomba': abastecimento.volumeBomba,
+      });
+    } catch (error) {
+      // Trate os erros aqui
+      if (kDebugMode) {
+        print('Erro ao cadastrar despesa: $error');
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> attDadosAbastecimento(
+    AbastecimentoDados abastecimento,
+    String data,
+  ) async {
+    var partes = abastecimento.data.split('/');
+    var anoMes = '${partes[2]}/${partes[1]}';
+    if ('${partes[1]}/${partes[2]}' != data.substring(3)) {
+      await excluirAbastecimento(abastecimento, data);
+    }
+    await _custosref
+        .child(
+            '${user?.uid}/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+        .update({
+      'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
+      'data': abastecimento.data,
+      'imageLink': abastecimento.imageLink,
+      'volumeBomba': abastecimento.volumeBomba,
+    });
+  }
+
+  Future<String?> excluirAbastecimento(
+      AbastecimentoDados abastecimento, String data) async {
+    List<String> partes = data.split('/');
+    String anoMes = '${partes[2]}/${partes[1]}';
+
+    await _custosref
+        .child(
+            '${user?.uid}/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+        .remove();
+
+    return null;
+  }
+
+  Future<Map?> lerDadosAbastecimento() async {
+    DatabaseEvent snapshot = await _custosref.child('${user?.uid}').once();
+    Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+    return data;
+  }
+
+  Future<UploadTask> subirImgemAbastecimento(File file, String id) async {
+    try {
+      String ref = 'images/Abastecimento/${user?.uid}/img-$id.jpg';
+      return _storage.ref(ref).putFile(file);
+    } catch (e) {
+      throw Exception('erro ao subir imagem:  $e');
+    }
+  }
+
+  Future<void> excluirImagem(id, ref) async {
+    await _storage.ref('images/$ref/${user?.uid}/img-$id.jpg').delete();
+  }
+
+  Future<String> pegarLinkImagens(String id, String ref) async {
+    var refs = (await _storage.ref('images/$ref/${user?.uid}').listAll()).items;
+    String link = '';
+    for (var ref in refs) {
+      await ref.getDownloadURL().then((value) {
+        if (id == value.split('img-')[1].split('.')[0]) {
+          link = value;
+        }
+      });
+    }
+    return link;
+  }
 }

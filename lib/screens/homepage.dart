@@ -1,9 +1,9 @@
-import 'package:apprubinho/components/despesas/despesas_tabbar.dart';
 import 'package:apprubinho/components/fretes/frete_tabbar.dart';
-import 'package:apprubinho/providers/despesas_provider.dart';
+import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../components/custos/custos_tabbar.dart';
 import '../providers/frete_card_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -139,14 +139,18 @@ class _HomePageState extends State<HomePage> {
   Future<void> carregandoFretes() async {
     await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
         .carregarDadosDoBanco();
-
-    await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-        .carregarDadosDoBanco();
-
-    await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-        .organizar();
-    await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-        .organizar();
+    if (mounted) {
+      await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+          .carregarDadosDoBanco();
+    }
+    if (mounted) {
+      await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+          .organizar();
+    }
+    if (mounted) {
+      await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+          .organizar();
+    }
 
     setState(() {
       _carregando = false;
@@ -154,14 +158,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> carregandoCustos() async {
-    await Provider.of<DespesasProvider>(context, listen: false)
-        .carregarDadosDoBanco();
-    await Provider.of<DespesasProvider>(context, listen: false).organizar();
+    if (mounted) {
+      await Provider.of<DespesasProvider>(context, listen: false)
+          .carregarDadosDoBanco();
+    }
+    if (mounted) {
+      await Provider.of<DespesasProvider>(context, listen: false).organizar();
+    }
 
-    await Provider.of<AbastecimentoProvider>(context, listen: false)
-        .carregarDadosDoBanco();
-    await Provider.of<AbastecimentoProvider>(context, listen: false)
-        .organizar();
+    if (mounted) {
+      await Provider.of<AbastecimentoProvider>(context, listen: false)
+          .carregarDadosDoBanco();
+    }
+    if (mounted) {
+      await Provider.of<AbastecimentoProvider>(context, listen: false)
+          .organizar();
+    }
 
     setState(() {
       _carregando = false;

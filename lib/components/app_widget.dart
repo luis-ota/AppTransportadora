@@ -1,4 +1,4 @@
-import 'package:apprubinho/providers/despesas_provider.dart';
+import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:apprubinho/providers/user_provider.dart';
 import 'package:apprubinho/screens/form_frete_page.dart';

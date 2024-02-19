@@ -1,9 +1,9 @@
-import 'package:apprubinho/components/despesas/despesas_card.dart';
-import 'package:apprubinho/providers/despesas_provider.dart';
+import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'abastecimento_card.dart';
+import 'despesas_card.dart';
 
 class DespesasTabbar extends StatefulWidget {
   const DespesasTabbar({super.key});
@@ -54,7 +54,7 @@ class _DespesasTabbarState extends State<DespesasTabbar>
                 child: ListView.builder(
                     itemCount: despesasCards.count,
                     itemBuilder: (context, i) =>
-                        DespeasasCard(card: despesasCards.all.elementAt(i))),
+                        DespesasCard(card: despesasCards.all.elementAt(i))),
               ),
               RefreshIndicator(
                 onRefresh: () async => await Provider.of<AbastecimentoProvider>(

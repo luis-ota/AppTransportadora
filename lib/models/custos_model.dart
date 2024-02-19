@@ -23,7 +23,7 @@ class AbastecimentoDados {
   AbastecimentoDados(
       {required this.quantidadeAbastecida,
       required this.data,
-      required this.imageLink,
+      this.imageLink = 'vazio',
       required this.volumeBomba,
       required this.abastecimentoId});
 }

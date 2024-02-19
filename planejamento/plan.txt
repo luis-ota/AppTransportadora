@@ -44,6 +44,8 @@ Aur 4j40 Marcelo
 
 uteis:
 
+flutter pub outdated
+flutter pub upgrade outdated_package
 flutter clean
 flutter pub get
 flutterfire configure

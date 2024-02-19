@@ -1,4 +1,5 @@
 import 'package:apprubinho/screens/form_frete_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -151,19 +152,29 @@ class _FreteCardState extends State<FreteCard> {
       await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
           .remover(widget.card);
 
-      await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-          .put(widget.card);
-      await _dbFrete.moverFrete(
-          status: 'Em andamento', card: widget.card, paraOnde: 'Concluido');
+      if (mounted) {
+        await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+            .put(widget.card);
+      }
+      if (mounted) {
+        await _dbFrete.moverFrete(
+            status: 'Em andamento', card: widget.card, paraOnde: 'Concluido');
+      }
     }
 
     if (widget.card.status == 'Concluido') {
-      await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-          .remover(widget.card);
+      if (mounted) {
+        await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+            .remover(widget.card);
+      }
 
-      print("removido do concluido");
-      await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-          .put(widget.card);
+      if (kDebugMode) {
+        print("removido do concluido");
+      }
+      if (mounted) {
+        await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+            .put(widget.card);
+      }
 
       await _dbFrete.moverFrete(
           card: widget.card, status: 'Concluido', paraOnde: 'Em andamento');

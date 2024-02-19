@@ -1,5 +1,6 @@
 import 'package:apprubinho/models/custos_model.dart';
-import 'package:apprubinho/providers/despesas_provider.dart';
+import 'package:apprubinho/providers/custos_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -352,9 +353,13 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
         debugPrint(err.toString());
       }
 
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } else {
-      print('inválido');
+      if (kDebugMode) {
+        print('inválido');
+      }
     }
   }
 
@@ -364,7 +369,9 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
     });
     await Provider.of<DespesasProvider>(context, listen: false)
         .remover(widget.card!);
-    Navigator.of(context).pop();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
     await _dbDespesa.excluirDespesa(widget.card!, widget.card!.data);
   }
 }

@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/frete_card_provider.dart';
 
 class HomePageAdm extends StatefulWidget {
   const HomePageAdm({super.key});
@@ -15,14 +13,12 @@ class HomePageAdm extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePageAdm> {
-  bool _carregando = true;
   int currentPageIndex = 0;
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-    carregandoFretes();
   }
 
   @override
@@ -85,7 +81,7 @@ class _HomePageState extends State<HomePageAdm> {
                       size: 40,
                     ),
                     title: const Text('Despesas'),
-                    subtitle: const Text('Fretes de todos os usuarios'),
+                    subtitle: const Text('Manutenção e Abastecimento'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {},
@@ -185,16 +181,5 @@ class _HomePageState extends State<HomePageAdm> {
         ),
       ));
     }
-  }
-
-  Future<void> carregandoFretes() async {
-    await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-        .carregarDadosDoBanco();
-
-    await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-        .carregarDadosDoBanco();
-    setState(() {
-      _carregando = false;
-    });
   }
 }

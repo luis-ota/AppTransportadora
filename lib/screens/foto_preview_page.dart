@@ -2,67 +2,84 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class PreviewPage extends StatelessWidget {
-  final File file;
+class PreviewPage extends StatefulWidget {
+  final String path;
+  final bool vendo;
 
-  const PreviewPage({super.key, required this.file});
+  const PreviewPage({super.key, required this.path, required this.vendo});
 
+  @override
+  State<PreviewPage> createState() => _PreviewPageState();
+}
+
+class _PreviewPageState extends State<PreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
         children: [
           Expanded(
-              child: Stack(
-            children: [
-              Positioned.fill(
-                  child: Image.file(
-                file,
-                fit: BoxFit.cover,
-              )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.all(32),
-                      child: CircleAvatar(
-                        radius: 32,
-                        backgroundColor: Colors.black.withOpacity(.5),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 30,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: (widget.path.contains('https'))
+                      ? Image.network(
+                          widget.path,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          File(widget.path),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Visibility(
+                      visible: !widget.vendo,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: CircleAvatar(
+                            radius: 32,
+                            backgroundColor: Colors.black.withOpacity(.5),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onPressed: () =>
+                                  Navigator.of(context).pop(File(widget.path)),
+                            ),
                           ),
-                          onPressed: () => Navigator.of(context).pop(file),
                         ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.all(32),
-                      child: CircleAvatar(
-                        radius: 32,
-                        backgroundColor: Colors.black.withOpacity(.5),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 30,
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.black.withOpacity(.5),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
                         ),
                       ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ))
+                    )
+                  ],
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

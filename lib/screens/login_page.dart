@@ -1,4 +1,5 @@
 import 'package:apprubinho/services/firebase_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -104,7 +105,9 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       _auth.acessar(usuario: usuario, senha: senha).then((value) {});
     } else {
-      print('inválido');
+      if (kDebugMode) {
+        print('inválido');
+      }
     }
   }
 }
