@@ -24,7 +24,7 @@ class _DespesasCardState extends State<DespesasCard> {
           children: [
             const ImageIcon(
               AssetImage("lib/assets/img/despesas_icon.png"),
-              size: 40,
+              size: 35,
             ),
             Text(widget.card.data.substring(0, 5))
           ],

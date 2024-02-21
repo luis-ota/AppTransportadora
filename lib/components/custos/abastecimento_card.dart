@@ -23,7 +23,7 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
           children: [
             const ImageIcon(
               AssetImage("lib/assets/img/local_gas_station.png"),
-              size: 40,
+              size: 35,
             ),
             Text(widget.card.data.substring(0, 5))
           ],

@@ -422,10 +422,9 @@ class _FormFretePageState extends State<FormFretePage> {
             .put(freteCardDados);
         try {
           (widget.action == 'editar')
-              ? await _dbFrete.cadastrarFrete(
-                  card: freteCardDados, status: 'Em andamento')
-              : await _dbFrete.attDadosFretes(
-                  freteCardDados, widget.card!.data);
+              ? await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data)
+              : await _dbFrete.cadastrarFrete(
+                  card: freteCardDados, status: 'Em andamento');
         } catch (err) {
           debugPrint(err.toString());
         }
