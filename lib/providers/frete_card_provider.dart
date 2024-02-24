@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/fretecard_model.dart';
@@ -28,7 +29,7 @@ class FreteCardAndamentoProvider with ChangeNotifier {
       final id = freteCard.freteId;
       _andamentoCards.putIfAbsent(
           id,
-          () => FreteCardDados(
+              () => FreteCardDados(
               origem: freteCard.origem,
               compra: freteCard.compra,
               destino: freteCard.destino,
@@ -49,7 +50,8 @@ class FreteCardAndamentoProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco() async {
     _andamentoCards.clear();
-    final dados = await _dbFrete.lerDadosFretes();
+    final dados = await _dbFrete.lerDadosBanco('Fretes',
+        uid: FirebaseAuth.instance.currentUser!.uid);
 
     if (dados?['Em andamento'] != null) {
       dados?['Em andamento'].forEach((key, value) {
@@ -113,14 +115,15 @@ class FreteCardConcluidoProvider with ChangeNotifier {
               status: 'Concluido',
               freteId: id));
     }
-
+    organizar();
     notifyListeners();
   }
 
   Future<void> carregarDadosDoBanco() async {
     _concluidoCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbFrete.lerDadosFretes();
+    final dados = await _dbFrete.lerDadosBanco('Fretes',
+        uid: FirebaseAuth.instance.currentUser!.uid);
     if (dados?['Concluido'] != null) {
       dados?['Concluido'].forEach((ano, value) {
         dados['Concluido']['$ano'].forEach((mes, value) {

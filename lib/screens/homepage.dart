@@ -45,7 +45,9 @@ class _HomePageState extends State<HomePage> {
                   child: CircularProgressIndicator(),
                 )
               : <Widget>[
-                  const FreteTabbar(),
+                  const FreteTabbar(
+                    admin: false,
+                  ),
                   const DespesasTabbar(),
                 ][currentPageIndex],
           bottomNavigationBar: NavigationBar(

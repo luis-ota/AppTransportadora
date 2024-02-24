@@ -1,6 +1,8 @@
 import 'package:apprubinho/models/fretecard_model.dart';
+import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
 import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:apprubinho/services/firebase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,11 +13,13 @@ import 'package:provider/provider.dart';
 class FormFretePage extends StatefulWidget {
   final FreteCardDados? card;
   final String? action;
+  final String? uid;
 
   const FormFretePage({
     super.key,
     this.card,
     this.action,
+    this.uid,
   });
 
   @override
@@ -413,7 +417,10 @@ class _FormFretePageState extends State<FormFretePage> {
         await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
             .put(freteCardDados);
         try {
-          await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data);
+          await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data,
+              uid: (widget.uid == null)
+                  ? FirebaseAuth.instance.currentUser?.uid
+                  : widget.uid);
         } catch (err) {
           debugPrint(err.toString());
         }
@@ -422,11 +429,18 @@ class _FormFretePageState extends State<FormFretePage> {
             .put(freteCardDados);
         try {
           (widget.action == 'editar')
-              ? await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data)
+              ? await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data,
+                  uid: (widget.uid == null)
+                      ? FirebaseAuth.instance.currentUser!.uid
+                      : widget.uid)
               : await _dbFrete.cadastrarFrete(
-                  card: freteCardDados, status: 'Em andamento');
+                  card: freteCardDados,
+                  status: 'Em andamento',
+                  uid: (widget.uid == null)
+                      ? FirebaseAuth.instance.currentUser!.uid
+                      : widget.uid);
         } catch (err) {
-          debugPrint(err.toString());
+          debugPrint("erro ao cadastrar ou editar frete: $err");
         }
       }
 
@@ -444,14 +458,32 @@ class _FormFretePageState extends State<FormFretePage> {
     setState(() {
       _carregando = true;
     });
-    await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-        .remover(widget.card!);
+    if (widget.card?.status == 'Em andamento') {
+      (widget.uid == null)
+          ? await Provider.of<FreteCardAndamentoProvider>(context,
+                  listen: false)
+              .remover(widget.card!)
+          : await Provider.of<VerUsuarioFreteCardAndamentoProvider>(context,
+                  listen: false)
+              .remover(widget.card!);
+    } else {
+      (widget.uid == null)
+          ? await Provider.of<FreteCardConcluidoProvider>(context,
+                  listen: false)
+              .remover(widget.card!)
+          : await Provider.of<VerUsuarioFreteCardConcluidoProvider>(context,
+                  listen: false)
+              .remover(widget.card!);
+    }
     if (mounted) {
       Navigator.of(context).pop();
     }
     await _dbFrete.excluirFrete(
         card: widget.card!,
         status: widget.card!.status,
-        data: widget.card!.data);
+        data: widget.card!.data,
+        uid: (widget.uid == null)
+            ? FirebaseAuth.instance.currentUser?.uid
+            : widget.uid);
   }
 }

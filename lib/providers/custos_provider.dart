@@ -1,4 +1,5 @@
 import 'package:apprubinho/models/custos_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../services/firebase_service.dart';
@@ -47,7 +48,8 @@ class DespesasProvider with ChangeNotifier {
   Future<void> carregarDadosDoBanco() async {
     _despesasCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbDespesas.lerDadosDespesas();
+    final dados = await _dbDespesas.lerDadosBanco('Despesas',
+        uid: FirebaseAuth.instance.currentUser!.uid);
     if (dados?['Despesas'] != null) {
       dados?['Despesas'].forEach((ano, value) {
         dados['Despesas']['$ano'].forEach((mes, value) {
@@ -68,14 +70,14 @@ class DespesasProvider with ChangeNotifier {
   }
 
   Future<void> organizar() async {
-    Map<String, DespesasDados> fretesOrdenados = {};
+    Map<String, DespesasDados> despesasOrdenados = {};
     List<String> chavesOrdenadas = _despesasCards.keys.toList();
     chavesOrdenadas.sort((a, b) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      fretesOrdenados[chave] = _despesasCards[chave]!;
+      despesasOrdenados[chave] = _despesasCards[chave]!;
     }
     _despesasCards.clear();
-    _despesasCards.addAll(fretesOrdenados);
+    _despesasCards.addAll(despesasOrdenados);
     notifyListeners();
   }
 }
@@ -123,7 +125,8 @@ class AbastecimentoProvider with ChangeNotifier {
   Future<void> carregarDadosDoBanco() async {
     _abastecimentoCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbDespesas.lerDadosDespesas();
+    final dados = await _dbDespesas.lerDadosBanco('Custos',
+        uid: FirebaseAuth.instance.currentUser!.uid);
     if (dados?['Abastecimento'] != null) {
       dados?['Abastecimento'].forEach((ano, value) {
         dados['Abastecimento']['$ano'].forEach((mes, value) {
@@ -144,15 +147,15 @@ class AbastecimentoProvider with ChangeNotifier {
   }
 
   Future<void> organizar() async {
-    Map<String, AbastecimentoDados> fretesOrdenados = {};
+    Map<String, AbastecimentoDados> abastecimentoOrdenados = {};
 
     List<String> chavesOrdenadas = _abastecimentoCards.keys.toList();
     chavesOrdenadas.sort((a, b) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      fretesOrdenados[chave] = _abastecimentoCards[chave]!;
+      abastecimentoOrdenados[chave] = _abastecimentoCards[chave]!;
     }
     _abastecimentoCards.clear();
-    _abastecimentoCards.addAll(fretesOrdenados);
+    _abastecimentoCards.addAll(abastecimentoOrdenados);
     notifyListeners();
   }
 }

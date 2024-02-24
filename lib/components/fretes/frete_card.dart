@@ -1,4 +1,6 @@
+import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
 import 'package:apprubinho/screens/form_frete_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,8 +13,15 @@ import '../../services/firebase_service.dart';
 class FreteCard extends StatefulWidget {
   final FreteCardDados card;
   final String status;
+  final String? uid;
+  final bool? admin;
 
-  const FreteCard({super.key, required this.card, required this.status});
+  const FreteCard(
+      {super.key,
+      required this.card,
+      required this.status,
+      this.uid,
+      this.admin});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,14 +51,14 @@ class _FreteCardState extends State<FreteCard> {
                         children: [
                           (widget.status == 'Em andamento')
                               ? const ImageIcon(
-                                  AssetImage("lib/assets/img/caminhao.png"),
-                                  size: 50,
-                                )
+                            AssetImage("lib/assets/img/caminhao.png"),
+                            size: 50,
+                          )
                               : const Icon(
-                                  Icons.check_circle_outline_outlined,
-                                  size: 55,
-                                  color: Colors.green,
-                                ),
+                            Icons.check_circle_outline_outlined,
+                            size: 55,
+                            color: Colors.green,
+                          ),
                           const SizedBox(
                             width: 15,
                           ),
@@ -123,8 +132,11 @@ class _FreteCardState extends State<FreteCard> {
                             onPressed: () =>
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => FormFretePage(
-                                          card: widget.card,
+                                      card: widget.card,
                                           action: 'editar',
+                                          uid: (widget.uid != null)
+                                              ? widget.uid
+                                              : null,
                                         )))),
                         const SizedBox(width: 8),
                         TextButton(
@@ -149,41 +161,69 @@ class _FreteCardState extends State<FreteCard> {
 
   Future<void> mover() async {
     if (widget.card.status == 'Em andamento') {
-      await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-          .remover(widget.card);
+      (widget.uid == null)
+          ? await Provider.of<FreteCardAndamentoProvider>(context,
+                  listen: false)
+              .remover(widget.card)
+          : await Provider.of<VerUsuarioFreteCardAndamentoProvider>(context,
+                  listen: false)
+              .remover(widget.card);
 
       if (mounted) {
-        await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-            .put(widget.card);
+        (widget.uid == null)
+            ? await Provider.of<FreteCardConcluidoProvider>(context,
+                    listen: false)
+                .put(widget.card)
+            : await Provider.of<VerUsuarioFreteCardConcluidoProvider>(context,
+                    listen: false)
+                .put(widget.card);
       }
       if (mounted) {
         await _dbFrete.moverFrete(
-            status: 'Em andamento', card: widget.card, paraOnde: 'Concluido');
+            status: 'Em andamento',
+            card: widget.card,
+            paraOnde: 'Concluido',
+            uid: (widget.uid == null)
+                ? FirebaseAuth.instance.currentUser?.uid
+                : widget.uid);
       }
     }
 
     if (widget.card.status == 'Concluido') {
       if (mounted) {
-        await Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-            .remover(widget.card);
+        (widget.uid == null)
+            ? await Provider.of<FreteCardConcluidoProvider>(context,
+                    listen: false)
+                .remover(widget.card)
+            : await Provider.of<VerUsuarioFreteCardConcluidoProvider>(context,
+                    listen: false)
+                .remover(widget.card);
       }
 
       if (kDebugMode) {
         print("removido do concluido");
       }
       if (mounted) {
-        await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-            .put(widget.card);
+        (widget.uid == null)
+            ? await Provider.of<FreteCardAndamentoProvider>(context,
+                    listen: false)
+                .put(widget.card)
+            : await Provider.of<VerUsuarioFreteCardAndamentoProvider>(context,
+                    listen: false)
+                .put(widget.card);
       }
 
       await _dbFrete.moverFrete(
-          card: widget.card, status: 'Concluido', paraOnde: 'Em andamento');
+          card: widget.card,
+          status: 'Concluido',
+          paraOnde: 'Em andamento',
+          uid: (widget.uid == null)
+              ? FirebaseAuth.instance.currentUser?.uid
+              : widget.uid);
     }
   }
 
-  String formatToReal(
-    String valor,
-  ) {
+  String formatToReal(String valor,) {
     return NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
         .format(double.parse(valor));
   }

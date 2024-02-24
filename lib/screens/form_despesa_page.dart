@@ -1,5 +1,6 @@
 import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +13,11 @@ import '../services/firebase_service.dart';
 class FormDespesaPage extends StatefulWidget {
   final DespesasDados? card;
   final String? action;
+  final String? uid;
+  final bool? admin;
 
-  const FormDespesaPage({super.key, this.card, this.action});
+  const FormDespesaPage(
+      {super.key, this.card, this.action, this.uid, this.admin});
 
   @override
   State<StatefulWidget> createState() {
@@ -345,9 +349,16 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
           .put(despesasDados);
       try {
         if (widget.action == 'editar') {
-          await _dbDespesa.attDadosDespesa(despesasDados, widget.card!.data);
+          await _dbDespesa.attDadosDespesa(despesasDados, widget.card!.data,
+              uid: (!widget.admin!)
+                  ? FirebaseAuth.instance.currentUser?.uid
+                  : widget.uid);
         } else {
-          await _dbDespesa.cadastrarDespesa(despesa: despesasDados);
+          await _dbDespesa.cadastrarDespesa(
+              despesa: despesasDados,
+              uid: (!widget.admin!)
+                  ? FirebaseAuth.instance.currentUser?.uid
+                  : widget.uid);
         }
       } catch (err) {
         debugPrint(err.toString());
@@ -372,6 +383,9 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
     if (mounted) {
       Navigator.of(context).pop();
     }
-    await _dbDespesa.excluirDespesa(widget.card!, widget.card!.data);
+    await _dbDespesa.excluirDespesa(widget.card!, widget.card!.data,
+        uid: (!widget.admin!)
+            ? FirebaseAuth.instance.currentUser?.uid
+            : widget.uid);
   }
 }

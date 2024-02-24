@@ -33,12 +33,12 @@ class _PerfilPageState extends State<PerfilPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text('Nome: Luis'),
-              Text('id: "${user?.uid}"'),
+              Text('emial: "${user?.email}"'),
               const Text('Lucros últimos 15 dias: 10 reais'),
               Visibility(
-                  visible: user?.uid == 'WYUO7BaXNCgqpVzqopIM0b6DiEl1',
+                  visible: user?.email == 'rubens@apprubinho.com',
                   child: TextButton(
-                    onPressed: () => Navigator.pushNamed(
+                    onPressed: () => Navigator.pushReplacementNamed(
                         context, "/home/admin/homepage_adm"),
                     child: const Text('Administração'),
                   ))

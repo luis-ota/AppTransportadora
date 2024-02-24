@@ -45,6 +45,7 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
                 builder: (context) => FormAbastecimentoPage(
                       card: widget.card,
                       action: 'editar',
+                      admin: false,
                     )));
           },
         ),

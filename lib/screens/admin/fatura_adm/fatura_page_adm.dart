@@ -1,23 +1,19 @@
-import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
-import 'package:apprubinho/screens/admin/fretes_usuarios_adm/lista_usuarios.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
 
-class HomePageAdm extends StatefulWidget {
-  const HomePageAdm({super.key});
+class FaturaPageAdm extends StatefulWidget {
+  const FaturaPageAdm({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _HomePageState();
+    return _FaturaPageState();
   }
 }
 
-class _HomePageState extends State<HomePageAdm> {
+class _FaturaPageState extends State<FaturaPageAdm> {
   int currentPageIndex = 0;
-  final user = FirebaseAuth.instance.currentUser;
-  late bool _carregando = false;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -59,29 +55,22 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Editar ou criar usuarios'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/usuarios_page_adm"),
+                      onPressed: () {},
                     ),
                   ),
                 ),
                 Card(
                   child: ListTile(
-                    leading: _carregando
-                        ? const CircularProgressIndicator()
-                        : const ImageIcon(
-                            AssetImage("lib/assets/img/caminhao.png"),
-                            size: 50,
-                          ),
+                    leading: const ImageIcon(
+                      AssetImage("lib/assets/img/caminhao.png"),
+                      size: 50,
+                    ),
                     title: const Text('Fretes'),
                     subtitle: const Text('Fretes de todos os usuarios'),
                     trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios),
-                        onPressed: () {
-                          carregarDadosUsuario();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const FretesUsuariosPageAdm()));
-                        }),
+                      icon: const Icon(Icons.arrow_forward_ios),
+                      onPressed: () {},
+                    ),
                   ),
                 ),
                 Card(
@@ -94,8 +83,7 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Manutenção e Abastecimento'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/despesas_page_adm"),
+                      onPressed: () {},
                     ),
                   ),
                 ),
@@ -109,8 +97,7 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Pagamento aos caminhoneiros'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/pagamentos_page_adm"),
+                      onPressed: () {},
                     ),
                   ),
                 ),
@@ -124,8 +111,7 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Lucros e despesas'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/faturamento_page_adm"),
+                      onPressed: () {},
                     ),
                   ),
                 ),
@@ -139,8 +125,7 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Verifique sua fatura mensal'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/fatura_page_adm"),
+                      onPressed: () {},
                     ),
                   ),
                 ),
@@ -170,21 +155,21 @@ class _HomePageState extends State<HomePageAdm> {
     } else {
       return MaterialApp(
           home: Scaffold(
-            appBar: AppBar(
-              title: const Text('Tranportadora Rubinho'),
-              backgroundColor: const Color(0xFF43A0E4),
-            ),
-            body: SizedBox(
-              height: double.maxFinite,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Voce nao tem acesso a essa área',
-                      style: TextStyle(fontSize: 19),
-                    ),
-                    TextButton(
+        appBar: AppBar(
+          title: const Text('Tranportadora Rubinho'),
+          backgroundColor: const Color(0xFF43A0E4),
+        ),
+        body: SizedBox(
+          height: double.maxFinite,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Voce nao tem acesso a essa área',
+                  style: TextStyle(fontSize: 19),
+                ),
+                TextButton(
                     onPressed: () =>
                         Navigator.pushReplacementNamed(context, "/home"),
                     child: const Text("Voltar"))
@@ -194,16 +179,5 @@ class _HomePageState extends State<HomePageAdm> {
         ),
       ));
     }
-  }
-
-  carregarDadosUsuario() async {
-    setState(() {
-      _carregando = true;
-    });
-    await Provider.of<UsuariosProvider>(context, listen: false)
-        .carregarDadosDoBanco();
-    setState(() {
-      _carregando = false;
-    });
   }
 }
