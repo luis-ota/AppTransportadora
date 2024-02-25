@@ -1,33 +1,31 @@
 import 'package:apprubinho/models/custos_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:apprubinho/services/firebase_service.dart';
 import 'package:flutter/material.dart';
-
-import '../services/firebase_service.dart';
 
 final FirebaseService _dbDespesas = FirebaseService();
 
-class DespesasProvider with ChangeNotifier {
-  final Map<String, DespesasDados> _despesasCards = {};
+class VerUsuarioDespesaProvider with ChangeNotifier {
+  final Map<String, DespesasDados> _usuarioDespesasCards = {};
 
   List<DespesasDados> get all {
-    return [..._despesasCards.values];
+    return [..._usuarioDespesasCards.values];
   }
 
   int get count {
-    return _despesasCards.length;
+    return _usuarioDespesasCards.length;
   }
 
   DespesasDados byIndex(int i) {
-    return _despesasCards.values.elementAt(i);
+    return _usuarioDespesasCards.values.elementAt(i);
   }
 
   Future<void> put(DespesasDados despesaCard) async {
     if (despesaCard.despesaId.trim().isNotEmpty &&
-        _despesasCards.containsKey(despesaCard.despesaId)) {
-      _despesasCards.update(despesaCard.despesaId, (_) => despesaCard);
+        _usuarioDespesasCards.containsKey(despesaCard.despesaId)) {
+      _usuarioDespesasCards.update(despesaCard.despesaId, (_) => despesaCard);
     } else {
       final id = despesaCard.despesaId;
-      _despesasCards.putIfAbsent(
+      _usuarioDespesasCards.putIfAbsent(
           id,
           () => DespesasDados(
               despesa: despesaCard.despesa,
@@ -41,15 +39,14 @@ class DespesasProvider with ChangeNotifier {
   }
 
   Future<void> remover(DespesasDados despesaCard) async {
-    _despesasCards.remove(despesaCard.despesaId);
+    _usuarioDespesasCards.remove(despesaCard.despesaId);
     notifyListeners();
   }
 
-  Future<void> carregarDadosDoBanco() async {
-    _despesasCards.clear();
+  Future<void> carregarDadosDoBanco(String? uid) async {
+    _usuarioDespesasCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbDespesas.lerDadosBanco('Custos',
-        uid: FirebaseAuth.instance.currentUser!.uid);
+    final dados = await _dbDespesas.lerDadosBanco('Custos', uid: uid!);
     if (dados?['Despesas'] != null) {
       dados?['Despesas'].forEach((ano, value) {
         dados['Despesas']['$ano'].forEach((mes, value) {
@@ -71,40 +68,41 @@ class DespesasProvider with ChangeNotifier {
 
   Future<void> organizar() async {
     Map<String, DespesasDados> despesasOrdenados = {};
-    List<String> chavesOrdenadas = _despesasCards.keys.toList();
+    List<String> chavesOrdenadas = _usuarioDespesasCards.keys.toList();
     chavesOrdenadas.sort((a, b) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      despesasOrdenados[chave] = _despesasCards[chave]!;
+      despesasOrdenados[chave] = _usuarioDespesasCards[chave]!;
     }
-    _despesasCards.clear();
-    _despesasCards.addAll(despesasOrdenados);
+    _usuarioDespesasCards.clear();
+    _usuarioDespesasCards.addAll(despesasOrdenados);
     notifyListeners();
   }
 }
 
-class AbastecimentoProvider with ChangeNotifier {
-  final Map<String, AbastecimentoDados> _abastecimentoCards = {};
+class VerUsuarioAbastecimentoProvider with ChangeNotifier {
+  final Map<String, AbastecimentoDados> _usuarioAbastecimentoCards = {};
 
   List<AbastecimentoDados> get all {
-    return [..._abastecimentoCards.values];
+    return [..._usuarioAbastecimentoCards.values];
   }
 
   int get count {
-    return _abastecimentoCards.length;
+    return _usuarioAbastecimentoCards.length;
   }
 
   AbastecimentoDados byIndex(int i) {
-    return _abastecimentoCards.values.elementAt(i);
+    return _usuarioAbastecimentoCards.values.elementAt(i);
   }
 
   Future<void> put(AbastecimentoDados abastecimentoCard) async {
     if (abastecimentoCard.abastecimentoId.trim().isNotEmpty &&
-        _abastecimentoCards.containsKey(abastecimentoCard.abastecimentoId)) {
-      _abastecimentoCards.update(
+        _usuarioAbastecimentoCards
+            .containsKey(abastecimentoCard.abastecimentoId)) {
+      _usuarioAbastecimentoCards.update(
           abastecimentoCard.abastecimentoId, (_) => abastecimentoCard);
     } else {
       final id = abastecimentoCard.abastecimentoId;
-      _abastecimentoCards.putIfAbsent(
+      _usuarioAbastecimentoCards.putIfAbsent(
           id,
           () => AbastecimentoDados(
               quantidadeAbastecida: abastecimentoCard.quantidadeAbastecida,
@@ -118,15 +116,14 @@ class AbastecimentoProvider with ChangeNotifier {
   }
 
   Future<void> remover(AbastecimentoDados abastecimentoDados) async {
-    _abastecimentoCards.remove(abastecimentoDados.abastecimentoId);
+    _usuarioAbastecimentoCards.remove(abastecimentoDados.abastecimentoId);
     notifyListeners();
   }
 
-  Future<void> carregarDadosDoBanco() async {
-    _abastecimentoCards.clear();
+  Future<void> carregarDadosDoBanco(String? uid) async {
+    _usuarioAbastecimentoCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbDespesas.lerDadosBanco('Custos',
-        uid: FirebaseAuth.instance.currentUser!.uid);
+    final dados = await _dbDespesas.lerDadosBanco('Custos', uid: uid!);
     if (dados?['Abastecimento'] != null) {
       dados?['Abastecimento'].forEach((ano, value) {
         dados['Abastecimento']['$ano'].forEach((mes, value) {
@@ -149,13 +146,13 @@ class AbastecimentoProvider with ChangeNotifier {
   Future<void> organizar() async {
     Map<String, AbastecimentoDados> abastecimentoOrdenados = {};
 
-    List<String> chavesOrdenadas = _abastecimentoCards.keys.toList();
+    List<String> chavesOrdenadas = _usuarioAbastecimentoCards.keys.toList();
     chavesOrdenadas.sort((a, b) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      abastecimentoOrdenados[chave] = _abastecimentoCards[chave]!;
+      abastecimentoOrdenados[chave] = _usuarioAbastecimentoCards[chave]!;
     }
-    _abastecimentoCards.clear();
-    _abastecimentoCards.addAll(abastecimentoOrdenados);
+    _usuarioAbastecimentoCards.clear();
+    _usuarioAbastecimentoCards.addAll(abastecimentoOrdenados);
     notifyListeners();
   }
 }

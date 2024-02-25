@@ -1,13 +1,16 @@
 import 'package:apprubinho/models/usuario_model.dart';
+import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
+import 'package:apprubinho/screens/admin/custos_adm/custos_usuarios_page_adm.dart';
 import 'package:apprubinho/screens/admin/fretes_usuarios_adm/fretes_usuarios_page_adm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UsuarioCard extends StatefulWidget {
   final UsuariosDados card;
+  final String administrar;
 
-  const UsuarioCard({super.key, required this.card});
+  const UsuarioCard({super.key, required this.card, required this.administrar});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,32 +35,55 @@ class _UsuarioCardState extends State<UsuarioCard> {
         trailing: IconButton(
             icon: const Icon(Icons.arrow_forward_ios),
             onPressed: () {
-              carregarDadosUsuario(widget.card.uid);
-              if (mounted) {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => FretesUsuariosPageAdm(
-                          card: widget.card,
-                        )));
-              }
+              acessar(widget.administrar);
             }),
       ),
     );
   }
 
-  carregarDadosUsuario(uid) async {
+  carregarDadosUsuario(uid, onde) async {
     setState(() {
       _carregando = true;
     });
-    await Provider.of<VerUsuarioFreteCardAndamentoProvider>(context,
-            listen: false)
-        .carregarDadosDoBanco(uid);
-    if (mounted) {
-      await Provider.of<VerUsuarioFreteCardConcluidoProvider>(context,
+    if (onde == 'Fretes') {
+      await Provider.of<VerUsuarioFreteCardAndamentoProvider>(context,
               listen: false)
           .carregarDadosDoBanco(uid);
+      if (mounted) {
+        await Provider.of<VerUsuarioFreteCardConcluidoProvider>(context,
+                listen: false)
+            .carregarDadosDoBanco(uid);
+      }
+    }
+    if (onde == 'Custos') {
+      if (mounted) {
+        await Provider.of<VerUsuarioDespesaProvider>(context, listen: false)
+            .carregarDadosDoBanco(uid);
+      }
+      if (mounted) {
+        await Provider.of<VerUsuarioAbastecimentoProvider>(context,
+                listen: false)
+            .carregarDadosDoBanco(uid);
+      }
     }
     setState(() {
       _carregando = false;
     });
+  }
+
+  void acessar(String administrar) {
+    carregarDadosUsuario(widget.card.uid, administrar);
+    if (mounted && administrar == 'Fretes') {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => FretesUsuariosPageAdm(
+                card: widget.card,
+              )));
+    }
+    if (mounted && administrar == 'Custos') {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => CustosUsuariosPageAdm(
+                card: widget.card,
+              )));
+    }
   }
 }

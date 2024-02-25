@@ -261,11 +261,6 @@ class FirebaseService {
   }
 
   Future<Map?> lerDadosBanco(String ref, {required String? uid}) async {
-    if (ref == 'Despesas') {
-      DatabaseEvent snapshot = await _custosref.child(uid!).once();
-      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
-      return data;
-    }
     if (ref == 'Fretes') {
       DatabaseEvent snapshot = await _fretesRef.child(uid!).once();
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;

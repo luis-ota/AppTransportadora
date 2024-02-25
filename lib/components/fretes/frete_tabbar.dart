@@ -6,10 +6,9 @@ import 'package:provider/provider.dart';
 import 'frete_card.dart';
 
 class FreteTabbar extends StatefulWidget {
-  final bool? admin;
   final String? uid;
 
-  const FreteTabbar({super.key, this.admin, this.uid});
+  const FreteTabbar({super.key, this.uid});
 
   @override
   State<StatefulWidget> createState() {
@@ -64,7 +63,7 @@ class _FreteTabbarState extends State<FreteTabbar>
                                 context)
                             .count,
                     itemBuilder: (context, i) => FreteCard(
-                          card: (widget.uid == null)
+                      card: (widget.uid == null)
                               ? Provider.of<FreteCardAndamentoProvider>(context)
                                   .all
                                   .elementAt(i)
@@ -74,8 +73,7 @@ class _FreteTabbarState extends State<FreteTabbar>
                                   .all
                                   .elementAt(i),
                           status: 'Em andamento',
-                          uid: widget.uid,
-                          admin: false,
+                          uid: (widget.uid != null) ? widget.uid : null,
                         )),
               ),
               RefreshIndicator(

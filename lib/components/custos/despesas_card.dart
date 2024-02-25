@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 
 class DespesasCard extends StatefulWidget {
   final DespesasDados card;
+  final String? uid;
 
-  const DespesasCard({super.key, required this.card});
+  const DespesasCard({super.key, required this.card, this.uid});
 
   @override
   State<StatefulWidget> createState() {
@@ -37,8 +38,9 @@ class _DespesasCardState extends State<DespesasCard> {
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => FormDespesaPage(
-                      card: widget.card,
+                  card: widget.card,
                       action: 'editar',
+                      uid: (widget.uid != null) ? widget.uid : null,
                     )));
           },
         ),

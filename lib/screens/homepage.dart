@@ -1,5 +1,6 @@
 import 'package:apprubinho/components/fretes/frete_tabbar.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
+import 'package:apprubinho/providers/custos_tabbar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _carregando = true;
   int currentPageIndex = 0;
+  int despesaIndex = 0;
 
   @override
   void initState() {
@@ -44,11 +46,9 @@ class _HomePageState extends State<HomePage> {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : <Widget>[
-                  const FreteTabbar(
-                    admin: false,
-                  ),
-                  const DespesasTabbar(),
+              : const <Widget>[
+                  FreteTabbar(),
+                  CustosTabbar(),
                 ][currentPageIndex],
           bottomNavigationBar: NavigationBar(
             height: 70,
@@ -105,28 +105,53 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      content: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pushNamed(
-                                    context, "/home/form_despesa_page");
-                              },
-                              child: const Text("Despesa"),
+                      content: SizedBox(
+                        height: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: 100,
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(
+                                      context, "/home/form_despesa_page");
+                                  Provider.of<CustosTabbarIndexProvider>(
+                                          context,
+                                          listen: false)
+                                      .mudarIndex(0);
+                                },
+                                child: const Column(
+                                  children: [
+                                    ImageIcon(
+                                      AssetImage(
+                                          "lib/assets/img/despesas_icon.png"),
+                                      size: 33,
+                                    ),
+                                    Text("Despesa"),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pushNamed(
-                                    context, "/home/form_abastecimento_page");
-                              },
-                              child: const Text("Abastecimento")),
-                        ],
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  await Navigator.pushNamed(
+                                      context, "/home/form_abastecimento_page");
+                                  mudarIndexTabbar();
+                                },
+                                child: const Column(
+                                  children: [
+                                    ImageIcon(
+                                      AssetImage("lib/assets/img/caminhao.png"),
+                                      size: 35,
+                                    ),
+                                    Text("Abastecimento"),
+                                  ],
+                                )),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -180,5 +205,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _carregando = false;
     });
+  }
+
+  void mudarIndexTabbar() {
+    if (mounted) {
+      Provider.of<CustosTabbarIndexProvider>(context, listen: false)
+          .mudarIndex(1);
+    }
   }
 }

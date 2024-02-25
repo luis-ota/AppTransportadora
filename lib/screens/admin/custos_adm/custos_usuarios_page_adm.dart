@@ -1,21 +1,21 @@
-import 'package:apprubinho/components/fretes/frete_tabbar.dart';
+import 'package:apprubinho/components/custos/custos_tabbar.dart';
 import 'package:apprubinho/models/usuario_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-class FretesUsuariosPageAdm extends StatefulWidget {
+class CustosUsuariosPageAdm extends StatefulWidget {
   final UsuariosDados? card;
 
-  const FretesUsuariosPageAdm({super.key, this.card});
+  const CustosUsuariosPageAdm({super.key, this.card});
 
   @override
   State<StatefulWidget> createState() {
-    return _FretesUsuariosPageState();
+    return _CustosUsuariosPageState();
   }
 }
 
-class _FretesUsuariosPageState extends State<FretesUsuariosPageAdm> {
+class _CustosUsuariosPageState extends State<CustosUsuariosPageAdm> {
   int currentPageIndex = 0;
   final User? user = FirebaseAuth.instance.currentUser;
 
@@ -43,14 +43,14 @@ class _FretesUsuariosPageState extends State<FretesUsuariosPageAdm> {
                   width: 15,
                 ),
                 ImageIcon(
-                  AssetImage("lib/assets/img/caminhao.png"),
+                  AssetImage("lib/assets/img/despesas_icon.png"),
                   size: 40,
                 ),
               ]),
-              title: Text('Fretes do ${widget.card?.nome}'),
+              title: Text('Custos do ${widget.card?.nome}'),
               backgroundColor: const Color(0xFF43A0E4),
             ),
-            body: FreteTabbar(
+            body: CustosTabbar(
               uid: widget.card?.uid,
             ),
             bottomNavigationBar: BottomAppBar(

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class AbastecimentoCard extends StatefulWidget {
   final AbastecimentoDados card;
+  final String? uid;
 
-  const AbastecimentoCard({super.key, required this.card});
+  const AbastecimentoCard({super.key, required this.card, this.uid});
 
   @override
   State<StatefulWidget> createState() {
@@ -43,9 +44,9 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => FormAbastecimentoPage(
-                      card: widget.card,
+                  card: widget.card,
                       action: 'editar',
-                      admin: false,
+                      uid: (widget.uid != null) ? widget.uid : null,
                     )));
           },
         ),

@@ -1,4 +1,5 @@
 import 'package:apprubinho/models/custos_model.dart';
+import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -14,10 +15,8 @@ class FormDespesaPage extends StatefulWidget {
   final DespesasDados? card;
   final String? action;
   final String? uid;
-  final bool? admin;
 
-  const FormDespesaPage(
-      {super.key, this.card, this.action, this.uid, this.admin});
+  const FormDespesaPage({super.key, this.card, this.action, this.uid});
 
   @override
   State<StatefulWidget> createState() {
@@ -345,18 +344,21 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
         despesaId: despesaId,
       );
 
-      await Provider.of<DespesasProvider>(context, listen: false)
-          .put(despesasDados);
+      (widget.uid == null)
+          ? await Provider.of<DespesasProvider>(context, listen: false)
+              .put(despesasDados)
+          : await Provider.of<VerUsuarioDespesaProvider>(context, listen: false)
+              .put(despesasDados);
       try {
         if (widget.action == 'editar') {
           await _dbDespesa.attDadosDespesa(despesasDados, widget.card!.data,
-              uid: (!widget.admin!)
+              uid: (widget.uid == null)
                   ? FirebaseAuth.instance.currentUser?.uid
                   : widget.uid);
         } else {
           await _dbDespesa.cadastrarDespesa(
               despesa: despesasDados,
-              uid: (!widget.admin!)
+              uid: (widget.uid == null)
                   ? FirebaseAuth.instance.currentUser?.uid
                   : widget.uid);
         }
@@ -378,13 +380,16 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
     setState(() {
       _carregando = true;
     });
-    await Provider.of<DespesasProvider>(context, listen: false)
-        .remover(widget.card!);
+    (widget.uid == null)
+        ? await Provider.of<DespesasProvider>(context, listen: false)
+            .remover(widget.card!)
+        : await Provider.of<VerUsuarioDespesaProvider>(context, listen: false)
+            .remover(widget.card!);
     if (mounted) {
       Navigator.of(context).pop();
     }
     await _dbDespesa.excluirDespesa(widget.card!, widget.card!.data,
-        uid: (!widget.admin!)
+        uid: (widget.uid == null)
             ? FirebaseAuth.instance.currentUser?.uid
             : widget.uid);
   }

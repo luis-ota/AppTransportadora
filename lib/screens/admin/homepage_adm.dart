@@ -1,5 +1,5 @@
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
-import 'package:apprubinho/screens/admin/fretes_usuarios_adm/lista_usuarios.dart';
+import 'package:apprubinho/screens/admin/usuarios_adm/lista_usuarios.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,7 +17,8 @@ class HomePageAdm extends StatefulWidget {
 class _HomePageState extends State<HomePageAdm> {
   int currentPageIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
-  late bool _carregando = false;
+  late bool _carregandoFretesUsuarios = false;
+  late bool _carregandoCustosUsuarios = false;
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePageAdm> {
                 ),
                 Card(
                   child: ListTile(
-                    leading: _carregando
+                    leading: _carregandoFretesUsuarios
                         ? const CircularProgressIndicator()
                         : const ImageIcon(
                             AssetImage("lib/assets/img/caminhao.png"),
@@ -76,26 +77,24 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Fretes de todos os usuarios'),
                     trailing: IconButton(
                         icon: const Icon(Icons.arrow_forward_ios),
-                        onPressed: () {
-                          carregarDadosUsuario();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const FretesUsuariosPageAdm()));
+                        onPressed: () async {
+                          await acessarFretesUsuarios();
                         }),
                   ),
                 ),
                 Card(
                   child: ListTile(
-                    leading: const ImageIcon(
-                      AssetImage("lib/assets/img/despesas_icon.png"),
-                      size: 40,
-                    ),
+                    leading: _carregandoCustosUsuarios
+                        ? const CircularProgressIndicator()
+                        : const ImageIcon(
+                            AssetImage("lib/assets/img/despesas_icon.png"),
+                            size: 40,
+                          ),
                     title: const Text('Despesas'),
                     subtitle: const Text('Manutenção e Abastecimento'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/despesas_page_adm"),
+                      onPressed: () async => await acessarCustosUsuarios(),
                     ),
                   ),
                 ),
@@ -196,14 +195,86 @@ class _HomePageState extends State<HomePageAdm> {
     }
   }
 
-  carregarDadosUsuario() async {
+  acessarFretesUsuarios() async {
     setState(() {
-      _carregando = true;
+      _carregandoFretesUsuarios = true;
     });
     await Provider.of<UsuariosProvider>(context, listen: false)
         .carregarDadosDoBanco();
     setState(() {
-      _carregando = false;
+      _carregandoFretesUsuarios = false;
     });
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const ListaUsuariosPageAdm(
+                administrar: 'Fretes',
+              )));
+    }
+  }
+
+  acessarCustosUsuarios() async {
+    setState(() {
+      _carregandoCustosUsuarios = true;
+    });
+    await Provider.of<UsuariosProvider>(context, listen: false)
+        .carregarDadosDoBanco();
+    setState(() {
+      _carregandoCustosUsuarios = false;
+    });
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const ListaUsuariosPageAdm(
+                administrar: 'Custos',
+              )));
+    }
+  }
+
+  acessarPagamentosUsuarios() async {
+    setState(() {
+      _carregandoFretesUsuarios = true;
+    });
+    await Provider.of<UsuariosProvider>(context, listen: false)
+        .carregarDadosDoBanco();
+    setState(() {
+      _carregandoFretesUsuarios = false;
+    });
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const ListaUsuariosPageAdm(
+                administrar: '',
+              )));
+    }
+  }
+
+  acessarFaturamentoUsuarios() async {
+    setState(() {
+      _carregandoFretesUsuarios = true;
+    });
+    await Provider.of<UsuariosProvider>(context, listen: false)
+        .carregarDadosDoBanco();
+    setState(() {
+      _carregandoFretesUsuarios = false;
+    });
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const ListaUsuariosPageAdm(
+                administrar: '',
+              )));
+    }
+  }
+
+  acessarFaturaUsuarios() async {
+    setState(() {
+      _carregandoFretesUsuarios = true;
+    });
+    await Provider.of<UsuariosProvider>(context, listen: false)
+        .carregarDadosDoBanco();
+    setState(() {
+      _carregandoFretesUsuarios = false;
+    });
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const ListaUsuariosPageAdm(administrar: '')));
+    }
   }
 }

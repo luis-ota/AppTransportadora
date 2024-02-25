@@ -7,29 +7,29 @@ import '../services/firebase_service.dart';
 final FirebaseService _dbFrete = FirebaseService();
 
 class FreteCardAndamentoProvider with ChangeNotifier {
-  final Map<String, FreteCardDados> _andamentoCards = {};
+  final Map<String, FreteCardDados> andamentoCards = {};
 
   List<FreteCardDados> get all {
-    return [..._andamentoCards.values];
+    return [...andamentoCards.values];
   }
 
   int get count {
-    return _andamentoCards.length;
+    return andamentoCards.length;
   }
 
   FreteCardDados byIndex(int i) {
-    return _andamentoCards.values.elementAt(i);
+    return andamentoCards.values.elementAt(i);
   }
 
   Future<void> put(FreteCardDados freteCard) async {
     if (freteCard.freteId.trim().isNotEmpty &&
-        _andamentoCards.containsKey(freteCard.freteId)) {
-      _andamentoCards.update(freteCard.freteId, (_) => freteCard);
+        andamentoCards.containsKey(freteCard.freteId)) {
+      andamentoCards.update(freteCard.freteId, (_) => freteCard);
     } else {
       final id = freteCard.freteId;
-      _andamentoCards.putIfAbsent(
+      andamentoCards.putIfAbsent(
           id,
-              () => FreteCardDados(
+          () => FreteCardDados(
               origem: freteCard.origem,
               compra: freteCard.compra,
               destino: freteCard.destino,
@@ -44,12 +44,12 @@ class FreteCardAndamentoProvider with ChangeNotifier {
   }
 
   Future<void> remover(FreteCardDados freteCard) async {
-    _andamentoCards.remove(freteCard.freteId);
+    andamentoCards.remove(freteCard.freteId);
     notifyListeners();
   }
 
   Future<void> carregarDadosDoBanco() async {
-    _andamentoCards.clear();
+    andamentoCards.clear();
     final dados = await _dbFrete.lerDadosBanco('Fretes',
         uid: FirebaseAuth.instance.currentUser!.uid);
 
@@ -71,13 +71,13 @@ class FreteCardAndamentoProvider with ChangeNotifier {
   Future<void> organizar() async {
     Map<String, FreteCardDados> fretesOrdenados = {};
 
-    List<String> chavesOrdenadas = _andamentoCards.keys.toList();
+    List<String> chavesOrdenadas = andamentoCards.keys.toList();
     chavesOrdenadas.sort((a, b) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      fretesOrdenados[chave] = _andamentoCards[chave]!;
+      fretesOrdenados[chave] = andamentoCards[chave]!;
     }
-    _andamentoCards.clear();
-    _andamentoCards.addAll(fretesOrdenados);
+    andamentoCards.clear();
+    andamentoCards.addAll(fretesOrdenados);
     notifyListeners();
   }
 }

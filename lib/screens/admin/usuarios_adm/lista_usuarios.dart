@@ -5,18 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import '../usuarios_adm/usuario_card.dart';
+import 'usuario_card.dart';
 
-class FretesUsuariosPageAdm extends StatefulWidget {
-  const FretesUsuariosPageAdm({super.key});
+class ListaUsuariosPageAdm extends StatefulWidget {
+  final String administrar;
+
+  const ListaUsuariosPageAdm({super.key, required this.administrar});
 
   @override
   State<StatefulWidget> createState() {
-    return _FretesUsuariosPageState();
+    return _ListaUsuariosPageState();
   }
 }
 
-class _FretesUsuariosPageState extends State<FretesUsuariosPageAdm> {
+class _ListaUsuariosPageState extends State<ListaUsuariosPageAdm> {
   int currentPageIndex = 0;
   final User? user = FirebaseAuth.instance.currentUser;
   final db = FirebaseService();
@@ -58,7 +60,7 @@ class _FretesUsuariosPageState extends State<FretesUsuariosPageAdm> {
                   itemCount: usuariosCards.count,
                   itemBuilder: (context, i) => UsuarioCard(
                         card: usuariosCards.all.elementAt(i),
-                      )),
+                      administrar: widget.administrar)),
             ),
             bottomNavigationBar: BottomAppBar(
               color: Colors.white,

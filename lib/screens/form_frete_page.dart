@@ -48,8 +48,21 @@ class _FormFretePageState extends State<FormFretePage> {
         TextEditingController(text: widget.card?.destino ?? '');
     _vendaController = TextEditingController(text: widget.card?.venda ?? '');
     _dataController = TextEditingController(text: widget.card?.data ?? '');
-    _placaController =
-        TextEditingController(text: widget.card?.placaCaminhao ?? '');
+
+    if (Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+        .andamentoCards
+        .entries
+        .isNotEmpty) {
+      _placaController = TextEditingController(
+          text: Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+              .andamentoCards
+              .entries
+              .first
+              .value
+              .placaCaminhao);
+    } else {
+      _placaController = TextEditingController(text: "");
+    }
   }
 
   @override

@@ -14,14 +14,9 @@ class FreteCard extends StatefulWidget {
   final FreteCardDados card;
   final String status;
   final String? uid;
-  final bool? admin;
 
   const FreteCard(
-      {super.key,
-      required this.card,
-      required this.status,
-      this.uid,
-      this.admin});
+      {super.key, required this.card, required this.status, this.uid});
 
   @override
   State<StatefulWidget> createState() {
@@ -56,9 +51,9 @@ class _FreteCardState extends State<FreteCard> {
                           )
                               : const Icon(
                             Icons.check_circle_outline_outlined,
-                            size: 55,
-                            color: Colors.green,
-                          ),
+                                  size: 50,
+                                  color: Colors.green,
+                                ),
                           const SizedBox(
                             width: 15,
                           ),

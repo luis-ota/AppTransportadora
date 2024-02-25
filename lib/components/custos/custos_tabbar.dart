@@ -1,23 +1,28 @@
+import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
+import 'package:apprubinho/providers/custos_tabbar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'abastecimento_card.dart';
 import 'despesas_card.dart';
 
-class DespesasTabbar extends StatefulWidget {
-  const DespesasTabbar({super.key});
+class CustosTabbar extends StatefulWidget {
+  final String? uid;
+
+  const CustosTabbar({
+    super.key,
+    this.uid,
+  });
 
   @override
   State<StatefulWidget> createState() {
-    return _DespesasTabbarState();
+    return _CustosTabbarState();
   }
 }
 
-class _DespesasTabbarState extends State<DespesasTabbar>
+class _CustosTabbarState extends State<CustosTabbar>
     with TickerProviderStateMixin {
-  late DespesasProvider despesasCards = Provider.of(context);
-  late AbastecimentoProvider abastecimentoCards = Provider.of(context);
   late final TabController _tabController;
 
   @override
@@ -34,6 +39,8 @@ class _DespesasTabbarState extends State<DespesasTabbar>
 
   @override
   Widget build(BuildContext context) {
+    _tabController.index =
+        Provider.of<CustosTabbarIndexProvider>(context).custosTabbarIndex;
     return Column(
       children: <Widget>[
         TabBar.secondary(
@@ -48,24 +55,55 @@ class _DespesasTabbarState extends State<DespesasTabbar>
             controller: _tabController,
             children: <Widget>[
               RefreshIndicator(
-                onRefresh: () async =>
-                    await Provider.of<DespesasProvider>(context, listen: false)
-                        .carregarDadosDoBanco(),
+                onRefresh: () async => (widget.uid == null)
+                    ? await Provider.of<DespesasProvider>(context,
+                            listen: false)
+                        .carregarDadosDoBanco()
+                    : await Provider.of<VerUsuarioDespesaProvider>(context,
+                            listen: false)
+                        .carregarDadosDoBanco(widget.uid),
                 child: ListView.builder(
-                    itemCount: despesasCards.count,
-                    itemBuilder: (context, i) =>
-                        DespesasCard(card: despesasCards.all.elementAt(i))),
+                  itemCount: (widget.uid == null)
+                      ? Provider.of<DespesasProvider>(context).count
+                      : Provider.of<VerUsuarioDespesaProvider>(context).count,
+                  itemBuilder: (context, i) => DespesasCard(
+                    card: (widget.uid == null)
+                        ? Provider.of<DespesasProvider>(context)
+                            .all
+                            .elementAt(i)
+                        : Provider.of<VerUsuarioDespesaProvider>(context)
+                            .all
+                            .elementAt(i),
+                    uid: (widget.uid != null) ? widget.uid : null,
+                  ),
+                ),
               ),
               RefreshIndicator(
-                onRefresh: () async => await Provider.of<AbastecimentoProvider>(
-                        context,
-                        listen: false)
-                    .carregarDadosDoBanco(),
+                onRefresh: () async => (widget.uid == null)
+                    ? await Provider.of<AbastecimentoProvider>(context,
+                            listen: false)
+                        .carregarDadosDoBanco()
+                    : await Provider.of<VerUsuarioAbastecimentoProvider>(
+                            context,
+                            listen: false)
+                        .carregarDadosDoBanco(widget.uid),
                 child: ListView.builder(
-                    itemCount: abastecimentoCards.count,
-                    itemBuilder: (context, i) => AbastecimentoCard(
-                        card: abastecimentoCards.all.elementAt(i))),
-              ),
+                  itemCount: (widget.uid == null)
+                      ? Provider.of<AbastecimentoProvider>(context).count
+                      : Provider.of<VerUsuarioAbastecimentoProvider>(context)
+                          .count,
+                  itemBuilder: (context, i) => AbastecimentoCard(
+                    card: (widget.uid == null)
+                        ? Provider.of<AbastecimentoProvider>(context)
+                            .all
+                            .elementAt(i)
+                        : Provider.of<VerUsuarioAbastecimentoProvider>(context)
+                            .all
+                            .elementAt(i),
+                    uid: (widget.uid != null) ? widget.uid : null,
+                  ),
+                ),
+              )
             ],
           ),
         ),

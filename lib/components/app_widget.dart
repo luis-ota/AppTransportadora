@@ -1,6 +1,8 @@
 import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
+import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
+import 'package:apprubinho/providers/custos_tabbar_provider.dart';
 import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:apprubinho/providers/user_provider.dart';
 import 'package:apprubinho/screens/admin/fatura_adm/fatura_page_adm.dart';
@@ -32,6 +34,8 @@ class _AppWidgetState extends State<AppWidget> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+            create: (context) => CustosTabbarIndexProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(
             create: (context) => FreteCardAndamentoProvider()),
@@ -44,6 +48,10 @@ class _AppWidgetState extends State<AppWidget> {
             create: (context) => VerUsuarioFreteCardAndamentoProvider()),
         ChangeNotifierProvider(
             create: (context) => VerUsuarioFreteCardConcluidoProvider()),
+        ChangeNotifierProvider(
+            create: (context) => VerUsuarioAbastecimentoProvider()),
+        ChangeNotifierProvider(
+            create: (context) => VerUsuarioDespesaProvider()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [
@@ -57,13 +65,9 @@ class _AppWidgetState extends State<AppWidget> {
           '/home': (context) => const HomePage(),
           '/home/perfil': (context) => const PerfilPage(),
           '/home/form_frete_page': (context) => const FormFretePage(),
-          '/home/form_despesa_page': (context) => const FormDespesaPage(
-                admin: false,
-              ),
+          '/home/form_despesa_page': (context) => const FormDespesaPage(),
           '/home/form_abastecimento_page': (context) =>
-              const FormAbastecimentoPage(
-                admin: false,
-              ),
+              const FormAbastecimentoPage(),
 
           //admin
           '/home/admin/homepage_adm': (context) => const HomePageAdm(),

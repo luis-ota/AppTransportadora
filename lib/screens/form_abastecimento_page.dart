@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:apprubinho/models/custos_model.dart';
+import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:camera_camera/camera_camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,11 +21,9 @@ import 'foto_preview_page.dart';
 class FormAbastecimentoPage extends StatefulWidget {
   final AbastecimentoDados? card;
   final String? action;
-  final bool? admin;
   final String? uid;
 
-  const FormAbastecimentoPage(
-      {super.key, this.card, this.action, this.admin, this.uid});
+  const FormAbastecimentoPage({super.key, this.card, this.action, this.uid});
 
   @override
   State<StatefulWidget> createState() {
@@ -117,7 +116,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                         height: 30,
                       ),
                       const Text(
-                        'Preencha com as informações do abastecimento',
+                        'Preencha as informações do abastecimento',
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(
@@ -402,8 +401,15 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                                     40), // set width and height
                               ),
                               onPressed: () {
-                                _arquivo.delete();
-                                Navigator.of(context).pop();
+                                try {
+                                  _arquivo.exists().then((existe) {
+                                    if (existe) {
+                                      _arquivo.delete();
+                                    }
+                                  });
+                                } finally {
+                                  Navigator.of(context).pop();
+                                }
                               },
                               child: const Text('Cancelar'),
                             ),
@@ -442,21 +448,25 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
       );
 
       if (mounted) {
-        await Provider.of<AbastecimentoProvider>(context, listen: false)
-            .put(abastecimentoDados);
+        (widget.uid == null)
+            ? await Provider.of<AbastecimentoProvider>(context, listen: false)
+                .put(abastecimentoDados)
+            : await Provider.of<VerUsuarioAbastecimentoProvider>(context,
+                    listen: false)
+                .put(abastecimentoDados);
       }
 
       try {
         if (widget.action == 'editar') {
           await _dbAbastecimento.attDadosAbastecimento(
               abastecimentoDados, widget.card!.data,
-              uid: (!widget.admin!)
+              uid: (widget.uid == null)
                   ? FirebaseAuth.instance.currentUser?.uid
                   : widget.uid);
         } else {
           await _dbAbastecimento.cadastrarAbastecimento(
               abastecimento: abastecimentoDados,
-              uid: (!widget.admin!)
+              uid: (widget.uid == null)
                   ? FirebaseAuth.instance.currentUser?.uid
                   : widget.uid);
         }
@@ -481,14 +491,18 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
       await excluirImagemAbast();
     }
     if (mounted) {
-      await Provider.of<AbastecimentoProvider>(context, listen: false)
-          .remover(widget.card!);
+      (widget.uid == null)
+          ? await Provider.of<AbastecimentoProvider>(context, listen: false)
+              .remover(widget.card!)
+          : await Provider.of<VerUsuarioAbastecimentoProvider>(context,
+                  listen: false)
+              .remover(widget.card!);
     }
     if (mounted) {
       Navigator.of(context).pop();
     }
     await _dbAbastecimento.excluirAbastecimento(widget.card!, widget.card!.data,
-        uid: (!widget.admin!)
+        uid: (widget.uid == null)
             ? FirebaseAuth.instance.currentUser?.uid
             : widget.uid);
   }
@@ -504,7 +518,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
   Future<String> subirImagem(String id) async {
     UploadTask task = await _dbAbastecimento.subirImagemAbastecimento(
         _arquivo, id, 'Abastecimento',
-        uid: (!widget.admin!)
+        uid: (widget.uid == null)
             ? FirebaseAuth.instance.currentUser?.uid
             : widget.uid);
 
@@ -525,7 +539,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
   Future<void> excluirImagemAbast() async {
     await _dbAbastecimento.excluirImagem(
         widget.card?.abastecimentoId, 'Abastecimento',
-        uid: (!widget.admin!)
+        uid: (widget.uid == null)
             ? FirebaseAuth.instance.currentUser?.uid
             : widget.uid);
     _formData["imageLink"] = '';
