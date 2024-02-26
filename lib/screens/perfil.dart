@@ -192,12 +192,11 @@ class _PerfilPageState extends State<PerfilPage> {
 
   Future<void> _saveChanges() async {
     user!.updateDisplayName(_nameController.text);
-    user!.verifyBeforeUpdateEmail(_emailController.text);
+    user!.updateEmail(_emailController.text);
     if (_senhaController.text.isNotEmpty) {
       try {
         await FirebaseAuth.instance.currentUser!
             .updatePassword(_senhaController.text);
-        // Senha atualizada com sucesso
         showSnack(true, '');
       } catch (error) {
         // Lidar com erros ao atualizar a senha

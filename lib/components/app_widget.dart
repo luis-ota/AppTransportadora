@@ -1,24 +1,18 @@
 import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
+import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
 import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:apprubinho/providers/custos_tabbar_provider.dart';
 import 'package:apprubinho/providers/frete_card_provider.dart';
 import 'package:apprubinho/providers/user_provider.dart';
-import 'package:apprubinho/screens/admin/fatura_adm/fatura_page_adm.dart';
-import 'package:apprubinho/screens/admin/faturamento_adm/faturamento_page_adm.dart';
-import 'package:apprubinho/screens/admin/fretes_usuarios_adm/fretes_usuarios_page_adm.dart';
-import 'package:apprubinho/screens/admin/pagamentos_adm/pagamentos_page_adm.dart';
 import 'package:apprubinho/screens/form_frete_page.dart';
 import 'package:apprubinho/screens/homepage.dart';
 import 'package:apprubinho/screens/perfil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-
-import 'package:apprubinho/screens/admin/despesas_adm/despesas_page_adm.dart';
 import 'package:apprubinho/screens/admin/homepage_adm.dart';
-import 'package:apprubinho/screens/admin/usuarios_adm/usuarios_page_adm.dart';
 import 'package:apprubinho/screens/form_abastecimento_page.dart';
 import 'package:apprubinho/screens/form_despesa_page.dart';
 
@@ -52,6 +46,11 @@ class _AppWidgetState extends State<AppWidget> {
             create: (context) => VerUsuarioAbastecimentoProvider()),
         ChangeNotifierProvider(
             create: (context) => VerUsuarioDespesaProvider()),
+        ChangeNotifierProvider(
+            create: (context) => PagamentosConcluidosProvider()),
+        ChangeNotifierProvider(
+            create: (context) => PagamentosProvider()),
+
       ],
       child: MaterialApp(
         localizationsDelegates: const [
@@ -71,15 +70,6 @@ class _AppWidgetState extends State<AppWidget> {
 
           //admin
           '/home/admin/homepage_adm': (context) => const HomePageAdm(),
-          '/home/admin/usuarios_page_adm': (context) => const UsuariosPageAdm(),
-          '/home/admin/despesas_page_adm': (context) => const DespesasPageAdm(),
-          '/home/admin/pagamentos_page_adm': (context) =>
-              const PagamentosPageAdm(),
-          '/home/admin/faturamento_page_adm': (context) =>
-              const FaturamentoPageAdm(),
-          '/home/admin/fatura_page_adm': (context) => const FaturaPageAdm(),
-          '/home/admin/fretes_usuarios_page_adm': (context) =>
-              const FretesUsuariosPageAdm(),
         },
       ),
     );

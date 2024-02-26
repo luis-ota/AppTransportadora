@@ -102,3 +102,5 @@ flutter:
     - lib/assets/img/despesas_icon.png
     - lib/assets/img/local_gas_station.png
     - lib/assets/img/add_a_photo.png
+    - lib/assets/img/pagamento.png
+    - lib/assets/img/pagamento_ok.png

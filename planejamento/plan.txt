@@ -49,18 +49,19 @@ flutter pub upgrade outdated_package
 flutter clean
 flutter pub get
 flutterfire configure
+flutter pub get
 
 
 
 cd C:\dev\projetos\apprubinho
-flutter build web
+C:\dev\flutter\bin\flutter.bat --no-color build web
 
 robocopy C:\dev\projetos\apprubinho\build\web\ C:\dev\projetos\apprubinhosite
 
 cd C:\dev\projetos\apprubinhosite\
 git add .
 git commit -m 'atualizando'
-git push
+git push -u origin main
 
 
 

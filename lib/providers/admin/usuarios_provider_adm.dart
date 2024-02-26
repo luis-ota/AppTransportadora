@@ -28,7 +28,7 @@ class UsuariosProvider with ChangeNotifier {
       _usuariosCards.putIfAbsent(
           id,
           () => UsuariosDados(
-              nome: usuariosDados.nome, uid: id, caminhaoPadrao: 'placa'));
+              nome: usuariosDados.nome, uid: id));
     }
     notifyListeners();
   }
@@ -44,7 +44,7 @@ class UsuariosProvider with ChangeNotifier {
 
     if (dados != null) {
       dados.forEach((key, value) {
-        put(UsuariosDados(nome: key, caminhaoPadrao: '', uid: value['uid']));
+        put(UsuariosDados(nome: key, uid: value['uid']));
       });
     }
     organizar();

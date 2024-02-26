@@ -1,9 +1,15 @@
+import 'package:apprubinho/models/usuario_model.dart';
+import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
+import 'package:apprubinho/screens/admin/pagamentos_adm/proximo_pagamento_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 
 class PagamentosPageAdm extends StatefulWidget {
-  const PagamentosPageAdm({super.key});
+  final UsuariosDados card;
+
+  const PagamentosPageAdm({super.key, required this.card});
 
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +20,7 @@ class PagamentosPageAdm extends StatefulWidget {
 class _PagamentosPageState extends State<PagamentosPageAdm> {
   int currentPageIndex = 0;
   final User? user = FirebaseAuth.instance.currentUser;
-
+  late bool _carregando = false;
   @override
   void initState() {
     super.initState();
@@ -34,95 +40,39 @@ class _PagamentosPageState extends State<PagamentosPageAdm> {
           supportedLocales: const [Locale('pt', 'BR')],
           home: Scaffold(
             appBar: AppBar(
-              title: const Text('Administração'),
+              title: Text('Pagamentos ao ${widget.card.nome}'),
               backgroundColor: const Color(0xFF43A0E4),
-              actions: [
-                IconButton(
-                    icon: const Icon(Icons.person),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/home/perfil")),
-              ],
+
             ),
             body: ListView(
               children: <Widget>[
                 Card(
                   child: ListTile(
-                    leading: const Icon(
-                      Icons.person_outlined,
-                      size: 50,
-                    ),
-                    title: const Text('Usuarios'),
-                    subtitle: const Text('Editar ou criar usuarios'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const ImageIcon(
-                      AssetImage("lib/assets/img/caminhao.png"),
-                      size: 50,
-                    ),
-                    title: const Text('Fretes'),
-                    subtitle: const Text('Fretes de todos os usuarios'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const ImageIcon(
-                      AssetImage("lib/assets/img/despesas_icon.png"),
-                      size: 40,
-                    ),
-                    title: const Text('Despesas'),
-                    subtitle: const Text('Manutenção e Abastecimento'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(
+                    leading: _carregando
+                        ?const CircularProgressIndicator()
+                        :const Icon(
                       Icons.monetization_on_outlined,
                       size: 50,
                     ),
-                    title: const Text('Pagamentos'),
-                    subtitle: const Text('Pagamento aos caminhoneiros'),
+                    title: const Text('Proximo pagamento'),
+                    subtitle: const Text('Comissao dos ultimos 15 dias'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
+                      onPressed: () async {
+                        acessar();
+                      },
                     ),
                   ),
                 ),
                 Card(
                   child: ListTile(
-                    leading: const Icon(
-                      Icons.analytics_outlined,
+                    leading: const ImageIcon(
+                      AssetImage("lib/assets/img/pagamento_ok.png"),
                       size: 50,
+                      color: Colors.green,
                     ),
-                    title: const Text('Faturamento'),
-                    subtitle: const Text('Lucros e despesas'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.receipt_long,
-                      size: 50,
-                    ),
-                    title: const Text('Fatura'),
-                    subtitle: const Text('Verifique sua fatura mensal'),
+                    title: const Text('Pagamentos anteriores'),
+                    subtitle: const Text('Pagamentos ja efetuados'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {},
@@ -179,5 +129,24 @@ class _PagamentosPageState extends State<PagamentosPageAdm> {
         ),
       ));
     }
+  }
+  Future<void> acessar() async {
+setState(() {
+  _carregando=true;
+});
+    double total = await Provider.of<
+        PagamentosProvider>(
+        context, listen: false).carregarDadosDoBanco(widget.card.uid);
+
+    if(mounted){
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ProximoPagamento(
+            card: widget.card,
+            total: total
+          )));
+    }
+setState(() {
+  _carregando=false;
+});
   }
 }

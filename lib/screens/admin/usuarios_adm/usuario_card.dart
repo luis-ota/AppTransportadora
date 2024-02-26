@@ -3,6 +3,7 @@ import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
 import 'package:apprubinho/screens/admin/custos_adm/custos_usuarios_page_adm.dart';
 import 'package:apprubinho/screens/admin/fretes_usuarios_adm/fretes_usuarios_page_adm.dart';
+import 'package:apprubinho/screens/admin/pagamentos_adm/pagamentos_page_adm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -71,8 +72,8 @@ class _UsuarioCardState extends State<UsuarioCard> {
     });
   }
 
-  void acessar(String administrar) {
-    carregarDadosUsuario(widget.card.uid, administrar);
+  Future<void> acessar(String administrar) async {
+    await carregarDadosUsuario(widget.card.uid, administrar);
     if (mounted && administrar == 'Fretes') {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => FretesUsuariosPageAdm(
@@ -85,5 +86,14 @@ class _UsuarioCardState extends State<UsuarioCard> {
                 card: widget.card,
               )));
     }
+
+    if (mounted && administrar == 'Pagamentos') {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => PagamentosPageAdm(
+                card: widget.card,
+              )));
+    }
+
+
   }
 }

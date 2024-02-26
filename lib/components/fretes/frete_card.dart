@@ -61,10 +61,10 @@ class _FreteCardState extends State<FreteCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.card.destino,
+                                limitarString(widget.card.destino, 'Destino'),
                                 style: const TextStyle(fontSize: 20),
                               ),
-                              Text('origem: ${widget.card.origem}'),
+                              Text('origem: ${limitarString(widget.card.origem, 'Origem')}'),
                             ],
                           )
                         ],
@@ -221,5 +221,14 @@ class _FreteCardState extends State<FreteCard> {
   String formatToReal(String valor,) {
     return NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
         .format(double.parse(valor));
+  }
+  String limitarString(String texto, String campo) {
+    if(campo=='Origem') {
+      return texto.length <= 10 ? texto : "${texto.substring(0, 10)}...";
+    }
+    if(campo=='Destino'){
+      return texto.length <= 15 ? texto : "${texto.substring(0, 13)}...";
+    }
+    return texto;
   }
 }

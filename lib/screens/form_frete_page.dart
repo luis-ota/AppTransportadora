@@ -49,13 +49,13 @@ class _FormFretePageState extends State<FormFretePage> {
     _vendaController = TextEditingController(text: widget.card?.venda ?? '');
     _dataController = TextEditingController(text: widget.card?.data ?? '');
 
-    if (Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-        .andamentoCards
+    if (Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+        .concluidoCards
         .entries
-        .isNotEmpty) {
+        .isNotEmpty && widget.uid==null) {
       _placaController = TextEditingController(
-          text: Provider.of<FreteCardAndamentoProvider>(context, listen: false)
-              .andamentoCards
+          text: Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+              .concluidoCards
               .entries
               .first
               .value
@@ -136,7 +136,7 @@ class _FormFretePageState extends State<FormFretePage> {
                               children: [
                                 Expanded(
                                   child: TextFormField(
-                                    maxLength: 20,
+                                    maxLength: 25,
                                     controller: _destinoController,
                                     decoration: const InputDecoration(
                                       labelText: 'Destino',
@@ -158,7 +158,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                 SizedBox(
                                   width: 117,
                                   child: TextFormField(
-                                    maxLength: 7,
+                                    maxLength: 8,
                                     controller: _vendaController,
                                     decoration: const InputDecoration(
                                       labelText: 'R\$ Venda',
@@ -212,7 +212,7 @@ class _FormFretePageState extends State<FormFretePage> {
                                 SizedBox(
                                   width: 117,
                                   child: TextFormField(
-                                    maxLength: 7,
+                                    maxLength: 8,
                                     controller: _compraController,
                                     decoration: const InputDecoration(
                                       labelText: 'R\$ Compra',
