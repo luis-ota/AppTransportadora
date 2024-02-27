@@ -21,48 +21,53 @@ class _PagamentoCardState extends State<PagamentoCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-          leading: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.monetization_on_outlined,
-                color: Colors.green,
-                size: 35,
-              ),
-              Text(widget.pagamento.data.substring(0, 5))
-            ],
-          ),
-          title: Text('Valor: ${widget.pagamento.valor}'),
-          trailing: IconButton(
-              icon: const Icon(
-                Icons.delete_forever,
-                color: Colors.red,
-              ),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                          title: const Text('Excluir Pagamento'),
-                          content:
-                              const Text('Excluir o registro de pagamento?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Não'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                excluirPagamento();
-                              },
-                              child: const Text('Sim'),
-                            )
-                          ],
-                        ));
-              })),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.monetization_on_outlined,
+                  color: Colors.green,
+                  size: 35,
+                ),
+                Text(widget.pagamento.data.substring(0, 5))
+              ],
+            ),
+            title: Text('Valor: ${widget.pagamento.valor}'),
+            trailing: IconButton(
+                icon: const ImageIcon(
+                  AssetImage(
+                    "lib/assets/img/lixo.png",
+                  ),
+                  color: Colors.red,
+                ),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: const Text('Excluir Pagamento'),
+                            content:
+                                const Text('Excluir o registro de pagamento?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Não'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  excluirPagamento();
+                                },
+                                child: const Text('Sim'),
+                              )
+                            ],
+                          ));
+                })),
+      ),
     );
   }
 

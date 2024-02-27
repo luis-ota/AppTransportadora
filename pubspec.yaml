@@ -104,3 +104,5 @@ flutter:
     - lib/assets/img/add_a_photo.png
     - lib/assets/img/pagamento.png
     - lib/assets/img/pagamento_ok.png
+    - lib/assets/img/check.png
+    - lib/assets/img/lixo.png

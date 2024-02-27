@@ -134,7 +134,7 @@ class _PagamentosPageState extends State<ProximoPagamento> {
                                         width: 95,
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                                 '${(pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.venda)}'),
@@ -210,7 +210,9 @@ class _PagamentosPageState extends State<ProximoPagamento> {
                         child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.check_circle_outline),
+                            ImageIcon(
+                              AssetImage("lib/assets/img/check.png"),
+                            ),
                             Text('Pagamento Efetuado')
                           ],
                         )),
