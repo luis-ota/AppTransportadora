@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/models/fretecard_model.dart';
+import 'package:apprubinho/models/pagamento_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,6 +15,8 @@ class FirebaseService {
   final _custosref = FirebaseDatabase.instance.ref('Custos');
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final DatabaseReference _usersRef = FirebaseDatabase.instance.ref('Users');
+  final DatabaseReference _pagamentosRef =
+      FirebaseDatabase.instance.ref('Pagamentos');
 
   Future<String?> acessar(
       {required String usuario, required String senha}) async {
@@ -277,10 +280,41 @@ class FirebaseService {
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
       return data;
     }
+
+    if (ref == 'Pagamentos') {
+      DatabaseEvent snapshot = await _pagamentosRef.child(uid!).once();
+      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+      return data;
+    }
+
     return null;
   }
 
-// Future<void> listarUsuarios() async {
-//   final dados =  await lerDadosBanco('Users', uid: '');
-//     }
+  Future<void> cadastrarPagamento(
+      {required PagamentoDados pagamento, required String? uid}) async {
+    try {
+      List<String> partes = pagamento.data.split('/');
+      String anoMes = '${partes[2]}/${partes[1]}';
+      await _pagamentosRef.child('$uid/$anoMes/${pagamento.uid}').set({
+        'data': pagamento.data,
+        'ultimoFrete': pagamento.ultimoFrete,
+        'valor': pagamento.valor,
+      });
+    } catch (error) {
+      if (kDebugMode) {
+        print('Erro ao cadastrar pagamento: $error');
+      }
+      rethrow;
+    }
+  }
+
+  Future<String?> excluirPagamento(PagamentoDados pagamento,
+      {required String? uid}) async {
+    List<String> partes = pagamento.data.split('/');
+    String anoMes = '${partes[2]}/${partes[1]}';
+
+    await _pagamentosRef.child('$uid/$anoMes/${pagamento.uid}').remove();
+
+    return null;
+  }
 }

@@ -1,9 +1,10 @@
 import 'package:apprubinho/models/fretecard_model.dart';
+import 'package:apprubinho/models/pagamento_model.dart';
 import 'package:apprubinho/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-final FirebaseService _dbFrete = FirebaseService();
+final FirebaseService _dbPagamentos = FirebaseService();
 
 class PagamentosProvider with ChangeNotifier {
   final Map<String, FreteCardDados> pagamentosUsuarios = {
@@ -67,39 +68,42 @@ class PagamentosProvider with ChangeNotifier {
         venda: 'Venda',
         placaCaminhao: '',
         status: ''));
+    String ultimoFrete =
+        await PagamentosConcluidosProvider().carregarDadosDoBanco(uid);
     double total = 0;
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbFrete.lerDadosBanco('Fretes', uid: uid!);
+    final dados = await _dbPagamentos.lerDadosBanco('Fretes', uid: uid!);
+    final anoAtual = DateTime.now().year.toString();
     if (dados?['Concluido'] != null) {
-      dados?['Concluido'].forEach((ano, value) {
-        dados['Concluido']['$ano'].forEach((mes, value) {
-          dados['Concluido']['$ano']['$mes'].forEach((key, value) {
-            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
-              put(FreteCardDados(
-                  origem: value['origem'],
-                  compra: formatToReal(value['compra']),
-                  destino: value['destino'],
-                  venda: formatToReal(value['venda']),
-                  data: value['data'].substring(0, 5),
-                  placaCaminhao: value['placaCaminhao'],
-                  status: 'Concluido',
-                  freteId: key));
-              total += ( double.tryParse(value['venda'])! - double.tryParse(value['compra'])!);
-            }
-          });
-        });
+      dados?['Concluido'][anoAtual][mesAtual].forEach((key, value) {
+        if (double.tryParse(key)! > double.tryParse(ultimoFrete)!) {
+          put(FreteCardDados(
+              origem: value['origem'],
+              compra: formatToReal(value['compra']),
+              destino: value['destino'],
+              venda: formatToReal(value['venda']),
+              data: value['data'].substring(0, 5),
+              placaCaminhao: value['placaCaminhao'],
+              status: 'Concluido',
+              freteId: key));
+
+          total += (double.tryParse(value['venda'])! -
+              double.tryParse(value['compra'])!);
+        }
       });
     }
+
+    organizar();
     return total;
   }
 
   Future<void> organizar() async {
-    Map<String, FreteCardDados> fretesOrdenados = {};
+    Map<String, FreteCardDados> pagamentosOrdenados = {};
 
     List<String> chavesOrdenadas = pagamentosUsuarios.keys.toList();
-    chavesOrdenadas.sort((a, b) => b.compareTo(a));
+    chavesOrdenadas.sort((b, a) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      fretesOrdenados[chave] = pagamentosUsuarios[chave]!;
+      pagamentosOrdenados[chave] = pagamentosUsuarios[chave]!;
     }
     pagamentosUsuarios.clear();
     put(FreteCardDados(
@@ -111,23 +115,30 @@ class PagamentosProvider with ChangeNotifier {
         venda: 'Venda',
         placaCaminhao: '',
         status: ''));
-    pagamentosUsuarios.addAll(fretesOrdenados);
+
+    pagamentosUsuarios.addAll(pagamentosOrdenados);
     notifyListeners();
   }
 
-  String formatToReal(String valor,) {
+  String formatToReal(
+    String valor,
+  ) {
     String texto = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
         .format(double.parse(valor));
-    if(texto.substring(texto.length - 2)=='00') {
+    if (texto.substring(texto.length - 2) == '00') {
       return texto.substring(0, texto.length - 3);
-    }else{return texto;}
+    } else {
+      return texto;
+    }
   }
 }
 
 class PagamentosConcluidosProvider with ChangeNotifier {
-  final Map<String, FreteCardDados> pagamentosUsuariosConcluidos = {};
+  final Map<String, PagamentoDados> pagamentosUsuariosConcluidos = {};
 
-  List<FreteCardDados> get all {
+  bool vazio = true;
+
+  List<PagamentoDados> get all {
     return [...pagamentosUsuariosConcluidos.values];
   }
 
@@ -135,71 +146,77 @@ class PagamentosConcluidosProvider with ChangeNotifier {
     return pagamentosUsuariosConcluidos.length;
   }
 
-  FreteCardDados byIndex(int i) {
+  PagamentoDados byIndex(int i) {
     return pagamentosUsuariosConcluidos.values.elementAt(i);
   }
 
-  Future<void> put(FreteCardDados freteCard) async {
-    if (freteCard.freteId.trim().isNotEmpty &&
-        pagamentosUsuariosConcluidos.containsKey(freteCard.freteId)) {
-      pagamentosUsuariosConcluidos.update(freteCard.freteId, (_) => freteCard);
+  Future<void> put(PagamentoDados pagamento) async {
+    if (pagamento.uid.trim().isNotEmpty &&
+        pagamentosUsuariosConcluidos.containsKey(pagamento.uid)) {
+      pagamentosUsuariosConcluidos.update(pagamento.uid, (_) => pagamento);
     } else {
-      final id = freteCard.freteId;
+      final id = pagamento.uid;
       pagamentosUsuariosConcluidos.putIfAbsent(
           id,
-          () => FreteCardDados(
-              origem: freteCard.origem,
-              compra: freteCard.compra,
-              destino: freteCard.destino,
-              venda: freteCard.venda,
-              data: freteCard.data,
-              placaCaminhao: freteCard.placaCaminhao,
-              status: 'Concluido',
-              freteId: id));
+          () => PagamentoDados(
+              data: pagamento.data,
+              ultimoFrete: pagamento.ultimoFrete,
+              valor: pagamento.valor,
+              uid: pagamento.uid));
     }
 
     notifyListeners();
   }
 
-  Future<void> carregarDadosDoBanco(String? uid) async {
+  Future<String> carregarDadosDoBanco(String? uid) async {
     pagamentosUsuariosConcluidos.clear();
-    put(FreteCardDados(
-        freteId: '0',
-        origem: 'De',
-        compra: 'Compra',
-        destino: 'Para',
-        data: 'Data',
-        venda: 'Venda',
-        placaCaminhao: '',
-        status: ''));
-
-    organizar();
+    var dados = await _dbPagamentos.lerDadosBanco('Pagamentos', uid: uid);
+    final anoAtual = DateTime.now().year.toString();
+    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
+    await dados?[anoAtual][mesAtual].forEach((key, value) {
+      put(PagamentoDados(
+          data: value['data'],
+          ultimoFrete: value['ultimoFrete'],
+          valor: value['valor'],
+          uid: key));
+    });
+    return organizar();
   }
 
-  Future<void> organizar() async {
-    Map<String, FreteCardDados> fretesOrdenados = {};
+  Future<String> organizar() async {
+    Map<String, PagamentoDados> pagamentosConcluidosOrdenados = {};
 
     List<String> chavesOrdenadas = pagamentosUsuariosConcluidos.keys.toList();
-    chavesOrdenadas.sort((a, b) => b.compareTo(a));
+    chavesOrdenadas.sort((b, a) => b.compareTo(a));
     for (var chave in chavesOrdenadas) {
-      fretesOrdenados[chave] = pagamentosUsuariosConcluidos[chave]!;
+      pagamentosConcluidosOrdenados[chave] =
+          pagamentosUsuariosConcluidos[chave]!;
     }
-    put(FreteCardDados(
-        freteId: '0',
-        origem: 'De',
-        compra: 'Compra',
-        destino: 'Para',
-        data: 'Data',
-        venda: 'Venda',
-        placaCaminhao: '',
-        status: ''));
     pagamentosUsuariosConcluidos.clear();
-    pagamentosUsuariosConcluidos.addAll(fretesOrdenados);
+    pagamentosUsuariosConcluidos.addAll(pagamentosConcluidosOrdenados);
+
+    notifyListeners();
+    if (pagamentosUsuariosConcluidos.isNotEmpty) {
+      vazio = false;
+      return pagamentosUsuariosConcluidos.values.last.ultimoFrete;
+    }
+    vazio = true;
+    return '0';
+  }
+
+  Future<void> remover(PagamentoDados pagamento, uid) async {
+    pagamentosUsuariosConcluidos.remove(pagamento.uid);
+    _dbPagamentos.excluirPagamento(pagamento, uid: uid);
+    if (pagamentosUsuariosConcluidos.values.isEmpty) {
+      vazio == true;
+    }
     notifyListeners();
   }
 
-  Future<void> remover(FreteCardDados freteCard) async {
-    pagamentosUsuariosConcluidos.remove(freteCard.freteId);
-    notifyListeners();
+  Future<bool> pagamentoEfetuado(PagamentoDados pagamento, String uid) async {
+    carregarDadosDoBanco(uid);
+    _dbPagamentos.cadastrarPagamento(pagamento: pagamento, uid: uid);
+    PagamentosProvider().carregarDadosDoBanco(uid);
+    return true;
   }
 }

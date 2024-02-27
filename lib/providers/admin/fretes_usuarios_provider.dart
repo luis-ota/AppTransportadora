@@ -120,23 +120,18 @@ class VerUsuarioFreteCardConcluidoProvider with ChangeNotifier {
     _verUsuarioConcluidoCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
     final dados = await _dbFrete.lerDadosBanco('Fretes', uid: uid!);
+    final anoAtual = DateTime.now().year.toString();
     if (dados?['Concluido'] != null) {
-      dados?['Concluido'].forEach((ano, value) {
-        dados['Concluido']['$ano'].forEach((mes, value) {
-          dados['Concluido']['$ano']['$mes'].forEach((key, value) {
-            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
-              put(FreteCardDados(
-                  origem: value['origem'],
-                  compra: value['compra'],
-                  destino: value['destino'],
-                  venda: value['venda'],
-                  data: value['data'],
-                  placaCaminhao: value['placaCaminhao'],
-                  status: 'Concluido',
-                  freteId: key));
-            }
-          });
-        });
+      dados?['Concluido'][anoAtual][mesAtual].forEach((key, value) {
+        put(FreteCardDados(
+            origem: value['origem'],
+            compra: value['compra'],
+            destino: value['destino'],
+            venda: value['venda'],
+            data: value['data'],
+            placaCaminhao: value['placaCaminhao'],
+            status: 'Concluido',
+            freteId: key));
       });
     }
     organizar();

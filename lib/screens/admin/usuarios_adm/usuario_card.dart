@@ -90,7 +90,7 @@ class _UsuarioCardState extends State<UsuarioCard> {
     if (mounted && administrar == 'Pagamentos') {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => PagamentosPageAdm(
-                card: widget.card,
+                userDados: widget.card,
               )));
     }
 

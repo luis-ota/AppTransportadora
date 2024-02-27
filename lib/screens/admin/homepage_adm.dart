@@ -57,12 +57,11 @@ class _HomePageState extends State<HomePageAdm> {
                       Icons.person_outlined,
                       size: 50,
                     ),
-                    title: const Text('Usuarios'),
+                    title: const Text('Usuarios (desenvolvendo)'),
                     subtitle: const Text('Editar ou criar usuarios'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/usuarios_page_adm"),
+                      onPressed: () => {},
                     ),
                   ),
                 ),
@@ -121,12 +120,11 @@ class _HomePageState extends State<HomePageAdm> {
                       Icons.analytics_outlined,
                       size: 50,
                     ),
-                    title: const Text('Faturamento'),
+                    title: const Text('Faturamento (desenvolv..)'),
                     subtitle: const Text('Lucros e despesas'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/faturamento_page_adm"),
+                      onPressed: () => {},
                     ),
                   ),
                 ),
@@ -136,12 +134,11 @@ class _HomePageState extends State<HomePageAdm> {
                       Icons.receipt_long,
                       size: 50,
                     ),
-                    title: const Text('Fatura'),
+                    title: const Text('Fatura (desenvolvendo)'),
                     subtitle: const Text('Verifique sua fatura mensal'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => Navigator.pushNamed(
-                          context, "/home/admin/fatura_page_adm"),
+                      onPressed: () => {},
                     ),
                   ),
                 ),
@@ -244,9 +241,7 @@ class _HomePageState extends State<HomePageAdm> {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const ListaUsuariosPageAdm(
                 administrar: 'Pagamentos',
-              )
-      )
-      );
+              )));
     }
     setState(() {
       _carregandoPagamentosUsuarios = false;

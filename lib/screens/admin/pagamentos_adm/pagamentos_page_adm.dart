@@ -1,5 +1,6 @@
 import 'package:apprubinho/models/usuario_model.dart';
 import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
+import 'package:apprubinho/screens/admin/pagamentos_adm/pagamentos_anteriores_page.dart';
 import 'package:apprubinho/screens/admin/pagamentos_adm/proximo_pagamento_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 class PagamentosPageAdm extends StatefulWidget {
-  final UsuariosDados card;
+  final UsuariosDados userDados;
 
-  const PagamentosPageAdm({super.key, required this.card});
+  const PagamentosPageAdm({super.key, required this.userDados});
 
   @override
   State<StatefulWidget> createState() {
@@ -20,7 +21,9 @@ class PagamentosPageAdm extends StatefulWidget {
 class _PagamentosPageState extends State<PagamentosPageAdm> {
   int currentPageIndex = 0;
   final User? user = FirebaseAuth.instance.currentUser;
-  late bool _carregando = false;
+  late bool _carregandoProximo = false;
+  late bool _carregandoAnteriores = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,42 +43,45 @@ class _PagamentosPageState extends State<PagamentosPageAdm> {
           supportedLocales: const [Locale('pt', 'BR')],
           home: Scaffold(
             appBar: AppBar(
-              title: Text('Pagamentos ao ${widget.card.nome}'),
+              title: Text('Pagamentos ao ${widget.userDados.nome}'),
               backgroundColor: const Color(0xFF43A0E4),
-
             ),
             body: ListView(
               children: <Widget>[
                 Card(
                   child: ListTile(
-                    leading: _carregando
-                        ?const CircularProgressIndicator()
-                        :const Icon(
-                      Icons.monetization_on_outlined,
-                      size: 50,
-                    ),
+                    leading: _carregandoProximo
+                        ? const CircularProgressIndicator()
+                        : const Icon(
+                            Icons.monetization_on_outlined,
+                            size: 50,
+                          ),
                     title: const Text('Proximo pagamento'),
                     subtitle: const Text('Comissao dos ultimos 15 dias'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () async {
-                        acessar();
+                        acessar('Proximo');
                       },
                     ),
                   ),
                 ),
                 Card(
                   child: ListTile(
-                    leading: const ImageIcon(
-                      AssetImage("lib/assets/img/pagamento_ok.png"),
-                      size: 50,
-                      color: Colors.green,
-                    ),
+                    leading: _carregandoAnteriores
+                        ? const CircularProgressIndicator()
+                        : const ImageIcon(
+                            AssetImage("lib/assets/img/pagamento_ok.png"),
+                            size: 50,
+                            color: Colors.green,
+                          ),
                     title: const Text('Pagamentos anteriores'),
                     subtitle: const Text('Pagamentos ja efetuados'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
+                      onPressed: () async {
+                        acessar('Anteriores');
+                      },
                     ),
                   ),
                 ),
@@ -130,23 +136,40 @@ class _PagamentosPageState extends State<PagamentosPageAdm> {
       ));
     }
   }
-  Future<void> acessar() async {
-setState(() {
-  _carregando=true;
-});
-    double total = await Provider.of<
-        PagamentosProvider>(
-        context, listen: false).carregarDadosDoBanco(widget.card.uid);
 
-    if(mounted){
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ProximoPagamento(
-            card: widget.card,
-            total: total
-          )));
+  Future<void> acessar(String tipo) async {
+    if (tipo == 'Proximo') {
+      setState(() {
+        _carregandoProximo = true;
+      });
+      double total =
+          await Provider.of<PagamentosProvider>(context, listen: false)
+              .carregarDadosDoBanco(widget.userDados.uid);
+
+      if (mounted) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                ProximoPagamento(userDados: widget.userDados, total: total)));
+      }
+      setState(() {
+        _carregandoProximo = false;
+      });
     }
-setState(() {
-  _carregando=false;
-});
+    if (tipo == 'Anteriores' && mounted) {
+      setState(() {
+        _carregandoAnteriores = true;
+      });
+      await Provider.of<PagamentosConcluidosProvider>(context, listen: false)
+          .carregarDadosDoBanco(widget.userDados.uid);
+
+      if (mounted) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                PagamentosAnterioresPage(userDados: widget.userDados)));
+      }
+      setState(() {
+        _carregandoAnteriores = false;
+      });
+    }
   }
 }
