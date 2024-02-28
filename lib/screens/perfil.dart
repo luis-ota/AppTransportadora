@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PerfilPage extends StatefulWidget {
-  const PerfilPage({Key? key}) : super(key: key);
+  const PerfilPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _PerfilPageState();
@@ -20,7 +20,8 @@ class _PerfilPageState extends State<PerfilPage> {
   bool _editMode = false;
   bool _editSenhaMode = false;
   bool _editouNome = false;
-  bool _editouEmail = false;
+
+  // bool _editouEmail = false;
 
   @override
   void initState() {
@@ -30,7 +31,7 @@ class _PerfilPageState extends State<PerfilPage> {
     _senhaController.text = '';
     _editMode = false;
     _editouNome = false;
-    _editouEmail = false;
+    // _editouEmail = false;
   }
 
   @override
@@ -56,7 +57,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         ? const Icon(Icons.person, size: 50)
                         : null,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Padding(
@@ -221,9 +222,9 @@ class _PerfilPageState extends State<PerfilPage> {
       });
     }
     if (_emailController.text.isNotEmpty) {
-      setState(() {
-        _editouEmail = true;
-      });
+      // setState(() {
+      // _editouEmail = true;
+      // });
     }
   }
 

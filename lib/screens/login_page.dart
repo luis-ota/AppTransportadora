@@ -124,8 +124,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<bool> acessar() async {
-    if (_disposed)
+    if (_disposed) {
       return false; // Verifica se o widget foi descartado antes de continuar
+    }
 
     setState(() {
       _carregando = true;
