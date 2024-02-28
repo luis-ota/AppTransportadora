@@ -19,6 +19,9 @@ class _PerfilPageState extends State<PerfilPage> {
 
   bool _editMode = false;
   bool _editSenhaMode = false;
+  bool _editouNome = false;
+
+  // bool _editouEmail = false;
 
   @override
   void initState() {
@@ -26,81 +29,80 @@ class _PerfilPageState extends State<PerfilPage> {
     _nameController.text = user!.displayName ?? '';
     _emailController.text = user!.email!.split('@').first;
     _senhaController.text = '';
-    _editMode = false; // Defina o estado inicial de _editMode
+    _editMode = false;
+    _editouNome = false;
+    // _editouEmail = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: const Row(children: [
-            SizedBox(
-              width: 25,
-            ),
-            Icon(Icons.person),
-          ]),
-          title: const Text('Meu perfil'),
-          backgroundColor: const Color(0xFF43A0E4),
-        ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+    return Scaffold(
+      appBar: AppBar(
+        leading: const Icon(Icons.person),
+        title: const Text('Meu perfil'),
+        backgroundColor: const Color(0xFF43A0E4),
+      ),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          child: user!.photoURL == null
+                              ? const Icon(Icons.person, size: 50)
+                              : null,
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: 350,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _editMode
+                                  ? _buildEditableField(
+                                      _nameController, 'Nome do Usuário')
+                                  : _buildReadOnlyField(!_editouNome
+                                      ? "Nome: ${user!.displayName}"
+                                      : "Nome: ${_nameController.text}"),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _editMode = !_editMode;
+                                    if (!_editMode) {
+                                      _saveChanges();
+                                    }
+                                  });
+                                },
+                                icon: Column(
+                                  children: [
+                                    const Icon(Icons.edit),
+                                    Text(_editMode ? 'Salvar' : 'Editar'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Column(
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    child: user!.photoURL == null
-                        ? const Icon(Icons.person, size: 50)
-                        : null,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 170,
-                        child: Column(
-                          children: [
-                            _editMode
-                                ? _buildEditableField(
-                                    _nameController, 'Nome do Usuário')
-                                : _buildReadOnlyField(
-                                    "Nome: ${user!.displayName}"),
-                            const SizedBox(height: 10),
-                            _editMode
-                                ? _buildEditableField(
-                                    _emailController, 'Usuario de Acesso')
-                                : _buildReadOnlyField(
-                                    "Usuario: ${user!.email!.split('@').first}"),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _editMode = !_editMode;
-                            if (!_editMode) {
-                              _saveChanges();
-                            }
-                          });
-                        },
-                        icon: Column(
-                          children: [
-                            const Icon(Icons.edit),
-                            Text(_editMode ? 'Salvar' : 'Editar'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                   Visibility(
                     visible: _editSenhaMode,
                     child: _buildEditableField(_senhaController, 'Nova Senha'),
@@ -117,57 +119,63 @@ class _PerfilPageState extends State<PerfilPage> {
                     },
                     child: Text(_editSenhaMode ? 'Salvar' : 'Alterar Senha'),
                   ),
-                  const SizedBox(height: 20),
-                  Visibility(
-                    visible: user?.email == 'rubens@apprubinho.com',
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, "/home/admin/homepage_adm");
-                      },
-                      child: const Text('Admitração'),
-                    ),
-                  )
                 ],
               ),
-            ),
+            ],
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.white,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                width: 100,
-                child: MaterialButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Icon(Icons.home), Text('Voltar')],
-                  ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: 100,
+              child: MaterialButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.home), Text('Voltar')],
                 ),
               ),
-              const SizedBox(width: 50),
-              SizedBox(
-                width: 100,
+            ),
+            Visibility(
+              visible: user?.email == 'rubens@apprubinho.com',
+              child: SizedBox(
+                width: 120,
                 child: MaterialButton(
-                  onPressed: _auth.sair,
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, "/home/admin/homepage_adm");
+                  },
                   child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.logout_rounded,
-                        color: Colors.red,
-                      ),
-                      Text('Sair')
+                      Icon(Icons.admin_panel_settings),
+                      Text('Admitração'),
                     ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              width: 100,
+              child: MaterialButton(
+                onPressed: _auth.sair,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.logout_rounded,
+                      color: Colors.red,
+                    ),
+                    Text('Sair')
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -175,10 +183,13 @@ class _PerfilPageState extends State<PerfilPage> {
 
   Widget _buildEditableField(
       TextEditingController controller, String hintText) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+        ),
       ),
     );
   }
@@ -191,22 +202,29 @@ class _PerfilPageState extends State<PerfilPage> {
   }
 
   Future<void> _saveChanges() async {
-    user!.updateDisplayName(_nameController.text);
-    user!.verifyBeforeUpdateEmail('${_emailController.text}@apprubinho.com');
+    if (_nameController.text.isNotEmpty) {
+      user!.updateDisplayName(_nameController.text);
+    }
+    // user!.verifyBeforeUpdateEmail('${_emailController.text}@apprubinho.com');
     if (_senhaController.text.isNotEmpty) {
       try {
         await FirebaseAuth.instance.currentUser!
             .updatePassword(_senhaController.text);
         showSnack(true, '');
       } catch (error) {
-        // Lidar com erros ao atualizar a senha
-        showSnack(false, error);
+        showSnack(false, error.toString());
       }
     }
-
-    _nameController.text = user!.displayName ?? '';
-    _emailController.text = user!.email!.split('@').first;
-    _senhaController.text = '';
+    if (_nameController.text.isNotEmpty) {
+      setState(() {
+        _editouNome = true;
+      });
+    }
+    if (_emailController.text.isNotEmpty) {
+      setState(() {
+        // _editouEmail = true;
+      });
+    }
   }
 
   void showSnack(bool status, erro) {
@@ -214,8 +232,12 @@ class _PerfilPageState extends State<PerfilPage> {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Senha atualizada com sucesso')));
     } else {
+      _senhaController.text = '';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao atualizar a senha: $erro')),
+        const SnackBar(
+            duration: Duration(seconds: 8),
+            content: Text(
+                'Erro ao atualizar a senha: a senha deve conter pelo menos 6 caracteres')),
       );
     }
   }

@@ -21,16 +21,18 @@ class FirebaseService {
   final DatabaseReference _pagamentosRef =
       FirebaseDatabase.instance.ref('Pagamentos');
 
-  Future<String?> acessar(
-      {required String usuario, required String senha}) async {
+  Future<bool> acessar({required String usuario, required String senha}) async {
     try {
       usuario = "$usuario@apprubinho.com";
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: usuario, password: senha);
-      return null;
-    } on FirebaseAuthException catch (e) {
-      return e.message;
+      await _firebaseAuth
+          .signInWithEmailAndPassword(email: usuario, password: senha)
+          .then((value) {
+        return true;
+      });
+    } on Exception {
+      return false;
     }
+    return false;
   }
 
   Future<void> sair() async {
