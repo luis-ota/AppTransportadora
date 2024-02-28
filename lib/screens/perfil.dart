@@ -157,8 +157,11 @@ class _PerfilPageState extends State<PerfilPage> {
                         context, "/home/admin/homepage_adm");
                   },
                   child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.admin_panel_settings),
+                      ImageIcon(
+                        AssetImage("lib/assets/img/admin-panel-settings.png"),
+                      ),
                       Text('Admitração'),
                     ],
                   ),

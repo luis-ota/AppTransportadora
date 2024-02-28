@@ -92,9 +92,12 @@ class _HomePageState extends State<HomePageAdm> {
                   child: ListTile(
                     leading: _carregandoCustosUsuarios
                         ? const CircularProgressIndicator()
-                        : const ImageIcon(
-                            AssetImage("lib/assets/img/despesas_icon.png"),
-                            size: 40,
+                        : const Padding(
+                            padding: EdgeInsets.all(5.0),
+                            child: ImageIcon(
+                              AssetImage("lib/assets/img/despesas_icon.png"),
+                              size: 40,
+                            ),
                           ),
                     title: const Text('Despesas'),
                     subtitle: const Text('Manutenção e Abastecimento'),
@@ -124,9 +127,12 @@ class _HomePageState extends State<HomePageAdm> {
                   child: ListTile(
                     leading: _carregandoPorcentagemPagamentos
                         ? const CircularProgressIndicator()
-                        : const Icon(
-                            Icons.percent,
-                            size: 50,
+                        : const Padding(
+                            padding: EdgeInsets.all(5.0),
+                            child: ImageIcon(
+                              AssetImage("lib/assets/img/porcentagem.png"),
+                              size: 40,
+                            ),
                           ),
                     title: const Text('Porcentagem Comissão'),
                     subtitle: const Text('Atualizar a % da comissão'),
