@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
+
 import '../components/anexo.dart';
 import '../services/firebase_service.dart';
 import 'foto_preview_page.dart';
@@ -517,7 +518,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
 
   Future<String> subirImagem(String id) async {
     UploadTask task = await _dbAbastecimento.subirImagemAbastecimento(
-        _arquivo, id, 'Abastecimento',
+        _arquivo.path, id, 'Abastecimento',
         uid: (widget.uid == null)
             ? FirebaseAuth.instance.currentUser?.uid
             : widget.uid);

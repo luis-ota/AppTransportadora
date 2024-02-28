@@ -161,7 +161,8 @@ class PagamentosConcluidosProvider with ChangeNotifier {
           () => PagamentoDados(
               data: pagamento.data,
               ultimoFrete: pagamento.ultimoFrete,
-              valor: pagamento.valor,
+              valorTotal: pagamento.valorTotal,
+              valorComissao: pagamento.valorComissao,
               uid: pagamento.uid));
     }
 
@@ -175,10 +176,12 @@ class PagamentosConcluidosProvider with ChangeNotifier {
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
     await dados?[anoAtual][mesAtual].forEach((key, value) {
       put(PagamentoDados(
-          data: value['data'],
-          ultimoFrete: value['ultimoFrete'],
-          valor: value['valor'],
-          uid: key));
+        data: value['data'],
+        ultimoFrete: value['ultimoFrete'],
+        valorTotal: value['valorTotal'],
+        valorComissao: value['valorComissao'],
+        uid: key,
+      ));
     });
     return organizar();
   }

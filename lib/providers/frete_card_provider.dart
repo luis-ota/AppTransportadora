@@ -8,6 +8,7 @@ final FirebaseService _dbFrete = FirebaseService();
 
 class FreteCardAndamentoProvider with ChangeNotifier {
   final Map<String, FreteCardDados> andamentoCards = {};
+  late String porcentagem;
 
   List<FreteCardDados> get all {
     return [...andamentoCards.values];
@@ -50,6 +51,9 @@ class FreteCardAndamentoProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco() async {
     andamentoCards.clear();
+    Map? dadosPor =
+        await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
+    porcentagem = dadosPor?['porcentagem'];
     final dados = await _dbFrete.lerDadosBanco('Fretes',
         uid: FirebaseAuth.instance.currentUser!.uid);
 
@@ -84,6 +88,7 @@ class FreteCardAndamentoProvider with ChangeNotifier {
 
 class FreteCardConcluidoProvider with ChangeNotifier {
   final Map<String, FreteCardDados> concluidoCards = {};
+  late String porcentagem;
 
   List<FreteCardDados> get all {
     return [...concluidoCards.values];
@@ -121,6 +126,9 @@ class FreteCardConcluidoProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco() async {
     concluidoCards.clear();
+    Map? dadosPor =
+        await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
+    porcentagem = dadosPor?['porcentagem'];
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
     final dados = await _dbFrete.lerDadosBanco('Fretes',
         uid: FirebaseAuth.instance.currentUser!.uid);

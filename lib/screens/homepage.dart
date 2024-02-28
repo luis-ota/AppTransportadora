@@ -46,9 +46,9 @@ class _HomePageState extends State<HomePage> {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : const <Widget>[
-                  FreteTabbar(),
-                  CustosTabbar(),
+              : <Widget>[
+                  const FreteTabbar(),
+                  const CustosTabbar(),
                 ][currentPageIndex],
           bottomNavigationBar: NavigationBar(
             height: 70,

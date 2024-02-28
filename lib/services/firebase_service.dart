@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/models/fretecard_model.dart';
 import 'package:apprubinho/models/pagamento_model.dart';
@@ -15,6 +16,8 @@ class FirebaseService {
   final _custosref = FirebaseDatabase.instance.ref('Custos');
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final DatabaseReference _usersRef = FirebaseDatabase.instance.ref('Users');
+  final DatabaseReference _porcentagemComissaoRef =
+      FirebaseDatabase.instance.ref('PorcentagemComisao');
   final DatabaseReference _pagamentosRef =
       FirebaseDatabase.instance.ref('Pagamentos');
 
@@ -234,13 +237,13 @@ class FirebaseService {
   }
 
   Future<UploadTask> subirImagemAbastecimento(
-      File file, String id, String refRepo,
+      String filePath, String id, String refRepo,
       {required String? uid}) async {
     try {
       String ref = 'images/$refRepo/$uid/img-$id.jpg';
-      return _storage.ref(ref).putFile(file);
+      return _storage.ref(ref).putFile(File(filePath));
     } catch (e) {
-      throw Exception('erro ao subir imagem:  $e');
+      throw Exception('Erro ao subir imagem:  $e');
     }
   }
 
@@ -287,6 +290,12 @@ class FirebaseService {
       return data;
     }
 
+    if (ref == 'PorcentagemPagamentos') {
+      DatabaseEvent snapshot = await _porcentagemComissaoRef.once();
+      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+      return data;
+    }
+
     return null;
   }
 
@@ -298,7 +307,22 @@ class FirebaseService {
       await _pagamentosRef.child('$uid/$anoMes/${pagamento.uid}').set({
         'data': pagamento.data,
         'ultimoFrete': pagamento.ultimoFrete,
-        'valor': pagamento.valor,
+        'valorTotal': pagamento.valorTotal,
+        'valorComissao': pagamento.valorComissao,
+      });
+    } catch (error) {
+      if (kDebugMode) {
+        print('Erro ao cadastrar pagamento: $error');
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> atualizarPorcentagemComissao(
+      {required String porcentagemComissao}) async {
+    try {
+      await _porcentagemComissaoRef.update({
+        'porcentagem': porcentagemComissao,
       });
     } catch (error) {
       if (kDebugMode) {

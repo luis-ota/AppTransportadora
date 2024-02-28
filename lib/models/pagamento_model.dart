@@ -2,11 +2,13 @@ class PagamentoDados {
   final String uid;
   final String data;
   final String ultimoFrete;
-  final String valor;
+  final String valorTotal;
+  final String valorComissao;
 
   PagamentoDados(
       {required this.data,
       required this.ultimoFrete,
-      required this.valor,
+      required this.valorTotal,
+      required this.valorComissao,
       required this.uid});
 }

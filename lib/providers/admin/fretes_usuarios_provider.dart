@@ -6,6 +6,7 @@ final FirebaseService _dbFrete = FirebaseService();
 
 class VerUsuarioFreteCardAndamentoProvider with ChangeNotifier {
   final Map<String, FreteCardDados> _verUsuarioAdamentoCards = {};
+  late String porcentagem;
 
   List<FreteCardDados> get all {
     return [..._verUsuarioAdamentoCards.values];
@@ -48,6 +49,9 @@ class VerUsuarioFreteCardAndamentoProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco(String? uid) async {
     _verUsuarioAdamentoCards.clear();
+    Map? dadosPor =
+        await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
+    porcentagem = dadosPor?['porcentagem'];
     final dados = await _dbFrete.lerDadosBanco('Fretes', uid: uid!);
 
     if (dados?['Em andamento'] != null) {
@@ -81,6 +85,7 @@ class VerUsuarioFreteCardAndamentoProvider with ChangeNotifier {
 
 class VerUsuarioFreteCardConcluidoProvider with ChangeNotifier {
   final Map<String, FreteCardDados> _verUsuarioConcluidoCards = {};
+  late String porcentagem;
 
   List<FreteCardDados> get all {
     return [..._verUsuarioConcluidoCards.values];
@@ -118,6 +123,9 @@ class VerUsuarioFreteCardConcluidoProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco(String? uid) async {
     _verUsuarioConcluidoCards.clear();
+    Map? dadosPor =
+        await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
+    porcentagem = dadosPor?['porcentagem'];
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
     final dados = await _dbFrete.lerDadosBanco('Fretes', uid: uid!);
     final anoAtual = DateTime.now().year.toString();

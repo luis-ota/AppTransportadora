@@ -1,9 +1,12 @@
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
+import 'package:apprubinho/screens/admin/comissao_page.dart';
 import 'package:apprubinho/screens/admin/usuarios_adm/lista_usuarios.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+
+import '../../services/firebase_service.dart';
 
 class HomePageAdm extends StatefulWidget {
   const HomePageAdm({super.key});
@@ -20,6 +23,9 @@ class _HomePageState extends State<HomePageAdm> {
   late bool _carregandoFretesUsuarios = false;
   late bool _carregandoCustosUsuarios = false;
   late bool _carregandoPagamentosUsuarios = false;
+  late bool _carregandoPorcentagemPagamentos = false;
+
+  final FirebaseService _dbPagamentos = FirebaseService();
 
   @override
   void initState() {
@@ -111,6 +117,22 @@ class _HomePageState extends State<HomePageAdm> {
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () async => await acessarPagamentosUsuarios(),
+                    ),
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                    leading: _carregandoPorcentagemPagamentos
+                        ? const CircularProgressIndicator()
+                        : const Icon(
+                            Icons.percent,
+                            size: 50,
+                          ),
+                    title: const Text('Porcentagem Comissão'),
+                    subtitle: const Text('Atualizar a % da comissão'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios),
+                      onPressed: () async => await acessarPorcentagemComissao(),
                     ),
                   ),
                 ),
@@ -245,6 +267,23 @@ class _HomePageState extends State<HomePageAdm> {
     }
     setState(() {
       _carregandoPagamentosUsuarios = false;
+    });
+  }
+
+  acessarPorcentagemComissao() async {
+    setState(() {
+      _carregandoPorcentagemPagamentos = true;
+    });
+    Map? dados =
+        await _dbPagamentos.lerDadosBanco('PorcentagemPagamentos', uid: '');
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => AtualizarPorcentagemComissaoPage(
+                porcentagemAtual: dados?['porcentagem'],
+              )));
+    }
+    setState(() {
+      _carregandoPorcentagemPagamentos = false;
     });
   }
 

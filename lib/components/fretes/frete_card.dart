@@ -14,9 +14,14 @@ class FreteCard extends StatefulWidget {
   final FreteCardDados card;
   final String status;
   final String? uid;
+  final String porcentagemPagamento;
 
   const FreteCard(
-      {super.key, required this.card, required this.status, this.uid});
+      {super.key,
+      required this.card,
+      required this.status,
+      this.uid,
+      required this.porcentagemPagamento});
 
   @override
   State<StatefulWidget> createState() {
@@ -46,9 +51,9 @@ class _FreteCardState extends State<FreteCard> {
                         children: [
                           (widget.status == 'Em andamento')
                               ? const ImageIcon(
-                            AssetImage("lib/assets/img/caminhao.png"),
-                            size: 50,
-                          )
+                                  AssetImage("lib/assets/img/caminhao.png"),
+                                  size: 50,
+                                )
                               : const Icon(
                             Icons.check_circle_outline_outlined,
                                   size: 50,
@@ -64,7 +69,8 @@ class _FreteCardState extends State<FreteCard> {
                                 limitarString(widget.card.destino, 'Destino'),
                                 style: const TextStyle(fontSize: 20),
                               ),
-                              Text('origem: ${limitarString(widget.card.origem, 'Origem')}'),
+                              Text(
+                                  'origem: ${limitarString(widget.card.origem, 'Origem')}'),
                             ],
                           )
                         ],
@@ -102,7 +108,7 @@ class _FreteCardState extends State<FreteCard> {
                           color: Colors.green,
                         ),
                         Text(
-                            ': ${formatToReal(((double.parse(widget.card.venda) - double.parse(widget.card.compra)) * .12).toString())}')
+                            ': ${formatToReal(((double.parse(widget.card.venda) - double.parse(widget.card.compra)) * (double.parse(widget.porcentagemPagamento) / 100)).toString())}')
                       ],
                     )
                   ],
@@ -218,15 +224,18 @@ class _FreteCardState extends State<FreteCard> {
     }
   }
 
-  String formatToReal(String valor,) {
+  String formatToReal(
+    String valor,
+  ) {
     return NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
         .format(double.parse(valor));
   }
+
   String limitarString(String texto, String campo) {
-    if(campo=='Origem') {
+    if (campo == 'Origem') {
       return texto.length <= 10 ? texto : "${texto.substring(0, 10)}...";
     }
-    if(campo=='Destino'){
+    if (campo == 'Destino') {
       return texto.length <= 15 ? texto : "${texto.substring(0, 13)}...";
     }
     return texto;

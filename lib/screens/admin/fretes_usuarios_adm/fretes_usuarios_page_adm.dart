@@ -6,8 +6,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 class FretesUsuariosPageAdm extends StatefulWidget {
   final UsuariosDados? card;
+  final String porcentagemComissao;
 
-  const FretesUsuariosPageAdm({super.key, this.card});
+  const FretesUsuariosPageAdm(
+      {super.key, this.card, required this.porcentagemComissao});
 
   @override
   State<StatefulWidget> createState() {

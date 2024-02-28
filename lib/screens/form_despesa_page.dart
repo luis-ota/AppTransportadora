@@ -117,8 +117,8 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                           Expanded(
                             child: TextFormField(
                               controller: _despesaController,
-                              maxLength: 8,
-                              decoration: const InputDecoration(
+                                    maxLength: 25,
+                                    decoration: const InputDecoration(
                                       labelText: 'Despesa',
                                       border: OutlineInputBorder(),
                                     ),

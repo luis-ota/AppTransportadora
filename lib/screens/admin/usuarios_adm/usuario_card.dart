@@ -4,6 +4,7 @@ import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
 import 'package:apprubinho/screens/admin/custos_adm/custos_usuarios_page_adm.dart';
 import 'package:apprubinho/screens/admin/fretes_usuarios_adm/fretes_usuarios_page_adm.dart';
 import 'package:apprubinho/screens/admin/pagamentos_adm/pagamentos_page_adm.dart';
+import 'package:apprubinho/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,7 @@ class UsuarioCard extends StatefulWidget {
 
 class _UsuarioCardState extends State<UsuarioCard> {
   bool _carregando = false;
+  final FirebaseService _dbPagamentos = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +76,15 @@ class _UsuarioCardState extends State<UsuarioCard> {
 
   Future<void> acessar(String administrar) async {
     await carregarDadosUsuario(widget.card.uid, administrar);
+
+    Map? dados =
+        await _dbPagamentos.lerDadosBanco('PorcentagemPagamentos', uid: '');
+
     if (mounted && administrar == 'Fretes') {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => FretesUsuariosPageAdm(
                 card: widget.card,
+                porcentagemComissao: dados?['porcentagem'],
               )));
     }
     if (mounted && administrar == 'Custos') {

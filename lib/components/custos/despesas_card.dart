@@ -30,15 +30,15 @@ class _DespesasCardState extends State<DespesasCard> {
             Text(widget.card.data.substring(0, 5))
           ],
         ),
-        title: Text(widget.card.despesa),
-        subtitle: Text("${limitarString(widget.card.descricao)}\n"
+        title: Text(limitarString(widget.card.despesa, 'titulo')),
+        subtitle: Text("${limitarString(widget.card.descricao, 'descricao')}\n"
             "valor: ${formatToReal(widget.card.valor)}"),
         trailing: IconButton(
           icon: const Icon(Icons.edit),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => FormDespesaPage(
-                  card: widget.card,
+                      card: widget.card,
                       action: 'editar',
                       uid: (widget.uid != null) ? widget.uid : null,
                     )));
@@ -56,7 +56,11 @@ class _DespesasCardState extends State<DespesasCard> {
         .format(double.parse(valor));
   }
 
-  String limitarString(String texto) {
-    return texto.length <= 23 ? texto : "${texto.substring(0, 26)}...";
+  String limitarString(String texto, String campo) {
+    if (campo == 'titulo') {
+      return texto.length <= 23 ? texto : "${texto.substring(0, 26)}...";
+    } else {
+      return texto.length <= 23 ? texto : "${texto.substring(0, 26)}...";
+    }
   }
 }

@@ -7,7 +7,6 @@ import 'frete_card.dart';
 
 class FreteTabbar extends StatefulWidget {
   final String? uid;
-
   const FreteTabbar({super.key, this.uid});
 
   @override
@@ -74,6 +73,15 @@ class _FreteTabbarState extends State<FreteTabbar>
                                   .elementAt(i),
                           status: 'Em andamento',
                           uid: (widget.uid != null) ? widget.uid : null,
+                          porcentagemPagamento: (widget.uid == null)
+                              ? Provider.of<FreteCardAndamentoProvider>(context,
+                                      listen: false)
+                                  .porcentagem
+                              : Provider.of<
+                                          VerUsuarioFreteCardAndamentoProvider>(
+                                      context,
+                                      listen: false)
+                                  .porcentagem,
                         )),
               ),
               RefreshIndicator(
@@ -103,6 +111,15 @@ class _FreteTabbarState extends State<FreteTabbar>
                                   .elementAt(i),
                           status: 'Concluido',
                           uid: (widget.uid != null) ? widget.uid : null,
+                          porcentagemPagamento: (widget.uid == null)
+                              ? Provider.of<FreteCardConcluidoProvider>(context,
+                                      listen: false)
+                                  .porcentagem
+                              : Provider.of<
+                                          VerUsuarioFreteCardConcluidoProvider>(
+                                      context,
+                                      listen: false)
+                                  .porcentagem,
                         )),
               ),
             ],

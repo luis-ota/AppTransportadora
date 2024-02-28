@@ -35,7 +35,7 @@ class _PagamentoCardState extends State<PagamentoCard> {
                 Text(widget.pagamento.data.substring(0, 5))
               ],
             ),
-            title: Text('Valor: ${widget.pagamento.valor}'),
+            title: Text('Valor: ${widget.pagamento.valorComissao}'),
             trailing: IconButton(
                 icon: const ImageIcon(
                   AssetImage(

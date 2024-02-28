@@ -50,9 +50,11 @@ class _FormFretePageState extends State<FormFretePage> {
     _dataController = TextEditingController(text: widget.card?.data ?? '');
 
     if (Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-        .concluidoCards
-        .entries
-        .isNotEmpty && widget.uid==null) {
+            .concluidoCards
+            .entries
+            .isNotEmpty &&
+        widget.uid == null &&
+        widget.action != 'editar') {
       _placaController = TextEditingController(
           text: Provider.of<FreteCardConcluidoProvider>(context, listen: false)
               .concluidoCards
@@ -164,11 +166,13 @@ class _FormFretePageState extends State<FormFretePage> {
                                       labelText: 'R\$ Venda',
                                       border: OutlineInputBorder(),
                                     ),
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
                                         RegExp(
-                                            r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
+                                            r'^\d*([.,])?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
                                       ),
                                     ],
                                     validator: (String? value) {
@@ -218,11 +222,13 @@ class _FormFretePageState extends State<FormFretePage> {
                                       labelText: 'R\$ Compra',
                                       border: OutlineInputBorder(),
                                     ),
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
                                         RegExp(
-                                            r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
+                                            r'^\d*([.,])?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
                                       ),
                                     ],
                                     validator: (String? value) {
@@ -441,17 +447,25 @@ class _FormFretePageState extends State<FormFretePage> {
         await Provider.of<FreteCardAndamentoProvider>(context, listen: false)
             .put(freteCardDados);
         try {
-          (widget.action == 'editar')
-              ? await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data,
-                  uid: (widget.uid == null)
-                      ? FirebaseAuth.instance.currentUser!.uid
-                      : widget.uid)
-              : await _dbFrete.cadastrarFrete(
-                  card: freteCardDados,
-                  status: 'Em andamento',
-                  uid: (widget.uid == null)
-                      ? FirebaseAuth.instance.currentUser!.uid
-                      : widget.uid);
+          if (widget.action == 'editar') {
+            await _dbFrete.attDadosFretes(freteCardDados, widget.card!.data,
+                uid: (widget.uid == null)
+                    ? FirebaseAuth.instance.currentUser!.uid
+                    : widget.uid);
+
+            if (mounted) {
+              await Provider.of<FreteCardConcluidoProvider>(context,
+                      listen: false)
+                  .carregarDadosDoBanco();
+            }
+          } else {
+            await _dbFrete.cadastrarFrete(
+                card: freteCardDados,
+                status: 'Em andamento',
+                uid: (widget.uid == null)
+                    ? FirebaseAuth.instance.currentUser!.uid
+                    : widget.uid);
+          }
         } catch (err) {
           debugPrint("erro ao cadastrar ou editar frete: $err");
         }

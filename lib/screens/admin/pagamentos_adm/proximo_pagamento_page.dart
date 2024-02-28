@@ -11,9 +11,13 @@ import 'package:provider/provider.dart';
 class ProximoPagamento extends StatefulWidget {
   final UsuariosDados userDados;
   final double total;
+  final String porcentagemPagamento;
 
   const ProximoPagamento(
-      {super.key, required this.userDados, required this.total});
+      {super.key,
+      required this.userDados,
+      required this.total,
+      required this.porcentagemPagamento});
 
   @override
   State<StatefulWidget> createState() {
@@ -179,7 +183,10 @@ class _PagamentosPageState extends State<ProximoPagamento> {
                             Text(
                               NumberFormat.currency(
                                       locale: 'pt_BR', symbol: 'R\$')
-                                  .format(widget.total * 0.12),
+                                  .format(widget.total *
+                                      (double.tryParse(
+                                              widget.porcentagemPagamento)! /
+                                          100)),
                               style: const TextStyle(fontSize: 20),
                             ),
                           ],
@@ -263,19 +270,18 @@ class _PagamentosPageState extends State<ProximoPagamento> {
     PagamentoDados pagamentoDados = PagamentoDados(
         data: DateFormat('dd/MM/yyyy').format(DateTime.now()),
         ultimoFrete: pagamentosUsuarios.entries.last.value.freteId,
-        valor: NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
-            .format(widget.total * 0.12),
-        uid: (DateTime.now())
-            .toString()
-            .replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''));
+        valorComissao: NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+            .format(widget.total *
+                (double.tryParse(widget.porcentagemPagamento)! / 100)),
+        uid:
+            (DateTime.now()).toString().replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''),
+        valorTotal: '${widget.total}');
 
     bool pagou = await concluirPagamentos.pagamentoEfetuado(
         pagamentoDados, widget.userDados.uid);
-    if (mounted) {
-      Navigator.of(context).pop(pagou);
-    }
     setState(() {
       _carregando = false;
+      Navigator.of(context).pop(pagou);
     });
   }
 }

@@ -2,6 +2,7 @@ import 'package:apprubinho/models/usuario_model.dart';
 import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
 import 'package:apprubinho/screens/admin/pagamentos_adm/pagamentos_anteriores_page.dart';
 import 'package:apprubinho/screens/admin/pagamentos_adm/proximo_pagamento_page.dart';
+import 'package:apprubinho/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,6 +24,8 @@ class _PagamentosPageState extends State<PagamentosPageAdm> {
   final User? user = FirebaseAuth.instance.currentUser;
   late bool _carregandoProximo = false;
   late bool _carregandoAnteriores = false;
+
+  final FirebaseService _dbPagamentos = FirebaseService();
 
   @override
   void initState() {
@@ -145,16 +148,22 @@ class _PagamentosPageState extends State<PagamentosPageAdm> {
       double total =
           await Provider.of<PagamentosProvider>(context, listen: false)
               .carregarDadosDoBanco(widget.userDados.uid);
+      Map? dados =
+          await _dbPagamentos.lerDadosBanco('PorcentagemPagamentos', uid: '');
 
       if (mounted) {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                ProximoPagamento(userDados: widget.userDados, total: total)));
+            builder: (context) => ProximoPagamento(
+                  userDados: widget.userDados,
+                  total: total,
+                  porcentagemPagamento: dados?['porcentagem'],
+                )));
       }
       setState(() {
         _carregandoProximo = false;
       });
     }
+
     if (tipo == 'Anteriores' && mounted) {
       setState(() {
         _carregandoAnteriores = true;
