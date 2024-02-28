@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePageAdm> {
                               size: 40,
                             ),
                           ),
-                    title: const Text('Porcentagem Comissão'),
+                    title: const Text('Porcentagem da Comissão'),
                     subtitle: const Text('Atualizar a % da comissão'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
