@@ -22,7 +22,7 @@ class _PagamentoCardState extends State<PagamentoCard> {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListTile(
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,

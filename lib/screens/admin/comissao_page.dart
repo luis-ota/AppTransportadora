@@ -51,7 +51,7 @@ class _AtualizarPorcentagemComissaoPageState
                         ? const CircularProgressIndicator()
                         : const ImageIcon(
                             AssetImage("lib/assets/img/porcentagem.png"),
-                            size: 50,
+                            size: 45,
                           ),
                     title: _editMode
                         ? _buildEditableField(
