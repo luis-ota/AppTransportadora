@@ -45,12 +45,6 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPageAdm> {
             appBar: AppBar(
               title: const Text('Selecione o usuario'),
               backgroundColor: const Color(0xFF43A0E4),
-              actions: [
-                IconButton(
-                    icon: const Icon(Icons.person),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/home/perfil")),
-              ],
             ),
             body: RefreshIndicator(
               onRefresh: () async =>

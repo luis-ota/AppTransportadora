@@ -49,12 +49,6 @@ class _HomePageState extends State<HomePageAdm> {
             appBar: AppBar(
               title: const Text('Administração'),
               backgroundColor: const Color(0xFF43A0E4),
-              actions: [
-                IconButton(
-                    icon: const Icon(Icons.person),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/home/perfil")),
-              ],
             ),
             body: ListView(
               children: <Widget>[

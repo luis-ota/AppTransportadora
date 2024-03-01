@@ -55,7 +55,9 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
                     subtitle: const Text('Lucros e despesas'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
+                      onPressed: () {
+                        print('faturamento');
+                      },
                     ),
                   ),
                 ),
