@@ -100,7 +100,5 @@ class _UsuarioCardState extends State<UsuarioCard> {
                 userDados: widget.card,
               )));
     }
-
-
   }
 }

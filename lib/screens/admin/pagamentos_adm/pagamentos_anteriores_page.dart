@@ -1,6 +1,6 @@
+import 'package:apprubinho/components/admin/pagamenetos_anteriores_card.dart';
 import 'package:apprubinho/models/usuario_model.dart';
 import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
-import 'package:apprubinho/screens/admin/pagamentos_adm/pagamenetos_anteriores_card.dart';
 import 'package:apprubinho/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

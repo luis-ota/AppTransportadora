@@ -1,3 +1,4 @@
+import 'package:apprubinho/screens/admin/usuarios_adm/form_usuarios_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -43,7 +44,7 @@ class _UsuariosPageState extends State<UsuariosPageAdm> {
                   child: ListTile(
                     leading: const Icon(Icons.person, size: 40),
                     title: const Text('Usuarios existentes'),
-                    subtitle: const Text('Editar ou remover'),
+                    subtitle: const Text('Editar ou desativar'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {},
@@ -60,7 +61,9 @@ class _UsuariosPageState extends State<UsuariosPageAdm> {
                     subtitle: const Text('Criar novos usuarios'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => const FormUsuarioPage())),
                     ),
                   ),
                 ),

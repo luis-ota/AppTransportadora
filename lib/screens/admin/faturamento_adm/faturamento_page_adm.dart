@@ -48,81 +48,11 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
                 Card(
                   child: ListTile(
                     leading: const Icon(
-                      Icons.person_outlined,
-                      size: 50,
-                    ),
-                    title: const Text('Usuarios'),
-                    subtitle: const Text('Editar ou criar usuarios'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const ImageIcon(
-                      AssetImage("lib/assets/img/caminhao.png"),
-                      size: 50,
-                    ),
-                    title: const Text('Fretes'),
-                    subtitle: const Text('Fretes de todos os usuarios'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const ImageIcon(
-                      AssetImage("lib/assets/img/despesas_icon.png"),
-                      size: 40,
-                    ),
-                    title: const Text('Despesas'),
-                    subtitle: const Text('Manutenção e Abastecimento'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.monetization_on_outlined,
-                      size: 50,
-                    ),
-                    title: const Text('Pagamentos'),
-                    subtitle: const Text('Pagamento aos caminhoneiros'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(
                       Icons.analytics_outlined,
                       size: 50,
                     ),
                     title: const Text('Faturamento'),
                     subtitle: const Text('Lucros e despesas'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.receipt_long,
-                      size: 50,
-                    ),
-                    title: const Text('Fatura'),
-                    subtitle: const Text('Verifique sua fatura mensal'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {},

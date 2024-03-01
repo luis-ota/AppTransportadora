@@ -8,6 +8,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../services/firebase_service.dart';
+
 class ProximoPagamento extends StatefulWidget {
   final UsuariosDados userDados;
   final double total;
@@ -24,6 +26,8 @@ class ProximoPagamento extends StatefulWidget {
     return _PagamentosPageState();
   }
 }
+
+final FirebaseService _dbPagamentos = FirebaseService();
 
 class _PagamentosPageState extends State<ProximoPagamento> {
   int currentPageIndex = 0;
@@ -279,6 +283,9 @@ class _PagamentosPageState extends State<ProximoPagamento> {
 
     bool pagou = await concluirPagamentos.pagamentoEfetuado(
         pagamentoDados, widget.userDados.uid);
+    _dbPagamentos.cadastrarPagamento(
+        pagamento: pagamentoDados, uid: widget.userDados.uid);
+
     setState(() {
       _carregando = false;
       Navigator.of(context).pop(pagou);

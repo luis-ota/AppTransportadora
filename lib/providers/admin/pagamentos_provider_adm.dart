@@ -209,7 +209,6 @@ class PagamentosConcluidosProvider with ChangeNotifier {
 
   Future<void> remover(PagamentoDados pagamento, uid) async {
     pagamentosUsuariosConcluidos.remove(pagamento.uid);
-    _dbPagamentos.excluirPagamento(pagamento, uid: uid);
     if (pagamentosUsuariosConcluidos.values.isEmpty) {
       vazio == true;
     }
@@ -218,7 +217,6 @@ class PagamentosConcluidosProvider with ChangeNotifier {
 
   Future<bool> pagamentoEfetuado(PagamentoDados pagamento, String uid) async {
     carregarDadosDoBanco(uid);
-    _dbPagamentos.cadastrarPagamento(pagamento: pagamento, uid: uid);
     PagamentosProvider().carregarDadosDoBanco(uid);
     return true;
   }

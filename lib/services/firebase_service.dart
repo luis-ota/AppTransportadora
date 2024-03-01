@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:apprubinho/models/custos_model.dart';
 import 'package:apprubinho/models/fretecard_model.dart';
 import 'package:apprubinho/models/pagamento_model.dart';
+import 'package:apprubinho/models/usuario_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,6 +22,7 @@ class FirebaseService {
   final DatabaseReference _pagamentosRef =
       FirebaseDatabase.instance.ref('Pagamentos');
 
+  // ================= Auth ====================
   Future<bool> acessar({required String usuario, required String senha}) async {
     try {
       usuario = "$usuario@apprubinho.com";
@@ -38,6 +40,8 @@ class FirebaseService {
   Future<void> sair() async {
     return await _firebaseAuth.signOut();
   }
+
+  // ================= Fretes ====================
 
   Future cadastrarFrete({
     required FreteCardDados card,
@@ -133,6 +137,8 @@ class FirebaseService {
     return null;
   }
 
+  // ================= Despesas ====================
+
   Future<void> cadastrarDespesa({
     required DespesasDados despesa,
     required String? uid,
@@ -145,6 +151,7 @@ class FirebaseService {
         'valor': despesa.valor,
         'data': despesa.data,
         'descricao': despesa.descricao,
+        'placaCaminhao': despesa.placaCaminhao,
       });
     } catch (error) {
       // Trate os erros aqui
@@ -169,6 +176,7 @@ class FirebaseService {
       'valor': despesa.valor,
       'data': despesa.data,
       'descricao': despesa.descricao,
+      'placaCaminhao': despesa.placaCaminhao,
     });
   }
 
@@ -184,9 +192,10 @@ class FirebaseService {
     return null;
   }
 
-  Future<void> cadastrarAbastecimento({
-    required AbastecimentoDados abastecimento,
-    required String? uid}) async {
+  // ================= Abastecimento ====================
+
+  Future<void> cadastrarAbastecimento(
+      {required AbastecimentoDados abastecimento, required String? uid}) async {
     try {
       List<String> partes = abastecimento.data.split('/');
       String anoMes = '${partes[2]}/${partes[1]}';
@@ -197,11 +206,12 @@ class FirebaseService {
         'data': abastecimento.data,
         'imageLink': abastecimento.imageLink,
         'volumeBomba': abastecimento.volumeBomba,
+        'placaCaminhao': abastecimento.placaCaminhao,
       });
     } catch (error) {
       // Trate os erros aqui
       if (kDebugMode) {
-        print('Erro ao cadastrar despesa: $error');
+        print('Erro ao cadastrar abastecimento: $error');
       }
       rethrow;
     }
@@ -221,6 +231,7 @@ class FirebaseService {
       'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
       'data': abastecimento.data,
       'imageLink': abastecimento.imageLink,
+      'placaCaminhao': abastecimento.placaCaminhao,
       'volumeBomba': abastecimento.volumeBomba,
     });
   }
@@ -268,6 +279,8 @@ class FirebaseService {
     return link;
   }
 
+  // ================= Ler dados do banco ====================
+
   Future<Map?> lerDadosBanco(String ref, {required String? uid}) async {
     if (ref == 'Fretes') {
       DatabaseEvent snapshot = await _fretesRef.child(uid!).once();
@@ -301,6 +314,8 @@ class FirebaseService {
     return null;
   }
 
+  // ================= Pagamentos aos usuarios ====================
+
   Future<void> cadastrarPagamento(
       {required PagamentoDados pagamento, required String? uid}) async {
     try {
@@ -328,7 +343,7 @@ class FirebaseService {
       });
     } catch (error) {
       if (kDebugMode) {
-        print('Erro ao cadastrar pagamento: $error');
+        print('Erro ao atualizar porcentagem: $error');
       }
       rethrow;
     }
@@ -342,5 +357,51 @@ class FirebaseService {
     await _pagamentosRef.child('$uid/$anoMes/${pagamento.uid}').remove();
 
     return null;
+  }
+
+// ================= Usuarios ====================
+  Future<dynamic> cadastrarUsuario(
+      {required UsuariosDados usuario, required String senha}) async {
+    try {
+      var novoUsuairo = await _firebaseAuth
+          .createUserWithEmailAndPassword(
+              email: '${usuario.usuario}@apprubinho.com', password: senha)
+          .then((value) async {
+        await _usersRef.child(value.user!.uid).set({
+          'userCredential': value.toString(),
+          'nome': usuario.nome,
+          'usuario': usuario.usuario,
+          'estaAtivo': usuario.estaAtivo,
+        });
+        return value;
+      });
+
+      return novoUsuairo;
+    } catch (error) {
+      if (kDebugMode) {
+        print('Erro ao cadastrar usuario: $error');
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> atualizarUsuario(
+      {bool status = true,
+      required String uid,
+      required UsuariosDados? usuario,
+      String? novoNome}) async {
+    try {
+      if (uid.isNotEmpty) {
+        await _usersRef.child(uid).update({
+          'nome': novoNome!.isNotEmpty ? novoNome : usuario?.nome,
+          // 'estaAtivo': status ? usuario.estaAtivo : !usuario.estaAtivo,
+        });
+      }
+    } catch (error) {
+      if (kDebugMode) {
+        print('Erro ao atualizar usuario: $error');
+      }
+      rethrow;
+    }
   }
 }

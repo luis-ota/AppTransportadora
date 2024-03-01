@@ -28,7 +28,11 @@ class UsuariosProvider with ChangeNotifier {
       _usuariosCards.putIfAbsent(
           id,
           () => UsuariosDados(
-              nome: usuariosDados.nome, uid: id));
+              nome: usuariosDados.nome,
+              uid: id,
+              estaAtivo: usuariosDados.estaAtivo,
+              usuario: usuariosDados.usuario,
+              userCredential: usuariosDados.userCredential));
     }
     notifyListeners();
   }
@@ -44,7 +48,12 @@ class UsuariosProvider with ChangeNotifier {
 
     if (dados != null) {
       dados.forEach((key, value) {
-        put(UsuariosDados(nome: key, uid: value['uid']));
+        put(UsuariosDados(
+            uid: key,
+            nome: value['nome'],
+            estaAtivo: value['estaAtivo'],
+            usuario: value['usuario'],
+            userCredential: value['userCredential']));
       });
     }
     organizar();

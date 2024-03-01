@@ -32,6 +32,7 @@ class VerUsuarioDespesaProvider with ChangeNotifier {
               descricao: despesaCard.descricao,
               valor: despesaCard.valor,
               data: despesaCard.data,
+              placaCaminhao: despesaCard.placaCaminhao,
               despesaId: id));
     }
     organizar();
@@ -55,6 +56,7 @@ class VerUsuarioDespesaProvider with ChangeNotifier {
             despesa: value['despesa'],
             valor: value['valor'],
             descricao: value['descricao'],
+            placaCaminhao: value['placaCaminhao'],
             data: value['data']));
       });
     }
@@ -104,7 +106,8 @@ class VerUsuarioAbastecimentoProvider with ChangeNotifier {
               data: abastecimentoCard.data,
               imageLink: abastecimentoCard.imageLink,
               volumeBomba: abastecimentoCard.volumeBomba,
-              abastecimentoId: id));
+              abastecimentoId: id,
+              placaCaminhao: abastecimentoCard.placaCaminhao));
     }
     organizar();
     notifyListeners();
@@ -127,7 +130,8 @@ class VerUsuarioAbastecimentoProvider with ChangeNotifier {
             data: value['data'],
             imageLink: value['imageLink'],
             volumeBomba: value['volumeBomba'],
-            abastecimentoId: key));
+            abastecimentoId: key,
+            placaCaminhao: value['placaCaminhao']));
       });
     }
     organizar();

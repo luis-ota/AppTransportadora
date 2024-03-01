@@ -58,3 +58,4 @@ lib/firebase_options.dart
 pubspec.lock
 planejamento/banco.sql
 .metadata
+/planejamento/transapp-c2093-default-rtdb-export.json

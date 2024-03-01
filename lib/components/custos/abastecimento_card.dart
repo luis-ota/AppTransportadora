@@ -44,7 +44,7 @@ class _AbastecimentoCardState extends State<AbastecimentoCard> {
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => FormAbastecimentoPage(
-                  card: widget.card,
+                      card: widget.card,
                       action: 'editar',
                       uid: (widget.uid != null) ? widget.uid : null,
                     )));

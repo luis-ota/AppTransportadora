@@ -1,3 +1,4 @@
+import 'package:apprubinho/components/admin/usuario_card.dart';
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
 import 'package:apprubinho/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'usuario_card.dart';
 
 class ListaUsuariosPageAdm extends StatefulWidget {
   final String administrar;
@@ -59,7 +59,7 @@ class _ListaUsuariosPageState extends State<ListaUsuariosPageAdm> {
               child: ListView.builder(
                   itemCount: usuariosCards.count,
                   itemBuilder: (context, i) => UsuarioCard(
-                        card: usuariosCards.all.elementAt(i),
+                      card: usuariosCards.all.elementAt(i),
                       administrar: widget.administrar)),
             ),
             bottomNavigationBar: BottomAppBar(

@@ -16,6 +16,7 @@ import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
 
 import '../components/anexo.dart';
+import '../providers/frete_card_provider.dart';
 import '../services/firebase_service.dart';
 import 'foto_preview_page.dart';
 
@@ -45,6 +46,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
   late TextEditingController _dataController;
   late TextEditingController _quantAbastController;
   late TextEditingController _volumeBombaController;
+  late TextEditingController _placaCaminhaoController;
 
   late bool excluirImagemBanco = false;
   late bool editarFoto = false;
@@ -57,8 +59,39 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
         TextEditingController(text: widget.card?.quantidadeAbastecida ?? '');
     _volumeBombaController =
         TextEditingController(text: widget.card?.volumeBomba ?? '');
+    _placaCaminhaoController =
+        TextEditingController(text: widget.card?.placaCaminhao ?? '');
     if (widget.card?.imageLink != '' && widget.action == 'editar') {
       _anexoVisivel = true;
+    }
+    if (Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+            .andamentoCards
+            .entries
+            .isNotEmpty &&
+        widget.uid == null &&
+        widget.action != 'editar') {
+      _placaCaminhaoController = TextEditingController(
+          text: Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+              .andamentoCards
+              .entries
+              .first
+              .value
+              .placaCaminhao);
+    } else if (Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+            .concluidoCards
+            .entries
+            .isNotEmpty &&
+        widget.action != 'editar') {
+      _placaCaminhaoController = TextEditingController(
+          text: Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+              .concluidoCards
+              .entries
+              .first
+              .value
+              .placaCaminhao);
+    } else {
+      _placaCaminhaoController =
+          TextEditingController(text: widget.card?.placaCaminhao ?? '');
     }
   }
 
@@ -67,6 +100,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
     _dataController.dispose();
     _quantAbastController.dispose();
     _volumeBombaController.dispose();
+    _placaCaminhaoController.dispose();
 
     super.dispose();
   }
@@ -136,11 +170,13 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                                 labelText: 'Quantidade abastecida',
                                 border: OutlineInputBorder(),
                               ),
-                              keyboardType: TextInputType.number,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                   RegExp(
-                                      r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
+                                      r'^\d*([.])?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
                                 ),
                               ],
                               validator: (String? value) {
@@ -217,11 +253,13 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                                 labelText: 'Volume da bomba',
                                 border: OutlineInputBorder(),
                               ),
-                              keyboardType: TextInputType.number,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
                                   RegExp(
-                                      r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
+                                      r'^\d*([.])?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
                                 ),
                               ],
                               validator: (String? value) {
@@ -232,6 +270,27 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
                               },
                               onSaved: (value) =>
                                   _formData['volumeBomba'] = value!,
+                            ),
+                            const SizedBox(
+                              height: 7,
+                            ),
+                            TextFormField(
+                              controller: _placaCaminhaoController,
+                              maxLength: 8,
+                              maxLines: null,
+                              decoration: const InputDecoration(
+                                labelText: 'Placa do caminhão',
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.text,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Insira a placa do caminhão';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) =>
+                                  _formData['placaCaminhao'] = value!,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -425,7 +484,8 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
     );
   }
 
-  criarAbastecimentoCard({String abastecimentoId = '', bool att = false}) async {
+  criarAbastecimentoCard(
+      {String abastecimentoId = '', bool att = false}) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _carregando = true;
@@ -446,6 +506,7 @@ class _FormAbastecimentoPageState extends State<FormAbastecimentoPage> {
         imageLink: _formData["imageLink"]!,
         volumeBomba: _formData['volumeBomba']!,
         abastecimentoId: abastecimentoId,
+        placaCaminhao: _formData['placaCaminhao']!,
       );
 
       if (mounted) {

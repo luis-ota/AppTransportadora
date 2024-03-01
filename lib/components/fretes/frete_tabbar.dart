@@ -62,7 +62,7 @@ class _FreteTabbarState extends State<FreteTabbar>
                                 context)
                             .count,
                     itemBuilder: (context, i) => FreteCard(
-                      card: (widget.uid == null)
+                          card: (widget.uid == null)
                               ? Provider.of<FreteCardAndamentoProvider>(context)
                                   .all
                                   .elementAt(i)

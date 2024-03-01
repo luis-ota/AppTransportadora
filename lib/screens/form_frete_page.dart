@@ -32,7 +32,7 @@ class _FormFretePageState extends State<FormFretePage> {
   late TextEditingController _destinoController;
   late TextEditingController _vendaController;
   late TextEditingController _dataController;
-  late TextEditingController _placaController;
+  late TextEditingController _placaCaminhaoController;
 
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
@@ -49,13 +49,25 @@ class _FormFretePageState extends State<FormFretePage> {
     _vendaController = TextEditingController(text: widget.card?.venda ?? '');
     _dataController = TextEditingController(text: widget.card?.data ?? '');
 
-    if (Provider.of<FreteCardConcluidoProvider>(context, listen: false)
-            .concluidoCards
+    if (Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+            .andamentoCards
             .entries
             .isNotEmpty &&
         widget.uid == null &&
         widget.action != 'editar') {
-      _placaController = TextEditingController(
+      _placaCaminhaoController = TextEditingController(
+          text: Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+              .andamentoCards
+              .entries
+              .first
+              .value
+              .placaCaminhao);
+    } else if (Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+            .concluidoCards
+            .entries
+            .isNotEmpty &&
+        widget.action != 'editar') {
+      _placaCaminhaoController = TextEditingController(
           text: Provider.of<FreteCardConcluidoProvider>(context, listen: false)
               .concluidoCards
               .entries
@@ -63,7 +75,8 @@ class _FormFretePageState extends State<FormFretePage> {
               .value
               .placaCaminhao);
     } else {
-      _placaController = TextEditingController(text: "");
+      _placaCaminhaoController =
+          TextEditingController(text: widget.card?.placaCaminhao ?? '');
     }
   }
 
@@ -74,7 +87,7 @@ class _FormFretePageState extends State<FormFretePage> {
     _destinoController.dispose();
     _vendaController.dispose();
     _dataController.dispose();
-    _placaController.dispose();
+    _placaCaminhaoController.dispose();
     super.dispose();
   }
 
@@ -301,7 +314,7 @@ class _FormFretePageState extends State<FormFretePage> {
                             ),
                             TextFormField(
                               maxLength: 8,
-                              controller: _placaController,
+                              controller: _placaCaminhaoController,
                               decoration: const InputDecoration(
                                 labelText: 'Placa do Caminhão',
                                 border: OutlineInputBorder(),

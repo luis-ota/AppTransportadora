@@ -12,6 +12,9 @@ class PerfilPage extends StatefulWidget {
 class _PerfilPageState extends State<PerfilPage> {
   final FirebaseService _auth = FirebaseService();
   final User? user = FirebaseAuth.instance.currentUser;
+  final _formKey = GlobalKey<FormState>();
+
+  final FirebaseService _dbUsuario = FirebaseService();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -117,10 +120,8 @@ class _PerfilPageState extends State<PerfilPage> {
                   ElevatedButton(
                     onPressed: () async {
                       setState(() {
-                        _editSenhaMode = !_editSenhaMode;
-                        if (!_editSenhaMode) {
-                          _saveChanges();
-                        }
+                        _editSenhaMode = true;
+                        _saveChanges();
                       });
                     },
                     child: Text(_editSenhaMode ? 'Salvar' : 'Alterar Senha'),
@@ -192,10 +193,21 @@ class _PerfilPageState extends State<PerfilPage> {
 
   Widget _buildEditableField(
       TextEditingController controller, String hintText) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hintText,
+            ),
+            validator: (String? value) {
+              if (value!.length <= 5) {
+                return 'A senha deve conter mais de 6 caracters';
+              }
+              return null;
+            }),
       ),
     );
   }
@@ -209,12 +221,17 @@ class _PerfilPageState extends State<PerfilPage> {
 
   Future<void> _saveChanges() async {
     user!.updateDisplayName(_nameController.text);
+    _dbUsuario.atualizarUsuario(
+        usuario: null,
+        uid: FirebaseAuth.instance.currentUser!.uid,
+        novoNome: _nameController.text);
     // user!.verifyBeforeUpdateEmail('${_emailController.text}@apprubinho.com');
-    if (_senhaController.text.isNotEmpty) {
+    if (_senhaController.text.isNotEmpty && _formKey.currentState!.validate()) {
       try {
         await FirebaseAuth.instance.currentUser!
             .updatePassword(_senhaController.text);
         showSnack(true, '');
+        _editSenhaMode = false;
       } catch (error) {
         showSnack(false, error.toString());
       }

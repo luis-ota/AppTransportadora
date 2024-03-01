@@ -1,5 +1,6 @@
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
 import 'package:apprubinho/screens/admin/comissao_page.dart';
+import 'package:apprubinho/screens/admin/faturamento_adm/faturamento_page_adm.dart';
 import 'package:apprubinho/screens/admin/usuarios_adm/lista_usuarios.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -63,12 +64,14 @@ class _HomePageState extends State<HomePageAdm> {
                       Icons.person_outlined,
                       size: 50,
                     ),
-                    title: const Text('Usuarios (desenvolvendo)'),
+                    title: const Text('Usuarios (inativo)'),
                     subtitle: const Text('Editar ou criar usuarios'),
                     trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => {},
-                    ),
+                        icon: const Icon(Icons.arrow_forward_ios),
+                        onPressed: () {} //=> Navigator.of(context).push(
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const UsuariosPageAdm())),
+                        ),
                   ),
                 ),
                 Card(
@@ -152,7 +155,10 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Lucros e despesas'),
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () => {},
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const FaturamentoPageAdm())),
                     ),
                   ),
                 ),

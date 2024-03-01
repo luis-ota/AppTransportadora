@@ -4,6 +4,8 @@ import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../services/firebase_service.dart';
+
 class PagamentoCard extends StatefulWidget {
   final UsuariosDados userDados;
   final PagamentoDados pagamento;
@@ -16,6 +18,8 @@ class PagamentoCard extends StatefulWidget {
     return _PagamentoCardState();
   }
 }
+
+final FirebaseService _dbPagamentos = FirebaseService();
 
 class _PagamentoCardState extends State<PagamentoCard> {
   @override
@@ -74,5 +78,6 @@ class _PagamentoCardState extends State<PagamentoCard> {
   void excluirPagamento() {
     Provider.of<PagamentosConcluidosProvider>(context, listen: false)
         .remover(widget.pagamento, widget.userDados.uid);
+    _dbPagamentos.excluirPagamento(widget.pagamento, uid: widget.userDados.uid);
   }
 }

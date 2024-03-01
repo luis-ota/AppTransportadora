@@ -1,20 +1,19 @@
+import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/admin/fretes_usuarios_provider.dart';
 import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
 import 'package:apprubinho/providers/admin/usuarios_provider_adm.dart';
-import 'package:apprubinho/providers/admin/custos_usuarios_provider.dart';
 import 'package:apprubinho/providers/custos_provider.dart';
 import 'package:apprubinho/providers/custos_tabbar_provider.dart';
 import 'package:apprubinho/providers/frete_card_provider.dart';
-import 'package:apprubinho/providers/user_provider.dart';
+import 'package:apprubinho/screens/admin/homepage_adm.dart';
+import 'package:apprubinho/screens/form_abastecimento_page.dart';
+import 'package:apprubinho/screens/form_despesa_page.dart';
 import 'package:apprubinho/screens/form_frete_page.dart';
 import 'package:apprubinho/screens/homepage.dart';
 import 'package:apprubinho/screens/perfil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:apprubinho/screens/admin/homepage_adm.dart';
-import 'package:apprubinho/screens/form_abastecimento_page.dart';
-import 'package:apprubinho/screens/form_despesa_page.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -30,7 +29,6 @@ class _AppWidgetState extends State<AppWidget> {
       providers: [
         ChangeNotifierProvider(
             create: (context) => CustosTabbarIndexProvider()),
-        ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(
             create: (context) => FreteCardAndamentoProvider()),
         ChangeNotifierProvider(
@@ -48,9 +46,7 @@ class _AppWidgetState extends State<AppWidget> {
             create: (context) => VerUsuarioDespesaProvider()),
         ChangeNotifierProvider(
             create: (context) => PagamentosConcluidosProvider()),
-        ChangeNotifierProvider(
-            create: (context) => PagamentosProvider()),
-
+        ChangeNotifierProvider(create: (context) => PagamentosProvider()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [

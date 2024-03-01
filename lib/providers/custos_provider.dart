@@ -34,6 +34,7 @@ class DespesasProvider with ChangeNotifier {
               descricao: despesaCard.descricao,
               valor: despesaCard.valor,
               data: despesaCard.data,
+              placaCaminhao: despesaCard.placaCaminhao,
               despesaId: id));
     }
     organizar();
@@ -60,7 +61,8 @@ class DespesasProvider with ChangeNotifier {
                   despesa: value['despesa'],
                   valor: value['valor'],
                   descricao: value['descricao'],
-                  data: value['data']));
+                  data: value['data'],
+                  placaCaminhao: value['placaCaminhao']));
             }
           });
         });
@@ -111,7 +113,8 @@ class AbastecimentoProvider with ChangeNotifier {
               data: abastecimentoCard.data,
               imageLink: abastecimentoCard.imageLink,
               volumeBomba: abastecimentoCard.volumeBomba,
-              abastecimentoId: id));
+              abastecimentoId: id,
+              placaCaminhao: abastecimentoCard.placaCaminhao));
     }
     organizar();
     notifyListeners();
@@ -137,6 +140,7 @@ class AbastecimentoProvider with ChangeNotifier {
                   data: value['data'],
                   imageLink: value['imageLink'],
                   volumeBomba: value['volumeBomba'],
+                  placaCaminhao: value['placaCaminhao'],
                   abastecimentoId: key));
             }
           });

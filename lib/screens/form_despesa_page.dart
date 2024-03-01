@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/frete_card_provider.dart';
 import '../services/firebase_service.dart';
 
 class FormDespesaPage extends StatefulWidget {
@@ -35,6 +36,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
   late TextEditingController _valorController;
   late TextEditingController _despesaController;
   late TextEditingController _descricaoController;
+  late TextEditingController _placaCaminhaoController;
 
   @override
   void initState() {
@@ -45,6 +47,38 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
         TextEditingController(text: widget.card?.despesa ?? '');
     _descricaoController =
         TextEditingController(text: widget.card?.descricao ?? '');
+    _placaCaminhaoController =
+        TextEditingController(text: widget.card?.placaCaminhao ?? '');
+
+    if (Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+            .andamentoCards
+            .entries
+            .isNotEmpty &&
+        widget.uid == null &&
+        widget.action != 'editar') {
+      _placaCaminhaoController = TextEditingController(
+          text: Provider.of<FreteCardAndamentoProvider>(context, listen: false)
+              .andamentoCards
+              .entries
+              .first
+              .value
+              .placaCaminhao);
+    } else if (Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+            .concluidoCards
+            .entries
+            .isNotEmpty &&
+        widget.action != 'editar') {
+      _placaCaminhaoController = TextEditingController(
+          text: Provider.of<FreteCardConcluidoProvider>(context, listen: false)
+              .concluidoCards
+              .entries
+              .first
+              .value
+              .placaCaminhao);
+    } else {
+      _placaCaminhaoController =
+          TextEditingController(text: widget.card?.placaCaminhao ?? '');
+    }
   }
 
   @override
@@ -53,6 +87,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
     _valorController.dispose();
     _despesaController.dispose();
     _descricaoController.dispose();
+    _placaCaminhaoController.dispose();
     super.dispose();
   }
 
@@ -104,19 +139,19 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                         'Preencha com as informações da despesa',
                         style: TextStyle(fontSize: 16),
                       ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _despesaController,
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _despesaController,
                                     maxLength: 25,
                                     decoration: const InputDecoration(
                                       labelText: 'Despesa',
@@ -132,22 +167,22 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                                     onSaved: (value) =>
                                         _formData['despesa'] = value!,
                                   ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: TextFormField(
-                              controller: _valorController,
-                              maxLength: 7,
-                              decoration: const InputDecoration(
-                                labelText: 'R\$ Valor',
-                                border: OutlineInputBorder(),
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  width: 100,
+                                  child: TextFormField(
+                                    controller: _valorController,
+                                    maxLength: 7,
+                                    decoration: const InputDecoration(
+                                      labelText: 'R\$ Valor',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
                                         RegExp(
                                             r'^\d*\.?\d*$'), // Expressão regular para permitir números, vírgulas e pontos
                                       ),
@@ -161,93 +196,116 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                                     onSaved: (value) =>
                                         _formData['valor'] = value!,
                                   ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: MaskedTextField(
-                              controller: _dataController,
-                              mask: '##/##/####',
-                              maxLength: 10,
-                              decoration: const InputDecoration(
-                                labelText: 'Data da despesa',
-                                border: OutlineInputBorder(),
-                              ),
-                              keyboardType: TextInputType.datetime,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Insira a data da despesa';
-                                }
-                                if (value.length < 10) {
-                                  return 'Insira uma data válida';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) => _formData['data'] = value!,
+                                ),
+                              ],
                             ),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
+                            const SizedBox(
+                              height: 3,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: MaskedTextField(
+                                    controller: _dataController,
+                                    mask: '##/##/####',
+                                    maxLength: 10,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Data da despesa',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    keyboardType: TextInputType.datetime,
+                                    validator: (String? value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Insira a data da despesa';
+                                      }
+                                      if (value.length < 10) {
+                                        return 'Insira uma data válida';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (value) =>
+                                        _formData['data'] = value!,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(2023),
                                       lastDate: DateTime(
                                           (DateTime.now().year).toInt() + 1),
                                     );
 
-                              if (pickedDate != null) {
-                                String formattedDate =
+                                    if (pickedDate != null) {
+                                      String formattedDate =
                                           DateFormat('dd/MM/yyyy')
                                               .format(pickedDate);
                                       setState(() {
                                         _dataController.text = formattedDate;
                                       });
                                     }
-                            },
-                            icon: const Icon(Icons.calendar_month),
-                            iconSize: 40,
-                          ),
-                        ],
-                      ),
-                      TextFormField(
-                        controller: _descricaoController,
-                        maxLength: 100,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                          labelText: 'Descrição',
-                          border: OutlineInputBorder(),
+                                  },
+                                  icon: const Icon(Icons.calendar_month),
+                                  iconSize: 40,
+                                ),
+                              ],
+                            ),
+                            TextFormField(
+                              controller: _descricaoController,
+                              maxLength: 100,
+                              maxLines: null,
+                              decoration: const InputDecoration(
+                                labelText: 'Descrição',
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.name,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Insira a descrição da despesa';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) =>
+                                  _formData['descricao'] = value!,
+                            ),
+                            const SizedBox(
+                              height: 3,
+                            ),
+                            TextFormField(
+                              controller: _placaCaminhaoController,
+                              maxLength: 8,
+                              maxLines: null,
+                              decoration: const InputDecoration(
+                                labelText: 'Placa do caminhão',
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.text,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Insira a placa do caminhão';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) =>
+                                  _formData['placaCaminhao'] = value!,
+                            ),
+                          ],
                         ),
-                        keyboardType: TextInputType.name,
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Insira a descrição da despesa';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => _formData['descricao'] = value!,
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
-                    minimumSize: const Size(
-                        double.maxFinite, 40), // set width and height
-                  ),
-                  onPressed: () async {
-                    if (widget.action == 'editar') {
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue,
+                          minimumSize: const Size(
+                              double.maxFinite, 40), // set width and height
+                        ),
+                        onPressed: () async {
+                          if (widget.action == 'editar') {
                             criarDespesaCard(
                                 despesaId: (_formData['despesaId']).toString(),
                                 att: true);
@@ -262,22 +320,22 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                             ? 'Salvar'
                             : 'Cadastrar'),
                       ),
-                Row(
-                  children: [
-                    Visibility(
-                      visible: widget.action == 'editar',
-                      child: Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.redAccent,
-                            minimumSize: const Size(double.maxFinite, 40),
-                          ),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title:
+                      Row(
+                        children: [
+                          Visibility(
+                            visible: widget.action == 'editar',
+                            child: Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.redAccent,
+                                  minimumSize: const Size(double.maxFinite, 40),
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            title:
                                                 const Text('Excluir despesa'),
                                             content: const Text(
                                                 'Deseja excluir o registro de despesa?'),
@@ -298,33 +356,33 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
                                             ],
                                           ));
                                 },
-                          child: const Text('Excluir'),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                        visible: widget.action == 'editar',
-                        child: const SizedBox(
-                          width: 10,
-                        )),
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                                child: const Text('Excluir'),
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                              visible: widget.action == 'editar',
+                              child: const SizedBox(
+                                width: 10,
+                              )),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: Colors.blue,
                                 minimumSize: const Size(double.maxFinite,
                                     40), // set width and height
                               ),
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Cancelar'),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Cancelar'),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }
@@ -342,6 +400,7 @@ class _FormDespesaPageState extends State<FormDespesaPage> {
         valor: _formData['valor']!,
         data: _formData['data']!,
         despesaId: despesaId,
+        placaCaminhao: _formData['placaCaminhao']!,
       );
 
       (widget.uid == null)

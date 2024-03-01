@@ -55,7 +55,7 @@ class _FreteCardState extends State<FreteCard> {
                                   size: 50,
                                 )
                               : const Icon(
-                            Icons.check_circle_outline_outlined,
+                                  Icons.check_circle_outline_outlined,
                                   size: 50,
                                   color: Colors.green,
                                 ),
@@ -133,7 +133,7 @@ class _FreteCardState extends State<FreteCard> {
                             onPressed: () =>
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => FormFretePage(
-                                      card: widget.card,
+                                          card: widget.card,
                                           action: 'editar',
                                           uid: (widget.uid != null)
                                               ? widget.uid
