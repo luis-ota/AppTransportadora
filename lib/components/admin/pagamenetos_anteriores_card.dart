@@ -2,6 +2,7 @@ import 'package:apprubinho/models/pagamento_model.dart';
 import 'package:apprubinho/models/usuario_model.dart';
 import 'package:apprubinho/providers/admin/pagamentos_provider_adm.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../services/firebase_service.dart';
@@ -39,7 +40,8 @@ class _PagamentoCardState extends State<PagamentoCard> {
                 Text(widget.pagamento.data.substring(0, 5))
               ],
             ),
-            title: Text('Valor: ${widget.pagamento.valorComissao}'),
+            title: Text('Valor: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+                .format(double.tryParse(widget.pagamento.valorComissao))}'),
             trailing: IconButton(
                 icon: const ImageIcon(
                   AssetImage(

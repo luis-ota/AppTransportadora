@@ -281,8 +281,13 @@ class FirebaseService {
 
   // ================= Ler dados do banco ====================
 
-  Future<Map?> lerDadosBanco(String ref, {required String? uid}) async {
+  Future<Map?> lerDadosBanco(String ref, {required String? uid, int mes = 0}) async {
     if (ref == 'Fretes') {
+      if(mes == DateTime.now().month){
+        DatabaseEvent snapshot = await _fretesRef.child("${uid!}/Concluido/${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}").once();
+        Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+        return data;
+      }
       DatabaseEvent snapshot = await _fretesRef.child(uid!).once();
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
       return data;
@@ -300,7 +305,8 @@ class FirebaseService {
     }
 
     if (ref == 'Pagamentos') {
-      DatabaseEvent snapshot = await _pagamentosRef.child(uid!).once();
+
+      DatabaseEvent snapshot = await _pagamentosRef.child("${uid!}/${DateTime.now().year}/${DateTime.now().month.toString().length==1?"0":''}${DateTime.now().month}").once();
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
       return data;
     }

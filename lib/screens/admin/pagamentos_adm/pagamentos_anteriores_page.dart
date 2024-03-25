@@ -58,7 +58,7 @@ class _PagamentosAnterioresPageState extends State<PagamentosAnterioresPage> {
                   : ListView.builder(
                       itemCount: pagamentosAnteriores.count,
                       itemBuilder: (context, i) => PagamentoCard(
-                            pagamento: pagamentosAnteriores.all.elementAt(i),
+                            pagamento: (pagamentosAnteriores.all.elementAt(i)),
                             userDados: widget.userDados,
                           )),
             ),

@@ -47,6 +47,14 @@ class _HomePageState extends State<HomePageAdm> {
           supportedLocales: const [Locale('pt', 'BR')],
           home: Scaffold(
             appBar: AppBar(
+              leading: const Row(children: [
+                SizedBox(
+                  width: 15,
+                ),
+                  ImageIcon(
+                    AssetImage("lib/assets/img/admin-panel-settings.png"),
+                                   size: 35,),
+              ]),
               title: const Text('Administração'),
               backgroundColor: const Color(0xFF43A0E4),
             ),
@@ -62,9 +70,8 @@ class _HomePageState extends State<HomePageAdm> {
                     subtitle: const Text('Editar ou criar usuarios'),
                     trailing: IconButton(
                         icon: const Icon(Icons.arrow_forward_ios),
-                        onPressed: () {} //=> Navigator.of(context).push(
-                        //     MaterialPageRoute(
-                        //         builder: (context) => const UsuariosPageAdm())),
+                        onPressed: () {
+                          },
                         ),
                   ),
                 ),

@@ -171,18 +171,26 @@ class PagamentosConcluidosProvider with ChangeNotifier {
 
   Future<String> carregarDadosDoBanco(String? uid) async {
     pagamentosUsuariosConcluidos.clear();
-    var dados = await _dbPagamentos.lerDadosBanco('Pagamentos', uid: uid);
+    final dados = await _dbPagamentos.lerDadosBanco('Pagamentos', uid: uid);
     final anoAtual = DateTime.now().year.toString();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    await dados?[anoAtual][mesAtual].forEach((key, value) {
-      put(PagamentoDados(
-        data: value['data'],
-        ultimoFrete: value['ultimoFrete'],
-        valorTotal: value['valorTotal'],
-        valorComissao: value['valorComissao'],
-        uid: key,
-      ));
-    });
+    if (dados != null) {
+      Future<void> processarDados() async {
+        for (var key in dados.keys) {
+          var value = dados[key];
+          await put(PagamentoDados(
+            data: value['data'],
+            ultimoFrete: value['ultimoFrete'],
+            valorTotal: value['valorTotal'],
+            valorComissao: value['valorComissao'],
+            uid: key,
+          ));
+        }
+      }
+
+      await processarDados();
+    }
+
     return organizar();
   }
 

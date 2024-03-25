@@ -63,140 +63,149 @@ class _PagamentosPageState extends State<ProximoPagamento> {
             ),
             body: _carregando
                 ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height - 260,
-                        width: MediaQuery.of(context).size.width,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  Provider.of<PagamentosProvider>(context)
-                                      .count,
-                              itemBuilder: (context, i) => Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 5),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 50,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                '${pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.data}'),
-                                          ],
+                : InteractiveViewer(
+                    boundaryMargin: const EdgeInsets.all(20),
+                    minScale: 0.5,
+                    maxScale: 1.5,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height - 260,
+                          width: MediaQuery.of(context).size.width,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    Provider.of<PagamentosProvider>(context)
+                                        .count,
+                                itemBuilder: (context, i) => Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 50,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  '${pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.data}'),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 80,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(limitarString(
-                                                pagamentosUsuarios[
-                                                        pagamentosUsuarios.keys
-                                                            .toList()[i]]!
-                                                    .origem)),
-                                          ],
+                                        SizedBox(
+                                          width: 80,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(limitarString(
+                                                  pagamentosUsuarios[
+                                                          pagamentosUsuarios
+                                                              .keys
+                                                              .toList()[i]]!
+                                                      .origem)),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 80,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(limitarString(
-                                                pagamentosUsuarios[
-                                                        pagamentosUsuarios.keys
-                                                            .toList()[i]]!
-                                                    .destino)),
-                                          ],
+                                        SizedBox(
+                                          width: 80,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(limitarString(
+                                                  pagamentosUsuarios[
+                                                          pagamentosUsuarios
+                                                              .keys
+                                                              .toList()[i]]!
+                                                      .destino)),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 95,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                                '${(pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.compra)}'),
-                                          ],
+                                        SizedBox(
+                                          width: 95,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                  '${(pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.compra)}'),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 95,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                                '${(pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.venda)}'),
-                                          ],
+                                        SizedBox(
+                                          width: 95,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                  '${(pagamentosUsuarios[pagamentosUsuarios.keys.toList()[i]]?.venda)}'),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Total: ',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              NumberFormat.currency(
-                                      locale: 'pt_BR', symbol: 'R\$')
-                                  .format(widget.total),
-                              style: const TextStyle(fontSize: 20),
-                            )
-                          ],
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 15.0, right: 15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Total: ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                NumberFormat.currency(
+                                        locale: 'pt_BR', symbol: 'R\$')
+                                    .format(widget.total),
+                                style: const TextStyle(fontSize: 20),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Comissão: ',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              NumberFormat.currency(
-                                      locale: 'pt_BR', symbol: 'R\$')
-                                  .format(widget.total *
-                                      (double.tryParse(
-                                              widget.porcentagemPagamento)! /
-                                          100)),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 15.0, right: 15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Comissão: ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                NumberFormat.currency(
+                                        locale: 'pt_BR', symbol: 'R\$')
+                                    .format(widget.total *
+                                        (double.tryParse(
+                                                widget.porcentagemPagamento)! /
+                                            100)),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
             bottomNavigationBar: BottomAppBar(
               color: Colors.white,
@@ -274,9 +283,7 @@ class _PagamentosPageState extends State<ProximoPagamento> {
     PagamentoDados pagamentoDados = PagamentoDados(
         data: DateFormat('dd/MM/yyyy').format(DateTime.now()),
         ultimoFrete: pagamentosUsuarios.entries.last.value.freteId,
-        valorComissao: NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
-            .format(widget.total *
-                (double.tryParse(widget.porcentagemPagamento)! / 100)),
+        valorComissao: (widget.total * (double.tryParse(widget.porcentagemPagamento)! / 100)).toString(),
         uid:
             (DateTime.now()).toString().replaceAll(RegExp(r'[^a-zA-Z0-9]'), ''),
         valorTotal: '${widget.total}');
