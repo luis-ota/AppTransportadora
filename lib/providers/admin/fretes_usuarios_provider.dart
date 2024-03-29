@@ -52,10 +52,10 @@ class VerUsuarioFreteCardAndamentoProvider with ChangeNotifier {
     Map? dadosPor =
         await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
     porcentagem = dadosPor?['porcentagem'];
-    final dados = await _dbFrete.lerDadosBanco('Fretes', uid: uid!);
+    final dados = await _dbFrete.lerDadosBanco('FretesA', uid: uid!);
 
-    if (dados?['Em andamento'] != null) {
-      dados?['Em andamento'].forEach((key, value) {
+    if (dados != null) {
+      dados.forEach((key, value) {
         put(FreteCardDados(
             origem: value['origem'],
             compra: value['compra'],
@@ -126,11 +126,12 @@ class VerUsuarioFreteCardConcluidoProvider with ChangeNotifier {
     Map? dadosPor =
         await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
     porcentagem = dadosPor?['porcentagem'];
+    final dados = await _dbFrete.lerDadosBanco('FretesC', uid: uid!);
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbFrete.lerDadosBanco('Fretes', uid: uid!);
     final anoAtual = DateTime.now().year.toString();
-    if (dados?['Concluido'] != null) {
-      dados?['Concluido'][anoAtual][mesAtual].forEach((key, value) {
+    print(dados);
+    if (dados != null) {
+      dados.forEach((key, value) {
         put(FreteCardDados(
             origem: value['origem'],
             compra: value['compra'],

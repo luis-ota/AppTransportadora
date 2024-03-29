@@ -50,7 +50,7 @@ class FirebaseService {
   }) async {
     try {
       if (status == 'Em andamento') {
-        await _fretesRef.child('$uid/$status/${card.freteId}').set({
+        await _fretesRef.child('/$status/$uid/${card.freteId}').set({
           'origem': card.origem,
           'compra': card.compra,
           'destino': card.destino,
@@ -61,7 +61,7 @@ class FirebaseService {
       } else {
         List<String> partes = card.data.split('/');
         String anoMes = '${partes[2]}/${partes[1]}';
-        await _fretesRef.child('$uid/$status/$anoMes/${card.freteId}').set({
+        await _fretesRef.child('$status/$anoMes/$uid/${card.freteId}').set({
           'origem': card.origem,
           'compra': card.compra,
           'destino': card.destino,
@@ -99,7 +99,7 @@ class FirebaseService {
       List<String> partes = card.data.split('/');
       String anoMes = '${partes[2]}/${partes[1]}';
       return await _fretesRef
-          .child('$uid/${card.status}/$anoMes/${card.freteId}')
+          .child('${card.status}/$anoMes/$uid/${card.freteId}')
           .update({
         'origem': card.origem,
         'compra': card.compra,
@@ -119,9 +119,9 @@ class FirebaseService {
     List<String> partes = data.split('/');
     String anoMes = '${partes[2]}/${partes[1]}';
     if (status == 'Em andamento') {
-      _fretesRef.child('$uid/${card.status}/${card.freteId}').remove();
+      _fretesRef.child('${card.status}/$uid/${card.freteId}').remove();
     } else {
-      _fretesRef.child('$uid/${card.status}/$anoMes/${card.freteId}').remove();
+      _fretesRef.child('${card.status}/$anoMes/$uid/${card.freteId}').remove();
     }
     return null;
   }
@@ -146,7 +146,7 @@ class FirebaseService {
     try {
       List<String> partes = despesa.data.split('/');
       String anoMes = '${partes[2]}/${partes[1]}';
-      await _custosref.child('$uid/Despesas/$anoMes/${despesa.despesaId}').set({
+      await _custosref.child('Despesas/$anoMes/$uid/${despesa.despesaId}').set({
         'despesa': despesa.despesa,
         'valor': despesa.valor,
         'data': despesa.data,
@@ -170,7 +170,7 @@ class FirebaseService {
       await excluirDespesa(despesa, data, uid: uid);
     }
     await _custosref
-        .child('$uid/Despesas/$anoMes/${despesa.despesaId}')
+        .child('Despesas/$anoMes/$uid/${despesa.despesaId}')
         .update({
       'despesa': despesa.despesa,
       'valor': despesa.valor,
@@ -186,7 +186,7 @@ class FirebaseService {
     String anoMes = '${partes[2]}/${partes[1]}';
 
     await _custosref
-        .child('$uid/Despesas/$anoMes/${despesa.despesaId}')
+        .child('Despesas/$anoMes/$uid/${despesa.despesaId}')
         .remove();
 
     return null;
@@ -200,7 +200,7 @@ class FirebaseService {
       List<String> partes = abastecimento.data.split('/');
       String anoMes = '${partes[2]}/${partes[1]}';
       await _custosref
-          .child('$uid/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+          .child('Abastecimento/$anoMes/$uid/${abastecimento.abastecimentoId}')
           .set({
         'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
         'data': abastecimento.data,
@@ -226,7 +226,7 @@ class FirebaseService {
       await excluirAbastecimento(abastecimento, data, uid: uid);
     }
     await _custosref
-        .child('$uid/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+        .child('Abastecimento/$anoMes/$uid/${abastecimento.abastecimentoId}')
         .update({
       'quantidadeAbastecida': abastecimento.quantidadeAbastecida,
       'data': abastecimento.data,
@@ -243,7 +243,7 @@ class FirebaseService {
     String anoMes = '${partes[2]}/${partes[1]}';
 
     await _custosref
-        .child('$uid/Abastecimento/$anoMes/${abastecimento.abastecimentoId}')
+        .child('Abastecimento/$anoMes/$uid/${abastecimento.abastecimentoId}')
         .remove();
 
     return null;
@@ -281,19 +281,35 @@ class FirebaseService {
 
   // ================= Ler dados do banco ====================
 
-  Future<Map?> lerDadosBanco(String ref, {required String? uid, int mes = 0}) async {
-    if (ref == 'Fretes') {
-      if(mes == DateTime.now().month){
-        DatabaseEvent snapshot = await _fretesRef.child("${uid!}/Concluido/${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}").once();
-        Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
-        return data;
-      }
-      DatabaseEvent snapshot = await _fretesRef.child(uid!).once();
+  Future<Map?> lerDadosBanco(String ref,
+      {required String? uid, String mes = '0', String ano = '0'}) async {
+    mes = mes == '0' ? DateTime.now().month.toString().padLeft(2, '0') : mes;
+    ano = ano == '0' ? '${DateTime.now().year}' : ano;
+    if (ref == 'FretesC') {
+      ;
+      DatabaseEvent snapshot =
+          await _fretesRef.child("Concluido/$ano/$mes/$uid").once();
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
       return data;
     }
-    if (ref == 'Custos') {
-      DatabaseEvent snapshot = await _custosref.child(uid!).once();
+
+    if (ref == 'FretesA') {
+      DatabaseEvent snapshot =
+          await _fretesRef.child("Em andamento/${uid!}").once();
+      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+      return data;
+    }
+
+    if (ref == 'CustosA') {
+      DatabaseEvent snapshot =
+          await _custosref.child('Abastecimento/$ano/$mes/${uid!}').once();
+      Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
+      return data;
+    }
+
+    if (ref == 'CustosD') {
+      DatabaseEvent snapshot =
+          await _custosref.child('Despesas/$ano/$mes/${uid!}').once();
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
       return data;
     }
@@ -305,8 +321,8 @@ class FirebaseService {
     }
 
     if (ref == 'Pagamentos') {
-
-      DatabaseEvent snapshot = await _pagamentosRef.child("${uid!}/${DateTime.now().year}/${DateTime.now().month.toString().length==1?"0":''}${DateTime.now().month}").once();
+      DatabaseEvent snapshot =
+          await _pagamentosRef.child('$ano/$mes/${uid!}').once();
       Map<dynamic, dynamic>? data = snapshot.snapshot.value as Map?;
       return data;
     }
@@ -327,7 +343,7 @@ class FirebaseService {
     try {
       List<String> partes = pagamento.data.split('/');
       String anoMes = '${partes[2]}/${partes[1]}';
-      await _pagamentosRef.child('$uid/$anoMes/${pagamento.uid}').set({
+      await _pagamentosRef.child('$anoMes/$uid/${pagamento.uid}').set({
         'data': pagamento.data,
         'ultimoFrete': pagamento.ultimoFrete,
         'valorTotal': pagamento.valorTotal,
@@ -360,7 +376,7 @@ class FirebaseService {
     List<String> partes = pagamento.data.split('/');
     String anoMes = '${partes[2]}/${partes[1]}';
 
-    await _pagamentosRef.child('$uid/$anoMes/${pagamento.uid}').remove();
+    await _pagamentosRef.child('$anoMes/$uid/${pagamento.uid}').remove();
 
     return null;
   }

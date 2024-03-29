@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
@@ -239,7 +240,9 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
                 trailing: IconButton(
                   icon: const Icon(Icons.arrow_forward_ios),
                   onPressed: () {
-                    print(uid);
+                    if (kDebugMode) {
+                      print(uid);
+                    }
                   },
                 ),
                 isThreeLine: true,
@@ -253,9 +256,8 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
 
   Future<void> carregarDadosBancoCaminhao(uid) async {
     final dados = await _dbFirebase.lerDadosBanco(
-      'Fretes',
+      'FretesC',
       uid: uid,
-      mes: DateTime.now().month,
     );
 
 
@@ -263,7 +265,9 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
       for (var entry in dados.entries) {
         var value = entry.value;
         var placa = value['placaCaminhao'];
-        print(value['venda']);
+        if (kDebugMode) {
+          print(value['venda']);
+        }
         // Verifica se a placa já existe no mapa
         if (placas.containsKey(placa)) {
           // Se existe, soma os novos valores aos valores existentes
@@ -284,7 +288,7 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
     for (var entry in placas.entries) {
       var placa = entry.key;
       var value = entry.value;
-      cardsCaminhao.putIfAbsent(placa.toString(), () => Card());
+      cardsCaminhao.putIfAbsent(placa.toString(), () => const Card());
       cardsCaminhao.update(
         placa.toString(),
             (_) => Card(
@@ -318,16 +322,21 @@ class _FaturamentoPageState extends State<FaturamentoPageAdm> {
             trailing: IconButton(
               icon: const Icon(Icons.arrow_forward_ios),
               onPressed: () {
-                print(uid);
+                if (kDebugMode) {
+                  print(uid);
+                }
               },
             ),
             isThreeLine: true,
           ),
         ),
       );
-      print('Placa: $placa'); // Adiciona este print
+      if (kDebugMode) {
+        print('Placa: $placa');
+      } // Adiciona este print
     }
-    print('Cards Caminhao: $cardsCaminhao'); // Adiciona este print
-
+    if (kDebugMode) {
+      print('Cards Caminhao: $cardsCaminhao');
+    } // Adiciona este print
   }
 }

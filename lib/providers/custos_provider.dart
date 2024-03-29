@@ -48,24 +48,17 @@ class DespesasProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco() async {
     _despesasCards.clear();
-    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbDespesas.lerDadosBanco('Custos',
+    final dados = await _dbDespesas.lerDadosBanco('CustosD',
         uid: FirebaseAuth.instance.currentUser!.uid);
-    if (dados?['Despesas'] != null) {
-      dados?['Despesas'].forEach((ano, value) {
-        dados['Despesas']['$ano'].forEach((mes, value) {
-          dados['Despesas']['$ano']['$mes'].forEach((key, value) {
-            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
-              put(DespesasDados(
+    if (dados != null) {
+      dados.forEach((key, value) {
+        put(DespesasDados(
                   despesaId: key,
                   despesa: value['despesa'],
                   valor: value['valor'],
                   descricao: value['descricao'],
                   data: value['data'],
                   placaCaminhao: value['placaCaminhao']));
-            }
-          });
-        });
       });
     }
     organizar();
@@ -128,23 +121,17 @@ class AbastecimentoProvider with ChangeNotifier {
   Future<void> carregarDadosDoBanco() async {
     _abastecimentoCards.clear();
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbDespesas.lerDadosBanco('Custos',
+    final dados = await _dbDespesas.lerDadosBanco('CustosA',
         uid: FirebaseAuth.instance.currentUser!.uid);
-    if (dados?['Abastecimento'] != null) {
-      dados?['Abastecimento'].forEach((ano, value) {
-        dados['Abastecimento']['$ano'].forEach((mes, value) {
-          dados['Abastecimento']['$ano']['$mes'].forEach((key, value) {
-            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
-              put(AbastecimentoDados(
+    if (dados != null) {
+      dados.forEach((key, value) {
+        put(AbastecimentoDados(
                   quantidadeAbastecida: value['quantidadeAbastecida'],
                   data: value['data'],
                   imageLink: value['imageLink'],
                   volumeBomba: value['volumeBomba'],
                   placaCaminhao: value['placaCaminhao'],
                   abastecimentoId: key));
-            }
-          });
-        });
       });
     }
     organizar();

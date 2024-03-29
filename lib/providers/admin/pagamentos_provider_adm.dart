@@ -71,11 +71,9 @@ class PagamentosProvider with ChangeNotifier {
     String ultimoFrete =
         await PagamentosConcluidosProvider().carregarDadosDoBanco(uid);
     double total = 0;
-    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbPagamentos.lerDadosBanco('Fretes', uid: uid!);
-    final anoAtual = DateTime.now().year.toString();
-    if (dados?['Concluido'] != null) {
-      dados?['Concluido'][anoAtual][mesAtual].forEach((key, value) {
+    final dados = await _dbPagamentos.lerDadosBanco('FretesC', uid: uid!);
+    if (dados != null) {
+      dados.forEach((key, value) {
         if (double.tryParse(key)! > double.tryParse(ultimoFrete)!) {
           put(FreteCardDados(
               origem: value['origem'],
@@ -172,8 +170,6 @@ class PagamentosConcluidosProvider with ChangeNotifier {
   Future<String> carregarDadosDoBanco(String? uid) async {
     pagamentosUsuariosConcluidos.clear();
     final dados = await _dbPagamentos.lerDadosBanco('Pagamentos', uid: uid);
-    final anoAtual = DateTime.now().year.toString();
-    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
     if (dados != null) {
       Future<void> processarDados() async {
         for (var key in dados.keys) {

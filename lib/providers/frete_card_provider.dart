@@ -54,11 +54,11 @@ class FreteCardAndamentoProvider with ChangeNotifier {
     Map? dadosPor =
         await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
     porcentagem = dadosPor?['porcentagem'];
-    final dados = await _dbFrete.lerDadosBanco('Fretes',
+    final dados = await _dbFrete.lerDadosBanco('FretesA',
         uid: FirebaseAuth.instance.currentUser!.uid);
-
-    if (dados?['Em andamento'] != null) {
-      dados?['Em andamento'].forEach((key, value) {
+    print(dados);
+    if (dados != null) {
+      dados.forEach((key, value) {
         put(FreteCardDados(
             origem: value['origem'],
             compra: value['compra'],
@@ -130,14 +130,12 @@ class FreteCardConcluidoProvider with ChangeNotifier {
         await _dbFrete.lerDadosBanco('PorcentagemPagamentos', uid: '');
     porcentagem = dadosPor?['porcentagem'];
     final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final dados = await _dbFrete.lerDadosBanco('Fretes',
+    final anoAtual = DateTime.now().year.toString();
+    final dados = await _dbFrete.lerDadosBanco('FretesC',
         uid: FirebaseAuth.instance.currentUser!.uid);
-    if (dados?['Concluido'] != null) {
-      dados?['Concluido'].forEach((ano, value) {
-        dados['Concluido']['$ano'].forEach((mes, value) {
-          dados['Concluido']['$ano']['$mes'].forEach((key, value) {
-            if (mes == mesAtual && ano == DateTime.now().year.toString()) {
-              put(FreteCardDados(
+    if (dados != null) {
+      dados.forEach((key, value) {
+        put(FreteCardDados(
                   origem: value['origem'],
                   compra: value['compra'],
                   destino: value['destino'],
@@ -146,9 +144,6 @@ class FreteCardConcluidoProvider with ChangeNotifier {
                   placaCaminhao: value['placaCaminhao'],
                   status: 'Concluido',
                   freteId: key));
-            }
-          });
-        });
       });
     }
     organizar();

@@ -1,4 +1,3 @@
-import 'package:apprubinho/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,7 +6,9 @@ import 'package:intl/intl.dart';
 class FaturamentoUsuarioPageAdm extends StatefulWidget {
   final List cards;
   final List total;
-  const FaturamentoUsuarioPageAdm({Key? key, required this.cards, required this.total}) : super(key: key);
+
+  const FaturamentoUsuarioPageAdm(
+      {super.key, required this.cards, required this.total});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,7 +43,7 @@ class FaturamentoUsuarioPageState extends State<FaturamentoUsuarioPageAdm> {
             body: Column(
               children: [
                 SingleChildScrollView(
-                  child: Container(
+                  child: SizedBox(
                     height: 570,
                     child: ListView.builder(
                       itemCount: widget.cards.length,
@@ -61,9 +62,15 @@ class FaturamentoUsuarioPageState extends State<FaturamentoUsuarioPageAdm> {
                    child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Ganhos: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.total[0])}", style: TextStyle(fontSize: 17),),
-                    Text("Custos: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.total[1])}", style: TextStyle(fontSize: 17),),
-                    const Divider(
+                      Text(
+                        "Ganhos: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.total[0])}",
+                        style: const TextStyle(fontSize: 17),
+                      ),
+                      Text(
+                        "Custos: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.total[1])}",
+                        style: const TextStyle(fontSize: 17),
+                      ),
+                      const Divider(
                       color: Colors.black,
                       thickness: 1,
                       height: 1.0,
@@ -71,9 +78,10 @@ class FaturamentoUsuarioPageState extends State<FaturamentoUsuarioPageAdm> {
                       endIndent: 20.0,
                     ),
                     Text(
-                        'Lucro: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
-                            .format(widget.total[0]! - widget.total[1]!)}', style: TextStyle(fontSize: 20),),
-                  ],
+                        'Lucro: ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.total[0]! - widget.total[1]!)}',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ],
                 ),)
               ],
             ),

@@ -46,11 +46,10 @@ class VerUsuarioDespesaProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco(String? uid) async {
     _usuarioDespesasCards.clear();
-    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final anoAtual = DateTime.now().year.toString();
-    final dados = await _dbDespesas.lerDadosBanco('Custos', uid: uid!);
-    if (dados?['Despesas'] != null) {
-      dados?['Despesas'][anoAtual][mesAtual].forEach((key, value) {
+
+    final dados = await _dbDespesas.lerDadosBanco('CustosD', uid: uid!);
+    if (dados != null) {
+      dados.forEach((key, value) {
         put(DespesasDados(
             despesaId: key,
             despesa: value['despesa'],
@@ -120,11 +119,9 @@ class VerUsuarioAbastecimentoProvider with ChangeNotifier {
 
   Future<void> carregarDadosDoBanco(String? uid) async {
     _usuarioAbastecimentoCards.clear();
-    final mesAtual = DateTime.now().month.toString().padLeft(2, '0');
-    final anoAtual = DateTime.now().year.toString();
-    final dados = await _dbDespesas.lerDadosBanco('Custos', uid: uid!);
-    if (dados?['Abastecimento'] != null) {
-      dados?['Abastecimento'][anoAtual][mesAtual].forEach((key, value) {
+    final dados = await _dbDespesas.lerDadosBanco('CustosA', uid: uid!);
+    if (dados != null) {
+      dados.forEach((key, value) {
         put(AbastecimentoDados(
             quantidadeAbastecida: value['quantidadeAbastecida'],
             data: value['data'],
